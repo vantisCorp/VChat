@@ -1,0 +1,254 @@
+title = "V-COMM Gitleaks Configuration"
+
+# Gitleaks configuration for V-COMM project
+# Detects secrets and sensitive information in code
+
+[extend]
+# Use default regex patterns
+useDefault = true
+
+# Allow specific patterns that are false positives
+[allowlist]
+description = "Global Allowlist"
+paths = [
+    '''package-lock\.json''',
+    '''yarn\.lock''',
+    '''pnpm-lock\.yaml''',
+    '''go\.sum''',
+    '''Cargo\.lock''',
+    '''vendor/''',
+    '''\.venv/''',
+    '''node_modules/''',
+    '''target/''',
+    '''dist/''',
+    '''build/''',
+    '''\.git/''',
+    '''\.vscode/''',
+    '''\.idea/''',
+    '''test/''',
+    '''tests/''',
+    '''spec/''',
+    '''specs/''',
+    '''mock/''',
+    '''mocks/''',
+    '''fixture/''',
+    '''fixtures/''',
+    '''example/''',
+    '''examples/''',
+    '''sample/''',
+    '''samples/''',
+    '''\.example\.''',
+    '''\.sample\.''',
+    '''\.test\.''',
+    '''\.spec\.''',
+    '''\.md$''',
+    '''\.txt$''',
+    '''\.log$''',
+    '''\.sql$'''
+]
+
+[allowlist.comments]
+description = "Allow comments and documentation"
+regexes = [
+    '''^.*#.*$''',
+    '''^.*//.*$''',
+    '''^.*//\*.*$''',
+    '''^.*\*//.*$''',
+    '''^.*<!--.*$'''
+]
+
+# Custom regex patterns for V-COMM
+[[rules]]
+description = "Private Key (PEM format)"
+regex = '''-----BEGIN\s+(RSA\s+)?PRIVATE\s+KEY-----'''
+tags = ["key", "PEM"]
+
+[[rules]]
+description = "AWS Access Key ID"
+regex = '''(A3T[A-Z0-9]|AKIA|AGPA|AIDA|AROA|AIPA|ANPA|ANVA|ASIA)[A-Z0-9]{16}'''
+tags = ["aws", "secret"]
+
+[[rules]]
+description = "AWS Secret Key"
+regex = '''(?i)aws(.{0,20})?(?-i:['&quot;][0-9a-zA-Z/+]{40}['&quot;])'''
+tags = ["aws", "secret"]
+
+[[rules]]
+description = "GitHub Token"
+regex = '''ghp_[a-zA-Z0-9]{36}'''
+tags = ["github", "secret"]
+
+[[rules]]
+description = "GitHub App Token"
+regex = '''(ghu|gho|ghs|ghr)_[a-zA-Z0-9]{36}'''
+tags = ["github", "secret"]
+
+[[rules]]
+description = "GitHub OAuth Token"
+regex = '''gho_[a-zA-Z0-9]{36}'''
+tags = ["github", "secret"]
+
+[[rules]]
+description = "GitHub Personal Access Token"
+regex = '''ghp_[a-zA-Z0-9]{36}'''
+tags = ["github", "secret"]
+
+[[rules]]
+description = "GitHub Refresh Token"
+regex = '''ghr_[a-zA-Z0-9]{36}'''
+tags = ["github", "secret"]
+
+[[rules]]
+description = "GitHub Server Token"
+regex = '''ghu_[a-zA-Z0-9]{36}'''
+tags = ["github", "secret"]
+
+[[rules]]
+description = "Slack Token"
+regex = '''xox[baprs]-[a-zA-Z0-9-]+'''
+tags = ["slack", "secret"]
+
+[[rules]]
+description = "Stripe API Key"
+regex = '''sk_live_[0-9a-zA-Z]{24}'''
+tags = ["stripe", "secret"]
+
+[[rules]]
+description = "Twilio API Key"
+regex = '''SK[0-9a-fA-F]{32}'''
+tags = ["twilio", "secret"]
+
+[[rules]]
+description = "PostgreSQL Connection String"
+regex = '''postgres://[a-zA-Z0-9_:-]+@[a-zA-Z0-9.-]+:[0-9]+/[a-zA-Z0-9_-]+'''
+tags = ["database", "secret"]
+
+[[rules]]
+description = "MySQL Connection String"
+regex = '''mysql://[a-zA-Z0-9_:-]+@[a-zA-Z0-9.-]+:[0-9]+/[a-zA-Z0-9_-]+'''
+tags = ["database", "secret"]
+
+[[rules]]
+description = "MongoDB Connection String"
+regex = '''mongodb://[a-zA-Z0-9_:-]+@[a-zA-Z0-9.-]+:[0-9]+/[a-zA-Z0-9_-]+'''
+tags = ["database", "secret"]
+
+[[rules]]
+description = "Redis Connection String"
+regex = '''redis://[a-zA-Z0-9_:-]+@[a-zA-Z0-9.-]+:[0-9]+'''
+tags = ["database", "secret"]
+
+[[rules]]
+description = "JWT Token"
+regex = '''eyJ[a-zA-Z0-9_-]*\.[a-zA-Z0-9_-]*\.[a-zA-Z0-9_-]*'''
+tags = ["jwt", "secret"]
+
+[[rules]]
+description = "API Key Generic"
+regex = '''(?i)(api[_-]?key|apikey|secret[_-]?key|secretkey|access[_-]?token|private[_-]?key|auth[_-]?token)[\s'"]{0,2}[:=][\s'"]{0,2}[a-zA-Z0-9_\-]{16,}'''
+tags = ["api", "secret"]
+
+[[rules]]
+description = "Email Address"
+regex = '''[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}'''
+tags = ["email"]
+
+[[rules]]
+description = "IP Address"
+regex = '''\b(?:\d{1,3}\.){3}\d{1,3}\b'''
+tags = ["ip"]
+
+[[rules]]
+description = "Fernet Key"
+regex = '''[A-Za-z0-9+/]{44}=?'''
+tags = ["fernet", "secret"]
+
+[[rules]]
+description = "SSH Private Key"
+regex = '''-----BEGIN\s+(RSA|DSA|EC|OPENSSH|ECDSA)\s+PRIVATE\s+KEY-----'''
+tags = ["ssh", "secret"]
+
+[[rules]]
+description = "Android API Key"
+regex = '''AIza[0-9A-Za-z\-_]{35}'''
+tags = ["android", "secret"]
+
+[[rules]]
+description = "Google Cloud API Key"
+regex = '''AIza[0-9A-Za-z\-_]{35}'''
+tags = ["google", "secret"]
+
+[[rules]]
+description = "Heroku API Key"
+regex = '''[hH][eE][rR][oO][kK][uU].{0,30}[0-9A-F]{8}-[0-9A-F]{4}-[0-9A-F]{4}-[0-9A-F]{4}-[0-9A-F]{12}'''
+tags = ["heroku", "secret"]
+
+[[rules]]
+description = "Mailchimp API Key"
+regex = '''[0-9a-f]{32}-us[0-9]{1,2}'''
+tags = ["mailchimp", "secret"]
+
+[[rules]]
+description = "PayPal Braintree Access Token"
+regex = '''access_token\$production\$[0-9a-z]{16}\$[0-9a-f]{32}'''
+tags = ["paypal", "secret"]
+
+[[rules]]
+description = "Picatic API Key"
+regex = '''sk_live_[0-9a-z]{32}'''
+tags = ["picatic", "secret"]
+
+[[rules]]
+description = "SendGrid API Key"
+regex = '''SG\.[a-zA-Z0-9_-]{22}\.[a-zA-Z0-9_-]{43}'''
+tags = ["sendgrid", "secret"]
+
+[[rules]]
+description = "Shopify Shared Secret"
+regex = '''shpss_[a-fA-F0-9]{32}'''
+tags = ["shopify", "secret"]
+
+[[rules]]
+description = "Shopify Access Token"
+regex = '''shpat_[a-fA-F0-9]{32}'''
+tags = ["shopify", "secret"]
+
+[[rules]]
+description = "Stripe API Key"
+regex = '''sk_live_[0-9a-zA-Z]{24}'''
+tags = ["stripe", "secret"]
+
+[[rules]]
+description = "Square OAuth Secret"
+regex = '''sq0csp-[0-9A-Za-z\-_]{43}'''
+tags = ["square", "secret"]
+
+[[rules]]
+description = "Twilio API Key"
+regex = '''SK[0-9a-fA-F]{32}'''
+tags = ["twilio", "secret"]
+
+[[rules]]
+description = "Azure Storage Account Key"
+regex = '''AccountKey=[a-zA-Z0-9+/]{88}'''
+tags = ["azure", "secret"]
+
+[[rules]]
+description = "Google Cloud Platform Service Account"
+regex = '''"type":\s*"service_account"'''
+tags = ["google", "secret"]
+
+[[rules]]
+description = "V-COMM Private Key"
+regex = '''VCOMM_PRIVATE_KEY_[A-Z0-9]{32,}'''
+tags = ["vcomm", "secret"]
+
+[[rules]]
+description = "V-COMM Secret"
+regex = '''VCOMM_SECRET_[A-Z0-9]{32,}'''
+tags = ["vcomm", "secret"]
+
+[[rules]]
+description = "V-COMM API Key"
+regex = '''VCOMM_API_KEY_[A-Z0-9]{32,}'''
+tags = ["vcomm", "secret"]

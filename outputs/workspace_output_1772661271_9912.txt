@@ -1,0 +1,26 @@
+/workspace
+total 112
+drwxr-xr-x 11 user user 4096 Mar  4 21:54 .
+drwxr-xr-x 20 root root 4096 Feb 20 01:32 ..
+drwxr-xr-x  4 user user 4096 Feb 13 00:53 .agent_hooks
+-rw-r--r--  1 root root 2458 Mar  4 21:07 .commitlintrc.json
+drwxr-xr-x  2 root root 4096 Mar  4 21:25 .devcontainer
+-rw-r--r--  1 root root 1184 Mar  4 20:58 .editorconfig
+-rw-r--r--  1 root root 1872 Mar  4 21:06 .eslintrc.json
+-rw-r--r--  1 root root 1555 Mar  4 21:06 .gitattributes
+drwxr-xr-x  5 root root 4096 Mar  4 21:25 .github
+-rw-r--r--  1 root root 3535 Mar  4 21:11 .gitignore
+-rw-r--r--  1 root root 6083 Mar  4 21:16 .gitleaks.toml
+-rw-r--r--  1 root root  950 Mar  4 21:01 .prettierrc.json
+-rw-r--r--  1 root root 8829 Mar  4 21:54 PROJECT_STATUS.md
+-rw-r--r--  1 root root 6763 Mar  4 20:57 README.md
+drwxr-xr-x  5 root root 4096 Mar  4 21:25 apps
+drwxr-xr-x  2 root root 4096 Mar  4 21:25 docs
+drwxr-xr-x  6 root root 4096 Mar  4 21:25 infra
+drwxr-xr-x  2 root root 4096 Mar  4 21:54 outputs
+-rw-r--r--  1 root root 2600 Mar  4 21:00 package.json
+drwxr-xr-x  8 root root 4096 Mar  4 21:25 packages
+-rw-r--r--  1 root root 2967 Mar  4 21:50 todo.md
+drwxr-xr-x  4 root root 4096 Mar  4 21:25 tools
+-rw-r--r--  1 root root 1839 Mar  4 21:06 tsconfig.json
+-rw-r--r--  1 root root 1787 Mar  4 20:59 turbo.json

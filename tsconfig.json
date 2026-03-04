@@ -1,0 +1,70 @@
+{
+  "compilerOptions": {
+    "target": "ES2022",
+    "lib": ["ES2022", "DOM", "DOM.Iterable", "WebWorker"],
+    "module": "ESNext",
+    "moduleResolution": "bundler",
+    "resolveJsonModule": true,
+    "allowJs": true,
+    "checkJs": false,
+    "outDir": "./dist",
+    "rootDir": ".",
+    "removeComments": false,
+    "noEmit": true,
+    "isolatedModules": true,
+    "allowSyntheticDefaultImports": true,
+    "esModuleInterop": true,
+    "forceConsistentCasingInFileNames": true,
+    "strict": true,
+    "noImplicitAny": true,
+    "strictNullChecks": true,
+    "strictFunctionTypes": true,
+    "strictBindCallApply": true,
+    "strictPropertyInitialization": true,
+    "noImplicitThis": true,
+    "alwaysStrict": true,
+    "noUnusedLocals": true,
+    "noUnusedParameters": true,
+    "exactOptionalPropertyTypes": true,
+    "noImplicitReturns": true,
+    "noFallthroughCasesInSwitch": true,
+    "noUncheckedIndexedAccess": true,
+    "noImplicitOverride": true,
+    "noPropertyAccessFromIndexSignature": true,
+    "skipLibCheck": true,
+    "incremental": true,
+    "baseUrl": ".",
+    "paths": {
+      "@vcomm/core/*": ["./packages/core/src/*"],
+      "@vcomm/crypto/*": ["./packages/crypto/src/*"],
+      "@vcomm/protocols/*": ["./packages/protocols/src/*"],
+      "@vcomm/ui/*": ["./packages/ui/src/*"],
+      "@vcomm/types": ["./packages/types/src/index.ts"]
+    },
+    "jsx": "react-jsx",
+    "jsxFactory": "createElement",
+    "jsxFragmentFactory": "Fragment"
+  },
+  "include": [
+    "apps/**/*",
+    "packages/**/*",
+    "tools/**/*"
+  ],
+  "exclude": [
+    "node_modules",
+    "dist",
+    "build",
+    ".next",
+    "coverage",
+    ".turbo",
+    "target",
+    "**/*.spec.ts",
+    "**/*.test.ts",
+    "**/*.spec.tsx",
+    "**/*.test.tsx"
+  ],
+  "ts-node": {
+    "transpileOnly": true,
+    "experimentalSpecifierResolution": "node"
+  }
+}

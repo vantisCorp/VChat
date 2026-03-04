@@ -1,0 +1,82 @@
+{
+  "name": "vcomm-workspace",
+  "version": "0.1.0",
+  "private": true,
+  "description": "V-COMM: Next-Generation Secure Communication Ecosystem",
+  "license": "AGPL-3.0",
+  "workspaces": [
+    "apps/*",
+    "packages/*"
+  ],
+  "scripts": {
+    "build": "turbo run build",
+    "dev": "turbo run dev --parallel",
+    "lint": "turbo run lint",
+    "test": "turbo run test",
+    "format": "turbo run format",
+    "type-check": "turbo run type-check",
+    "clean": "turbo run clean && rm -rf node_modules",
+    "cargo:build": "turbo run cargo:build",
+    "cargo:test": "turbo run cargo:test",
+    "cargo:clippy": "turbo run cargo:clippy",
+    "docs:build": "turbo run docs:build",
+    "docs:serve": "turbo run docs:serve",
+    "security:audit": "turbo run security:audit && npm audit --audit-level=moderate",
+    "security:gitleaks": "gitleaks detect --source . --verbose --report-format json --report-path gitleaks-report.json",
+    "security:all": "pnpm run security:audit && pnpm run security:gitleaks",
+    "ci:build": "pnpm install && pnpm run build",
+    "ci:test": "pnpm run test",
+    "ci:lint": "pnpm run lint",
+    "ci:security": "pnpm run security:all",
+    "chaos:test": "python3 infra/scripts/chaos_monkey.py --config infra/chaos/config.json",
+    "migration:discord": "cargo run --package v-migrator --bin discord_migrator",
+    "release": "semantic-release",
+    "prepare": "husky install"
+  },
+  "devDependencies": {
+    "@commitlint/cli": "^18.6.0",
+    "@commitlint/config-conventional": "^18.6.0",
+    "@semantic-release/changelog": "^6.0.3",
+    "@semantic-release/git": "^10.0.1",
+    "@typescript-eslint/eslint-plugin": "^6.19.0",
+    "@typescript-eslint/parser": "^6.19.0",
+    "conventional-commits-parser": "^4.0.0",
+    "eslint": "^8.56.0",
+    "eslint-config-prettier": "^9.1.0",
+    "eslint-plugin-import": "^2.29.1",
+    "eslint-plugin-security": "^1.7.1",
+    "husky": "^8.0.3",
+    "lint-staged": "^15.2.0",
+    "prettier": "^3.2.4",
+    "semantic-release": "^22.0.12",
+    "turbo": "^1.11.3",
+    "typescript": "^5.3.3"
+  },
+  "engines": {
+    "node": ">=20.0.0",
+    "pnpm": ">=8.0.0"
+  },
+  "packageManager": "pnpm@8.14.1",
+  "keywords": [
+    "secure-communication",
+    "e2ee",
+    "zero-trust",
+    "web3",
+    "privacy",
+    "cryptography",
+    "post-quantum",
+    "messaging",
+    "gaming",
+    "rust",
+    "wasm"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/vantisCorp/VChat.git"
+  },
+  "bugs": {
+    "url": "https://github.com/vantisCorp/VChat/issues"
+  },
+  "homepage": "https://vcomm.dev",
+  "author": "Vantis Corp <dev@vcomm.dev>"
+}

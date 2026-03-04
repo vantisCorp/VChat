@@ -1,0 +1,316 @@
+# V-COMM Project - Comprehensive .gitignore
+# Based on GitIgnore.io for comprehensive coverage
+
+# === Operating System Files ===
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+desktop.ini
+
+# === Environment & Secrets ===
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+.env.*.local
+*.env
+*.key
+*.pem
+*.p12
+*.pfx
+*.cert
+*.crt
+secrets/
+credentials/
+*.secrets
+
+# === Node.js / npm ===
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+lerna-debug.log*
+.npm
+.yarn-integrity
+.yarn/cache
+.yarn/build-state.yml
+.yarn/install-state.gz
+.yarn/unplugged
+.yarn/versions
+.yarn/build-state.yml
+
+# === Build Outputs ===
+dist/
+build/
+out/
+.next/
+.nuxt/
+.cache/
+.vuepress/dist/
+.turbo/
+vercel/
+.netlify/
+
+# === Testing & Coverage ===
+coverage/
+*.lcov
+.nyc_output/
+test-results/
+junit.xml
+
+# === Rust / Cargo ===
+target/
+Cargo.lock
+**/*.rs.bk
+.cargo/
+*.pdb
+
+# === IDE & Editor Files ===
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.project
+.classpath
+.settings/
+*.sublime-project
+*.sublime-workspace
+.history/
+*.pid
+*.seed
+*.pid.lock
+
+# === TypeScript ===
+*.tsbuildinfo
+tsconfig.tsbuildinfo
+
+# === WebStorm / IntelliJ ===
+*.iml
+.idea/
+
+# === VS Code ===
+.vscode/*
+!.vscode/settings.json
+!.vscode/tasks.json
+!.vscode/launch.json
+!.vscode/extensions.json
+!.vscode/*.code-snippets
+
+# === Emacs ===
+*~
+\#*\#
+/.emacs.desktop
+/.emacs.desktop.lock
+*.elc
+auto-save-list
+tramp
+
+# === Vim ===
+[._]*.s[a-v][a-z]
+[._]*.sw[a-p]
+[._]s[a-rt-v][a-z]
+[._]ss[a-gi-z]
+[._]sw[a-p]
+Session.vim
+Sessionx.vim
+.netrwhist
+*~
+tags
+TAGS
+
+# === Logs ===
+logs/
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+lerna-debug.log*
+server.log
+error.log
+access.log
+
+# === Temporary Files ===
+tmp/
+temp/
+*.tmp
+*.temp
+*.bak
+*.backup
+.cache/
+.parcel-cache/
+
+# === Package Manager Lock Files (Keep pnpm-lock.yaml) ===
+package-lock.json
+yarn.lock
+
+# === Database Files ===
+*.db
+*.sqlite
+*.sqlite3
+*.db-journal
+*.db-shm
+*.db-wal
+
+# === Docker ===
+*.tar
+*.tar.gz
+.docker/
+
+# === Security & Gitleaks ===
+gitleaks-report.json
+*.asc
+*.gpg
+*.pgp
+
+# === OS Generated Files ===
+.fuse_hidden*
+.Trashes
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+desktop.ini
+
+# === Build Artifacts ===
+*.o
+*.so
+*.dll
+*.dylib
+*.exe
+*.bin
+*.out
+*.a
+*.lib
+
+# === Python ===
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+
+# === Terraform ===
+.terraform/
+*.tfstate
+*.tfstate.*
+*.tfvars
+.terraform.lock.hcl
+crash.log
+crash.*.log
+override.tf
+override.tf.json
+*_override.tf
+*_override.tf.json
+
+# === Kubernetes ===
+*.kubeconfig
+
+# === Audio/Video ===
+*.mp4
+*.webm
+*.mov
+*.avi
+*.mkv
+*.flv
+*.wmv
+*.3gp
+*.m4v
+
+# === Images (Large files) ===
+*.psd
+*.ai
+*.eps
+
+# === Archives ===
+*.zip
+*.tar
+*.tar.gz
+*.tgz
+*.rar
+*.7z
+*.bz2
+
+# === Miscellaneous ===
+*.pid
+*.seed
+*.pid.lock
+.cache/
+.parcel-cache/
+.next/
+.nuxt/
+.vuepress/dist
+.serverless/
+.fusebox/
+.dynamodb/
+.tern-port
+.cache-loader
+.vite/
+
+# === Security Scanners ===
+gitleaks-report.json
+snyk-report.json
+audit-results.json
+
+# === Chaos Testing ===
+chaos-reports/
+chaos-logs/
+
+# === IPFS ===
+.ipfs/
+
+# === WASM ===
+*.wasm
+*.wat
+
+# === Hardware Keys ===
+*.yubikey
+*.nitrokey
+
+# === HSM (Hardware Security Module) ===
+hsm-config/
+*.hsm
+
+# === Keys & Certificates ===
+private/
+*.private
+*.priv
+id_rsa
+id_ed25519
+id_ecdsa
+
+# === Backups ===
+*.backup
+*.bak
+backups/
+backup/
+
+# === Generated Documentation ===
+api-docs/
+generated-docs/
+autodocs/

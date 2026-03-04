@@ -1,0 +1,153 @@
+{
+  "name": "V-COMM Development Environment",
+  "image": "mcr.microsoft.com/devcontainers/base:ubuntu-22.04",
+  "features": {
+    "ghcr.io/devcontainers/features/node:1": {
+      "version": "20",
+      "nodeGypDependencies": true,
+      "nvmInstallPath": "/usr/local/share/nvm"
+    },
+    "ghcr.io/devcontainers/features/rust:1": {
+      "version": "stable",
+      "profile": "minimal",
+      "components": "rustfmt,clippy,rust-src,rust-analysis"
+    },
+    "ghcr.io/devcontainers/features/python:1": {
+      "version": "3.11"
+    },
+    "ghcr.io/devcontainers/features/docker-in-docker:2": {
+      "version": "latest",
+      "moby": true,
+      "dockerDashComposeVersion": "v2"
+    },
+    "ghcr.io/devcontainers/features/git:1": {
+      "version": "latest",
+      "ppa": true
+    },
+    "ghcr.io/devcontainers/features/github-cli:1": {
+      "version": "latest"
+    },
+    "ghcr.io/devcontainers/features/common-utils:2": {
+      "installZsh": true,
+      "installOhMyZsh": true,
+      "upgradePackages": true,
+      "username": "vscode",
+      "userUid": "automatic",
+      "userGid": "automatic"
+    }
+  },
+  "customizations": {
+    "vscode": {
+      "extensions": [
+        "dbaeumer.vscode-eslint",
+        "esbenp.prettier-vscode",
+        "rust-lang.rust-analyzer",
+        "ms-vscode.cpptools",
+        "GitHub.copilot",
+        "GitHub.copilot-chat",
+        "GitHub.vscode-pull-request-github",
+        "streetsidesoftware.code-spell-checker",
+        "eamodio.gitlens",
+        "ms-azuretools.vscode-docker",
+        "redhat.vscode-yaml",
+        "editorconfig.editorconfig",
+        "fill-labs.dependi",
+        "tamasfe.even-better-toml",
+        "serayuzgur.crates",
+        "vadimcn.vscode-lldb",
+        "ms-vscode.test-adapter-converter",
+        "hbenl.vscode-test-explorer",
+        "firsttris.vscode-jest-runner",
+        "wakatime.vscode-wakatime",
+        "usernamehw.errorlens",
+        "formulahendry.auto-rename-tag",
+        "bradlc.vscode-tailwindcss",
+        "davidanson.vscode-markdownlint",
+        "shd101wyy.markdown-preview-enhanced",
+        "yzhang.markdown-all-in-one",
+        "tomoki1207.pdf",
+        "humao.rest-client",
+        "mtxr.sqltools",
+        "mtxr.sqltools-driver-pg",
+        "mtxr.sqltools-driver-mysql",
+        "k--kato.intellij-idea-keybindings",
+        "zokugun.timestamp-sync",
+        "wayou.vscode-todo-highlight",
+        "gruntfuggly.todo-tree",
+        "alefragnani.bookmarks",
+        "mhutchie.git-graph",
+        "codezombiech.gitignore",
+        "eamodio.gitlens"
+      ],
+      "settings": {
+        "editor.formatOnSave": true,
+        "editor.defaultFormatter": "esbenp.prettier-vscode",
+        "editor.codeActionsOnSave": {
+          "source.fixAll.eslint": "explicit",
+          "source.organizeImports": "explicit"
+        },
+        "eslint.validate": [
+          "javascript",
+          "javascriptreact",
+          "typescript",
+          "typescriptreact",
+          "vue",
+          "html",
+          "json",
+          "jsonc",
+          "markdown"
+        ],
+        "[rust]": {
+          "editor.defaultFormatter": "rust-lang.rust-analyzer",
+          "editor.formatOnSave": true
+        },
+        "[toml]": {
+          "editor.defaultFormatter": "tamasfe.even-better-toml",
+          "editor.formatOnSave": true
+        },
+        "[python]": {
+          "editor.defaultFormatter": "ms-python.python",
+          "editor.formatOnSave": true
+        },
+        "terminal.integrated.profiles.linux": {
+          "zsh": {
+            "path": "/bin/zsh"
+          }
+        },
+        "terminal.integrated.defaultProfile.linux": "zsh",
+        "files.autoSave": "afterDelay",
+        "files.autoSaveDelay": 1000,
+        "files.exclude": {
+          "**/.git": true,
+          "**/.svn": true,
+          "**/.hg": true,
+          "**/CVS": true,
+          "**/.DS_Store": true,
+          "**/Thumbs.db": true,
+          "**/node_modules": true,
+          "**/target": true,
+          "**/.next": true,
+          "**/dist": true,
+          "**/build": true
+        },
+        "rust-analyzer.checkOnSave.command": "clippy",
+        "rust-analyzer.cargo.loadOutDirsFromCheck": true,
+        "rust-analyzer.cargo.features": "all",
+        "typescript.tsdk": "node_modules/typescript/lib",
+        "typescript.enablePromptUseWorkspaceTsdk": true
+      }
+    }
+  },
+  "postCreateCommand": "bash .devcontainer/setup.sh",
+  "runArgs": [
+    "--cap-add=SYS_PTRACE",
+    "--security-opt",
+    "seccomp=unconfined"
+  ],
+  "remoteUser": "vscode",
+  "mounts": [
+    "source=${localWorkspaceFolderBasename}-node-modules,target=${containerWorkspaceFolder}/node_modules,type=volume",
+    "source=${localWorkspaceFolderBasename}-cargo,target=${containerWorkspaceFolder}/.cargo,type=volume",
+    "source=${localWorkspaceFolderBasename}-target,target=${containerWorkspaceFolder}/target,type=volume"
+  ]
+}

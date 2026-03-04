@@ -1,0 +1,97 @@
+{
+  "extends": ["@commitlint/config-conventional"],
+  "rules": {
+    "type-enum": [
+      2,
+      "always",
+      [
+        "feat",
+        "fix",
+        "docs",
+        "style",
+        "refactor",
+        "perf",
+        "test",
+        "build",
+        "ci",
+        "chore",
+        "revert",
+        "security",
+        "release",
+        "wip"
+      ]
+    ],
+    "type-case": [2, "always", "lower-case"],
+    "type-empty": [2, "never"],
+    "scope-case": [2, "always", "lower-case"],
+    "subject-empty": [2, "never"],
+    "subject-full-stop": [2, "never", "."],
+    "header-max-length": [2, "always", 100],
+    "body-leading-blank": [2, "always"],
+    "body-max-line-length": [2, "always", 100],
+    "footer-leading-blank": [2, "always"],
+    "footer-max-line-length": [2, "always", 100]
+  },
+  "helpUrl": "https://www.conventionalcommits.org",
+  "defaultIgnores": true,
+  "prompt": {
+    "types": {
+      "feat": {
+        "description": "A new feature",
+        "emoji": "✨"
+      },
+      "fix": {
+        "description": "A bug fix",
+        "emoji": "🐛"
+      },
+      "docs": {
+        "description": "Documentation only changes",
+        "emoji": "📝"
+      },
+      "style": {
+        "description": "Code style changes (formatting, etc)",
+        "emoji": "💄"
+      },
+      "refactor": {
+        "description": "A code change that neither fixes a bug nor adds a feature",
+        "emoji": "♻️"
+      },
+      "perf": {
+        "description": "A code change that improves performance",
+        "emoji": "⚡"
+      },
+      "test": {
+        "description": "Adding missing tests or correcting existing tests",
+        "emoji": "✅"
+      },
+      "build": {
+        "description": "Changes that affect the build system or dependencies",
+        "emoji": "📦"
+      },
+      "ci": {
+        "description": "Changes to CI configuration files and scripts",
+        "emoji": "👷"
+      },
+      "chore": {
+        "description": "Other changes that don't modify src or test files",
+        "emoji": "♻️"
+      },
+      "revert": {
+        "description": "Reverts a previous commit",
+        "emoji": "⏪"
+      },
+      "security": {
+        "description": "Security vulnerability fixes",
+        "emoji": "🔒"
+      },
+      "release": {
+        "description": "Release preparation",
+        "emoji": "🚀"
+      },
+      "wip": {
+        "description": "Work in progress",
+        "emoji": "🚧"
+      }
+    }
+  }
+}

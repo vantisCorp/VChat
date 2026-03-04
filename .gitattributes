@@ -1,0 +1,112 @@
+# Auto detect text files and perform LF normalization
+* text=auto
+
+# Source files
+*.js text eol=lf
+*.jsx text eol=lf
+*.ts text eol=lf
+*.tsx text eol=lf
+*.json text eol=lf
+*.md text eol=lf
+*.html text eol=lf
+*.css text eol=lf
+*.scss text eol=lf
+
+# Rust files
+*.rs text eol=lf
+*.toml text eol=lf
+
+# Shell scripts
+*.sh text eol=lf eol=lf
+*.bash text eol=lf
+
+# Python files
+*.py text eol=lf
+
+# YAML files
+*.yml text eol=lf
+*.yaml text eol=lf
+
+# Terraform files
+*.tf text eol=lf
+*.tfvars text eol=lf
+
+# Git files
+.gitattributes text eol=lf
+.gitconfig text eol=lf
+.gitignore text eol=lf
+.gitmodules text eol=lf
+
+# Security files
+*.pem binary
+*.key binary
+*.crt binary
+*.p12 binary
+*.der binary
+
+# Images
+*.png binary
+*.jpg binary
+*.jpeg binary
+*.gif binary
+*.ico binary
+*.svg text eol=lf
+
+# Fonts
+*.ttf binary
+*.otf binary
+*.woff binary
+*.woff2 binary
+*.eot binary
+
+# Archives
+*.zip binary
+*.tar.gz binary
+*.tgz binary
+*.rar binary
+
+# Executables
+*.exe binary
+*.dll binary
+*.so binary
+*.dylib binary
+*.bin binary
+
+# Makefiles require tabs
+Makefile text eol=lf
+*.mk text eol=lf
+
+# Documentation
+README.md text eol=lf
+CHANGELOG.md text eol=lf
+LICENSE text eol=lf
+
+# Lock files
+package-lock.json text eol=lf
+pnpm-lock.yaml text eol=lf
+yarn.lock text eol=lf
+Cargo.lock text eol=lf
+
+# Database files
+*.db binary
+*.sqlite binary
+*.sqlite3 binary
+
+# Certificate files
+*.pem binary
+*.crt binary
+*.key binary
+*.csr binary
+
+# Large files
+*.mp4 binary
+*.webm binary
+*.mov binary
+*.avi binary
+*.mkv binary
+
+# Audio files
+*.mp3 binary
+*.wav binary
+*.ogg binary
+*.flac binary
