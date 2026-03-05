@@ -1,0 +1,112 @@
+name: 🔒 Security Vulnerability Report
+description: Report a security vulnerability (private)
+title: "[SECURITY] "
+labels: ["security", "critical"]
+assignees: ["@superninja-app"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        ⚠️ **IMPORTANT**: This issue is visible only to maintainers. Do not disclose security vulnerabilities publicly.
+        
+        For urgent security issues, please email: security@vcomm.dev
+        
+        PGP Key: 0x... (available at https://vcomm.dev/pgp-key)
+
+  - type: textarea
+    id: vulnerability
+    attributes:
+      label: Vulnerability Description
+      description: Please describe the security vulnerability
+      placeholder: "I found that X allows Y which leads to Z"
+    validations:
+      required: true
+
+  - type: textarea
+    id: impact
+    attributes:
+      label: Impact Assessment
+      description: What is the potential impact of this vulnerability?
+      placeholder: "This vulnerability could allow attackers to..."
+    validations:
+      required: true
+
+  - type: textarea
+    id: reproduction
+    attributes:
+      label: Steps to Reproduce
+      description: Detailed steps to reproduce the vulnerability
+      placeholder: |
+        1. Go to '...'
+        2. Click on '....'
+        3. Do '....'
+        4. See '....'
+    validations:
+      required: true
+
+  - type: dropdown
+    id: severity
+    attributes:
+      label: Severity Level
+      description: How severe is this vulnerability?
+      options:
+        - Critical - immediate fix required
+        - High - fix as soon as possible
+        - Medium - fix in next release
+        - Low - fix when convenient
+      default: High
+    validations:
+      required: true
+
+  - type: dropdown
+    id: cvss
+    attributes:
+      label: Estimated CVSS Score
+      description: What's your estimated CVSS score?
+      options:
+        - 9.0-10.0 (Critical)
+        - 7.0-8.9 (High)
+        - 4.0-6.9 (Medium)
+        - 0.1-3.9 (Low)
+      default: 7.0-8.9 (High)
+
+  - type: textarea
+    id: affected
+    attributes:
+      label: Affected Versions
+      description: Which versions are affected?
+      placeholder: "All versions up to 0.1.0"
+    validations:
+      required: true
+
+  - type: textarea
+    id: patch
+    attributes:
+      label: Suggested Fix
+      description: If you have a suggested fix, please describe it
+      placeholder: "The vulnerability can be fixed by..."
+
+  - type: textarea
+    id: proof
+    attributes:
+      label: Proof of Concept
+      description: If applicable, provide a proof of concept
+      render: shell
+
+  - type: checkboxes
+    id: disclosure
+    attributes:
+      label: Disclosure Policy
+      options:
+        - label: I have not disclosed this vulnerability publicly
+          required: true
+        - label: I understand this will be handled privately
+          required: true
+        - label: I'm willing to work with maintainers on a fix
+          required: false
+
+  - type: textarea
+    id: additional
+    attributes:
+      label: Additional Information
+      description: Any other relevant information

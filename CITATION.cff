@@ -1,0 +1,42 @@
+cff-version: 1.2.0
+message: "If you use V-COMM in your research, please cite it as follows."
+title: "V-COMM: Next-Generation Secure Communication Platform"
+abstract: "V-COMM is a military-grade secure communication platform built on Zero Trust architecture with post-quantum cryptography resistance. It provides end-to-end encrypted messaging, voice/video communication, and supports offline mesh networking."
+type: software
+authors:
+  - given-names: Vantis
+    family-names: Corp
+    affiliation: Vantis Corporation
+    email: dev@vcomm.dev
+    website: https://vcomm.dev
+  - given-names: SuperNinja
+    family-names: AI
+    affiliation: NinjaTech AI
+    role: Maintainer
+keywords:
+  - secure communication
+  - end-to-end encryption
+  - zero trust
+  - post-quantum cryptography
+  - privacy
+  - web3
+  - messaging
+  - gaming
+  - rust
+  - wasm
+license: AGPL-3.0
+version: 0.1.0
+doi: 10.5281/zenodo.XXXXXXX
+date-released: 2024-03-04
+url: https://github.com/vantisCorp/VChat
+repository-code: https://github.com/vantisCorp/VChat
+contact:
+  - email: contact@vcomm.dev
+    website: https://vcomm.dev
+identifiers:
+  - description: "The concept DOI of the work."
+    type: doi
+    value: 10.5281/zenodo.XXXXXXX
+  - description: "V-COMM on GitHub"
+    type: url
+    value: https://github.com/vantisCorp/VChat

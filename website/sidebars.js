@@ -1,0 +1,127 @@
+module.exports = {
+  tutorialSidebar: [
+    {
+      type: 'doc',
+      id: 'index',
+      label: 'Introduction',
+    },
+    {
+      type: 'category',
+      label: 'Getting Started',
+      collapsible: true,
+      collapsed: false,
+      items: [
+        'getting-started/installation',
+        'getting-started/quick-start',
+        'getting-started/requirements',
+      ],
+    },
+    {
+      type: 'category',
+      label: 'Architecture',
+      collapsible: true,
+      collapsed: false,
+      items: [
+        'architecture/overview',
+        'architecture/zero-trust',
+        'architecture/cryptography',
+        'architecture/network',
+      ],
+    },
+    {
+      type: 'category',
+      label: 'Security',
+      collapsible: true,
+      collapsed: false,
+      items: [
+        'security/overview',
+        'security/pqc',
+        'security/authentication',
+        'security/compliance',
+        'security/best-practices',
+      ],
+    },
+    {
+      type: 'category',
+      label: 'Features',
+      collapsible: true,
+      collapsed: false,
+      items: [
+        'features/channels',
+        'features/spaces',
+        'features/mesh',
+        'features/drive',
+        'features/bots',
+      ],
+    },
+    {
+      type: 'category',
+      label: 'Deployment',
+      collapsible: true,
+      collapsed: false,
+      items: [
+        'deployment/docker',
+        'deployment/kubernetes',
+        'deployment/terraform',
+        'deployment/production',
+      ],
+    },
+    {
+      type: 'category',
+      label: 'Development',
+      collapsible: true,
+      collapsed: false,
+      items: [
+        'development/setup',
+        'development/coding-standards',
+        'development/testing',
+        'development/contributing',
+      ],
+    },
+    'faq',
+    'troubleshooting',
+    'roadmap',
+  ],
+  apiSidebar: [
+    {
+      type: 'doc',
+      id: 'api/index',
+      label: 'API Overview',
+    },
+    {
+      type: 'category',
+      label: 'REST API',
+      collapsible: true,
+      collapsed: false,
+      items: [
+        'api/rest/authentication',
+        'api/rest/users',
+        'api/rest/channels',
+        'api/rest/messages',
+        'api/rest/files',
+      ],
+    },
+    {
+      type: 'category',
+      label: 'WebSocket API',
+      collapsible: true,
+      collapsed: false,
+      items: [
+        'api/websocket/connection',
+        'api/websocket/events',
+        'api/websocket/gateway',
+      ],
+    },
+    {
+      type: 'category',
+      label: 'GraphQL API',
+      collapsible: true,
+      collapsed: false,
+      items: [
+        'api/graphql/queries',
+        'api/graphql/mutations',
+        'api/graphql/subscriptions',
+      ],
+    },
+  ],
+};
