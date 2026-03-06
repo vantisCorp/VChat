@@ -1,0 +1,36 @@
+{
+  "name": "@vcomm/messaging",
+  "version": "0.1.0",
+  "description": "High-performance batch message passing system inspired by Discord Manifold",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "scripts": {
+    "build": "tsc",
+    "dev": "tsc --watch",
+    "test": "jest",
+    "lint": "eslint src --ext .ts",
+    "type-check": "tsc --noEmit"
+  },
+  "keywords": [
+    "messaging",
+    "batch",
+    "performance",
+    "websocket",
+    "broadcast"
+  ],
+  "author": "Vantis Corp <dev@vcomm.dev>",
+  "license": "AGPL-3.0",
+  "dependencies": {
+    "msgpack-lite": "^0.1.26"
+  },
+  "devDependencies": {
+    "@types/msgpack-lite": "^0.1.2",
+    "@types/node": "^20.0.0",
+    "typescript": "^5.3.3",
+    "jest": "^29.7.0",
+    "@types/jest": "^29.5.11"
+  },
+  "peerDependencies": {
+    "typescript": ">=5.0.0"
+  }
+}
