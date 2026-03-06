@@ -21,6 +21,9 @@
     "cargo:clippy": "turbo run cargo:clippy",
     "docs:build": "turbo run docs:build",
     "docs:serve": "turbo run docs:serve",
+    "docs:dev": "cd docs && mintlify dev",
+    "docs:validate": "cd docs && mintlify validate",
+    "docs:lint": "vale docs/",
     "security:audit": "turbo run security:audit && npm audit --audit-level=moderate",
     "security:gitleaks": "gitleaks detect --source . --verbose --report-format json --report-path gitleaks-report.json",
     "security:all": "pnpm run security:audit && pnpm run security:gitleaks",
@@ -47,10 +50,12 @@
     "eslint-plugin-security": "^1.7.1",
     "husky": "^8.0.3",
     "lint-staged": "^15.2.0",
+    "mintlify": "^4.0.0",
     "prettier": "^3.2.4",
     "semantic-release": "^22.0.12",
     "turbo": "^1.11.3",
-    "typescript": "^5.3.3"
+    "typescript": "^5.3.3",
+    "vale": "^3.5.0"
   },
   "engines": {
     "node": ">=20.0.0",

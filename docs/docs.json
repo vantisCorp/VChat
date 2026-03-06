@@ -1,0 +1,72 @@
+{
+  "$schema": "https://mintlify.com/schema.json",
+  "name": "V-COMM Documentation",
+  "logo": {
+    "dark": "/logo/dark-logo.png",
+    "light": "/logo/light-logo.png"
+  },
+  "favicon": "/logo/favicon.png",
+  "colors": {
+    "primary": "#0D9488",
+    "dark": "#0D9488",
+    "light": "#0D9488"
+  },
+  "topbarLinks": [
+    {
+      "name": "Support",
+      "url": "https://vcomm.dev/support"
+    },
+    {
+      "name": "GitHub",
+      "url": "https://github.com/vantisCorp/VChat"
+    }
+  ],
+  "topbarCtaButton": {
+    "name": "Get Started",
+    "url": "https://vcomm.dev/get-started"
+  },
+  "navigation": [
+    {
+      "group": "Getting Started",
+      "pages": [
+        "developers/introduction",
+        "developers/quickstart",
+        "developers/installation"
+      ]
+    },
+    {
+      "group": "Developer Guide",
+      "pages": [
+        "developers/architecture",
+        "developers/authentication",
+        "developers/api-reference"
+      ]
+    },
+    {
+      "group": "Security",
+      "pages": [
+        "developers/zero-trust",
+        "developers/e2ee",
+        "developers/pqc"
+      ]
+    },
+    {
+      "group": "Protocols",
+      "pages": [
+        "developers/signal-protocol",
+        "developers/mls",
+        "developers/av1"
+      ]
+    }
+  ],
+  "footerSocials": {
+    "github": "https://github.com/vantisCorp/VChat",
+    "twitter": "https://twitter.com/VCommSec",
+    "linkedin": "https://linkedin.com/company/vcomm"
+  },
+  "integrations": {
+    "openai": {
+      "enabled": true
+    }
+  }
+}
