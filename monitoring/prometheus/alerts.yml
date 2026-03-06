@@ -1,0 +1,137 @@
+# Alert Rules for V-COMM
+
+groups:
+  - name: vcomm_alerts
+    interval: 30s
+    rules:
+      # High Queue Size Alert
+      - alert: HighQueueSize
+        expr: vcomm_queue_size > 10000
+        for: 5m
+        labels:
+          severity: warning
+          team: backend
+        annotations:
+          summary: "High queue size detected"
+          description: "Queue size is {{ $value }} for {{ $labels.queue_type }} on {{ $labels.node }}"
+
+      # Critical Queue Size Alert
+      - alert: CriticalQueueSize
+        expr: vcomm_queue_size > 50000
+        for: 1m
+        labels:
+          severity: critical
+          team: backend
+        annotations:
+          summary: "Critical queue size detected"
+          description: "Queue size is {{ $value }} for {{ $labels.queue_type }} on {{ $labels.node }}"
+
+      # High Error Rate Alert
+      - alert: HighErrorRate
+        expr: rate(vcomm_errors_total[5m]) > 0.1
+        for: 5m
+        labels:
+          severity: warning
+          team: backend
+        annotations:
+          summary: "High error rate detected"
+          description: "Error rate is {{ $value }} for {{ $labels.type }} errors"
+
+      # Critical Error Rate Alert
+      - alert: CriticalErrorRate
+        expr: rate(vcomm_errors_total[1m]) > 1.0
+        for: 1m
+        labels:
+          severity: critical
+          team: backend
+        annotations:
+          summary: "Critical error rate detected"
+          description: "Error rate is {{ $value }} for {{ $labels.type }} errors"
+
+      # High Processing Time Alert
+      - alert: HighProcessingTime
+        expr: histogram_quantile(0.95, rate(vcomm_processing_time_seconds_bucket[5m])) > 1
+        for: 5m
+        labels:
+          severity: warning
+          team: backend
+        annotations:
+          summary: "High processing time detected"
+          description: "95th percentile processing time is {{ $value }}s for {{ $labels.operation }}"
+
+      # High Request Duration Alert
+      - alert: HighRequestDuration
+        expr: histogram_quantile(0.95, rate(vcomm_request_duration_seconds_bucket[5m])) > 2
+        for: 5m
+        labels:
+          severity: warning
+          team: backend
+        annotations:
+          summary: "High request duration detected"
+          description: "95th percentile request duration is {{ $value }}s for {{ $labels.route }}"
+
+      # Low Memory Alert
+      - alert: LowMemory
+        expr: (vcomm_memory_usage_bytes / node_memory_MemTotal_bytes) > 0.9
+        for: 5m
+        labels:
+          severity: warning
+          team: infrastructure
+        annotations:
+          summary: "Low memory available"
+          description: "Memory usage is {{ $value | humanizePercentage }}"
+
+      # Critical Memory Alert
+      - alert: CriticalMemory
+        expr: (vcomm_memory_usage_bytes / node_memory_MemTotal_bytes) > 0.95
+        for: 1m
+        labels:
+          severity: critical
+          team: infrastructure
+        annotations:
+          summary: "Critical memory usage detected"
+          description: "Memory usage is {{ $value | humanizePercentage }}"
+
+      # High CPU Usage Alert
+      - alert: HighCPUUsage
+        expr: vcomm_cpu_usage_percent > 80
+        for: 5m
+        labels:
+          severity: warning
+          team: infrastructure
+        annotations:
+          summary: "High CPU usage detected"
+          description: "CPU usage is {{ $value }}%"
+
+      # Critical CPU Usage Alert
+      - alert: CriticalCPUUsage
+        expr: vcomm_cpu_usage_percent > 95
+        for: 1m
+        labels:
+          severity: critical
+          team: infrastructure
+        annotations:
+          summary: "Critical CPU usage detected"
+          description: "CPU usage is {{ $value }}%"
+
+      # Low Active Connections Alert
+      - alert: LowActiveConnections
+        expr: vcomm_active_connections < 100
+        for: 10m
+        labels:
+          severity: info
+          team: backend
+        annotations:
+          summary: "Low active connections detected"
+          description: "Active connections dropped to {{ $value }}"
+
+      # Service Down Alert
+      - alert: ServiceDown
+        expr: up == 0
+        for: 1m
+        labels:
+          severity: critical
+          team: infrastructure
+        annotations:
+          summary: "Service is down"
+          description: "Service {{ $labels.job }} on {{ $labels.instance }} is down"

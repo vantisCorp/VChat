@@ -1,0 +1,38 @@
+{
+  "name": "@vcomm/metrics",
+  "version": "0.1.0",
+  "description": "Comprehensive monitoring and metrics system inspired by Discord Instruments",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "scripts": {
+    "build": "tsc",
+    "dev": "tsc --watch",
+    "test": "jest",
+    "lint": "eslint src --ext .ts",
+    "type-check": "tsc --noEmit"
+  },
+  "keywords": [
+    "monitoring",
+    "metrics",
+    "prometheus",
+    "grafana",
+    "sentry",
+    "performance"
+  ],
+  "author": "Vantis Corp <dev@vcomm.dev>",
+  "license": "AGPL-3.0",
+  "dependencies": {
+    "prom-client": "^15.0.0",
+    "@sentry/node": "^7.86.0",
+    "@sentry/tracing": "^7.86.0"
+  },
+  "devDependencies": {
+    "@types/node": "^20.0.0",
+    "typescript": "^5.3.3",
+    "jest": "^29.7.0",
+    "@types/jest": "^29.5.11"
+  },
+  "peerDependencies": {
+    "typescript": ">=5.0.0"
+  }
+}

@@ -1,0 +1,57 @@
+# Prometheus Configuration for V-COMM
+
+global:
+  scrape_interval: 15s
+  evaluation_interval: 15s
+  external_labels:
+    cluster: 'vcomm-production'
+    replica: '1'
+
+alerting:
+  alertmanagers:
+    - static_configs:
+        - targets:
+            - alertmanager:9093
+
+rule_files:
+  - 'alerts.yml'
+
+scrape_configs:
+  # V-COMM API Server
+  - job_name: 'vcomm-api'
+    static_configs:
+      - targets: ['api:9464']
+    metrics_path: '/metrics'
+    scrape_interval: 10s
+
+  # V-COMM WebSocket Server
+  - job_name: 'vcomm-websocket'
+    static_configs:
+      - targets: ['websocket:9465']
+    metrics_path: '/metrics'
+    scrape_interval: 5s
+
+  # V-COMM Message Processor
+  - job_name: 'vcomm-message-processor'
+    static_configs:
+      - targets: ['message-processor:9466']
+    metrics_path: '/metrics'
+    scrape_interval: 10s
+
+  # Node Exporter (System Metrics)
+  - job_name: 'node-exporter'
+    static_configs:
+      - targets: ['node-exporter:9100']
+    scrape_interval: 15s
+
+  # PostgreSQL Exporter
+  - job_name: 'postgres-exporter'
+    static_configs:
+      - targets: ['postgres-exporter:9187']
+    scrape_interval: 15s
+
+  # Redis Exporter
+  - job_name: 'redis-exporter'
+    static_configs:
+      - targets: ['redis-exporter:9121']
+    scrape_interval: 15s
