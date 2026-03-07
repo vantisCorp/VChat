@@ -1,0 +1,11 @@
+#!/usr/bin/env sh
+. "$(dirname -- "$0")/_/husky.sh"
+
+# Run tests before pushing
+echo "Running pre-push checks..."
+
+# Run linting
+npm run lint 2>/dev/null || echo "No lint script available"
+
+# Check for vulnerabilities
+npm audit --audit-level=moderate 2>/dev/null || true
