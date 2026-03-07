@@ -1,0 +1,34 @@
+# V-COMM Code Owners
+# This file defines who owns which parts of the codebase
+# Format: <file pattern> <github username> <...more owners...>
+
+# Core Team
+* @superninja-app
+
+# Rust Core
+packages/core/** @superninja-app
+packages/crypto/** @superninja-app
+packages/protocols/** @superninja-app
+
+# Frontend
+apps/desktop/** @superninja-app
+apps/web/** @superninja-app
+apps/mobile/** @superninja-app
+
+# Infrastructure
+infra/** @superninja-app
+
+# Documentation
+docs/** @superninja-app
+
+# CI/CD
+.github/workflows/** @superninja-app
+
+# Security
+**/security/** @superninja-app
+**/crypto/** @superninja-app
+
+# Global defaults for emergencies
+SECURITY.md @superninja-app
+LICENSE @superninja-app
+CODEOWNERS @superninja-app
