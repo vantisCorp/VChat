@@ -1,0 +1,33 @@
+name: CLA Check
+
+on:
+  pull_request_target:
+    types: [opened, synchronize]
+  issue_comment:
+    types: [created]
+
+permissions:
+  actions: write
+  contents: read
+  pull-requests: write
+  statuses: write
+
+jobs:
+  cla-check:
+    runs-on: ubuntu-latest
+    if: github.event_name == 'pull_request_target'
+    steps:
+      - name: Check CLA
+        uses: contributor-assistant/github-action@v2.2.0
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          path-to-signatures: 'signatures/version1/cla.json'
+          path-to-document: '.github/cla.md'
+          branch: 'main'
+          allowlist: dependabot[bot],renovate[bot],github-actions[bot]
+          
+      - name: CLA Check Result
+        if: failure()
+        run: |
+          echo "CLA has not been signed. Please sign the CLA by commenting '/cla sign' on this PR."
