@@ -1,0 +1,16 @@
+# GitHub Sponsors funding configuration
+# These links appear in the "Sponsor this project" section
+
+github: vantisCorp
+patreon: vantis
+open_collective: vcomm
+ko_fi: vantis
+liberapay: vantis
+buy_me_a_coffee: vantis
+custom: ['https://paypal.me/vantisCorp']
+
+# Alternative platforms
+custom: 
+  - 'https://github.com/sponsors/vantisCorp'
+  - 'https://opencollective.com/vcomm'
+  - 'https://patreon.com/vantis'
