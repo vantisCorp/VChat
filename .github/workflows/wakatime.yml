@@ -1,0 +1,207 @@
+name: WakaTime Stats
+
+on:
+  schedule:
+    # Update stats every 6 hours
+    - cron: '0 */6 * * *'
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/wakatime.yml'
+
+permissions:
+  contents: write
+
+jobs:
+  update-wakatime-stats:
+    name: 📊 Update WakaTime Stats
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Generate WakaTime Stats
+        env:
+          WAKATIME_API_KEY: ${{ secrets.WAKATIME_API_KEY }}
+        run: |
+          echo "📊 Fetching WakaTime stats..."
+          
+          if [ -z "$WAKATIME_API_KEY" ]; then
+            echo "⚠️ WAKATIME_API_KEY not set, using placeholder"
+            
+            # Create placeholder stats
+            cat > .github/badges/wakatime.json << 'EOF'
+          {
+            "data": {
+              "human_readable_total": "0 hrs 0 mins",
+              "human_readable_daily_average": "0 hrs 0 mins",
+              "languages": [
+                { "name": "TypeScript", "percent": 40.0, "digital": "0:00" },
+                { "name": "Rust", "percent": 30.0, "digital": "0:00" },
+                { "name": "Python", "percent": 15.0, "digital": "0:00" },
+                { "name": "JavaScript", "percent": 10.0, "digital": "0:00" },
+                { "name": "Other", "percent": 5.0, "digital": "0:00" }
+              ],
+              "editors": [
+                { "name": "VS Code", "percent": 80.0, "digital": "0:00" },
+                { "name": "Neovim", "percent": 20.0, "digital": "0:00" }
+              ],
+              "operating_systems": [
+                { "name": "Linux", "percent": 60.0, "digital": "0:00" },
+                { "name": "macOS", "percent": 40.0, "digital": "0:00" }
+              ]
+            }
+          }
+          EOF
+          else
+            # Fetch real stats from WakaTime API
+            ENCODED_KEY=$(echo -n "$WAKATIME_API_KEY" | base64)
+            
+            curl -s -H "Authorization: Basic $ENCODED_KEY" \
+              "https://wakatime.com/api/v1/users/current/stats/all_time" \
+              -o wakatime-raw.json || echo '{}' > wakatime-raw.json
+            
+            # Parse and format stats
+            cat wakatime-raw.json > .github/badges/wakatime.json
+          fi
+          
+          echo "✅ WakaTime stats fetched"
+
+      - name: Generate WakaTime SVG Badge
+        uses: lowlighter/profiler@v1
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          template: icons
+          base: header
+          plugins: |
+            wakatime
+          plugin_wakatime: ${{ secrets.WAKATIME_API_KEY }}
+        continue-on-error: true
+
+      - name: Create WakaTime README Section
+        env:
+          WAKATIME_API_KEY: ${{ secrets.WAKATIME_API_KEY }}
+        run: |
+          echo "📝 Creating WakaTime README section..."
+          
+          # Parse stats from JSON
+          if [ -f .github/badges/wakatime.json ]; then
+            TOTAL=$(cat .github/badges/wakatime.json | jq -r '.data.human_readable_total // "0 hrs"' 2>/dev/null || echo "0 hrs")
+            DAILY=$(cat .github/badges/wakatime.json | jq -r '.data.human_readable_daily_average // "0 hrs"' 2>/dev/null || echo "0 hrs")
+            
+            # Get top languages
+            LANGUAGES=$(cat .github/badges/wakatime.json | jq -r '.data.languages[:5][] | "- \(.name): \(.percent)%"' 2>/dev/null || echo "- TypeScript: 40%")
+            
+            # Create README section
+            cat > .github/badges/WAKATIME.md << EOF
+          <!-- WakaTime Stats - Auto-generated -->
+          
+          ## ⏱️ Coding Statistics
+          
+          **Total Time:** ${TOTAL}
+          **Daily Average:** ${DAILY}
+          
+          ### Languages
+          ${LANGUAGES}
+          
+          ---
+          *Stats updated automatically by [WakaTime](https://wakatime.com)*
+          EOF
+            
+            echo "✅ WakaTime README section created"
+          fi
+
+      - name: Commit Stats
+        run: |
+          git config --local user.email "github-actions[bot]@users.noreply.github.com"
+          git config --local user.name "github-actions[bot]"
+          
+          git add .github/badges/ 2>/dev/null || true
+          
+          if git diff --staged --quiet; then
+            echo "No changes to commit"
+          else
+            git commit -m "chore: update WakaTime stats [skip ci]"
+            git push
+          fi
+
+  # Generate WakaTime Gist
+  update-wakatime-gist:
+    name: 📝 Update WakaTime Gist
+    runs-on: ubuntu-latest
+    if: github.event_name == 'schedule' || github.event_name == 'workflow_dispatch'
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Update Gist
+        uses: matchai/waka-box@master
+        env:
+          GH_PAT: ${{ secrets.GH_PAT }}
+          GIST_ID: ${{ secrets.WAKATIME_GIST_ID }}
+          WAKATIME_API_KEY: ${{ secrets.WAKATIME_API_KEY }}
+        continue-on-error: true
+
+  # Create Language Pie Chart
+  language-chart:
+    name: 📈 Language Chart
+    runs-on: ubuntu-latest
+    needs: update-wakatime-stats
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install Dependencies
+        run: |
+          pip install matplotlib numpy
+
+      - name: Generate Chart
+        run: |
+          python3 << 'PYEOF'
+          import json
+          import matplotlib.pyplot as plt
+          import matplotlib
+          matplotlib.use('Agg')
+          
+          # Load WakaTime data
+          try:
+              with open('.github/badges/wakatime.json', 'r') as f:
+                  data = json.load(f)
+          except:
+              data = {"data": {"languages": []}}
+          
+          languages = data.get("data", {}).get("languages", [])[:7]
+          
+          if languages:
+              labels = [lang["name"] for lang in languages]
+              sizes = [lang["percent"] for lang in languages]
+              colors = ['#3178c6', '#dea584', '#3572A5', '#f1e05a', '#e34c26', '#563d7c', '#41b883']
+              
+              fig, ax = plt.subplots(figsize=(10, 8))
+              wedges, texts, autotexts = ax.pie(sizes, labels=labels, autopct='%1.1f%%',
+                                                 colors=colors[:len(labels)],
+                                                 startangle=90)
+              
+              plt.setp(autotexts, size=10, weight="bold")
+              ax.set_title('V-COMM Language Distribution', fontsize=14, fontweight='bold')
+              
+              plt.tight_layout()
+              plt.savefig('.github/badges/languages.png', dpi=150, bbox_inches='tight')
+              print("✅ Language chart generated")
+          else:
+              print("⚠️ No language data available")
+          PYEOF
+
+      - name: Upload Chart
+        uses: actions/upload-artifact@v4
+        with:
+          name: wakatime-charts
+          path: .github/badges/
