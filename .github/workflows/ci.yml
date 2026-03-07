@@ -76,7 +76,7 @@ jobs:
         run: pnpm run format --check
 
       - name: Commitlint check
-        uses: wagoid/commitlint-github-action@v5
+        uses: wagoid/commitlint-github-action@v6
         with:
           configFile: '.commitlintrc.json'
 
