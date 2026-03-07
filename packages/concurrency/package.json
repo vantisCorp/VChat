@@ -1,0 +1,35 @@
+{
+  "name": "@vcomm/concurrency",
+  "version": "1.0.0",
+  "description": "Concurrency control utilities including semaphores, rate limiters, circuit breakers, and distributed locks",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "scripts": {
+    "build": "tsc",
+    "test": "jest",
+    "lint": "eslint src/**/*.ts"
+  },
+  "keywords": [
+    "concurrency",
+    "semaphore",
+    "rate-limiter",
+    "circuit-breaker",
+    "distributed-lock",
+    "throttle",
+    "backpressure"
+  ],
+  "author": "V-COMM Team",
+  "license": "MIT",
+  "dependencies": {
+    "ioredis": "^5.3.0"
+  },
+  "devDependencies": {
+    "@types/node": "^20.0.0",
+    "typescript": "^5.0.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/vantisCorp/VChat.git",
+    "directory": "packages/concurrency"
+  }
+}
