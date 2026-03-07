@@ -1,0 +1,46 @@
+{
+  "name": "@vcomm/ui",
+  "version": "1.0.0",
+  "description": "UI components for V-COMM voice communication platform",
+  "main": "dist/index.js",
+  "module": "dist/index.mjs",
+  "types": "dist/index.d.ts",
+  "exports": {
+    ".": {
+      "import": "./dist/index.mjs",
+      "require": "./dist/index.js",
+      "types": "./dist/index.d.ts"
+    },
+    "./styles.css": "./dist/styles.css"
+  },
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "build": "tsup src/index.ts --format cjs,esm --dts",
+    "build:css": "postcss src/styles.css -o dist/styles.css",
+    "clean": "rm -rf dist",
+    "typecheck": "tsc --noEmit"
+  },
+  "keywords": [
+    "vcomm",
+    "ui",
+    "components",
+    "voice",
+    "communication",
+    "react"
+  ],
+  "author": "Vantis Team",
+  "license": "MIT",
+  "peerDependencies": {
+    "react": ">=18.0.0",
+    "react-dom": ">=18.0.0"
+  },
+  "devDependencies": {
+    "@types/react": "^18.2.0",
+    "@types/react-dom": "^18.2.0",
+    "postcss": "^8.4.0",
+    "tsup": "^8.0.0",
+    "typescript": "^5.3.0"
+  }
+}
