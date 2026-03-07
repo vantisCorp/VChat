@@ -1,0 +1,65 @@
+{
+  "$schema": "https://docs.renovatebot.com/renovate-schema.json",
+  "extends": [
+    "config:recommended",
+    ":dependencyDashboard",
+    ":semanticCommits",
+    ":semanticCommitTypeAll(chore)"
+  ],
+  "platform": "github",
+  "repository": "vantisCorp/VChat",
+  "onboarding": false,
+  "requireConfig": "required",
+  "schedule": ["on monday before 10:00am"],
+  "timezone": "UTC",
+  "prConcurrentLimit": 10,
+  "prHourlyLimit": 0,
+  "branchConcurrentLimit": 10,
+  "labels": ["dependencies", "renovate"],
+  "assignees": ["vantisCorp"],
+  "reviewers": ["vantisCorp"],
+  "commitMessageSuffix": "",
+  "packageRules": [
+    {
+      "matchPackagePatterns": ["*"],
+      "semanticCommitScope": "deps"
+    },
+    {
+      "matchDepTypes": ["devDependencies"],
+      "semanticCommitScope": "dev-deps",
+      "automerge": true
+    },
+    {
+      "matchUpdateTypes": ["patch"],
+      "automerge": true
+    },
+    {
+      "matchUpdateTypes": ["minor", "major"],
+      "automerge": false
+    },
+    {
+      "groupName": "eslint packages",
+      "matchPackagePatterns": ["eslint"],
+      "automerge": true
+    },
+    {
+      "groupName": "typescript packages",
+      "matchPackagePatterns": ["typescript", "@types/*"]
+    },
+    {
+      "groupName": "react packages",
+      "matchPackagePatterns": ["react", "react-dom", "@types/react"]
+    }
+  ],
+  "vulnerabilityAlerts": {
+    "labels": ["security"],
+    "automerge": true,
+    "assignees": ["vantisCorp"],
+    "reviewers": ["vantisCorp"]
+  },
+  "lockFileMaintenance": {
+    "enabled": true,
+    "schedule": ["before 5:00am on Monday"]
+  },
+  "ignorePaths": ["**/node_modules/**", "**/dist/**", "**/build/**"]
+}
