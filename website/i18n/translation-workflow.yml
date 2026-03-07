@@ -1,0 +1,196 @@
+name: AI-Powered Translation
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'website/docs/**/*.md'
+      - 'website/i18n/en.json'
+  workflow_dispatch:
+    inputs:
+      languages:
+        description: 'Languages to translate (comma-separated)'
+        required: false
+        default: 'pl,de,zh,es,fr,ru,ko,ja'
+
+env:
+  NODE_VERSION: '20.x'
+
+jobs:
+  detect-changes:
+    name: 🔍 Detect Changed Files
+    runs-on: ubuntu-latest
+    outputs:
+      changed_files: ${{ steps.detect.outputs.files }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 2
+      
+      - name: Detect changed documentation
+        id: detect
+        run: |
+          # Get changed markdown files
+          CHANGED=$(git diff --name-only HEAD~1 HEAD -- 'website/docs/**/*.md' | head -20)
+          
+          if [ -n "$CHANGED" ]; then
+            echo "files<<EOF" >> $GITHUB_OUTPUT
+            echo "$CHANGED" >> $GITHUB_OUTPUT
+            echo "EOF" >> $GITHUB_OUTPUT
+            echo "Changed files detected:"
+            echo "$CHANGED"
+          else
+            echo "No documentation changes detected"
+          fi
+
+  translate-content:
+    name: 🌐 Translate Content
+    runs-on: ubuntu-latest
+    needs: detect-changes
+    if: needs.detect-changes.outputs.changed_files != ''
+    strategy:
+      matrix:
+        language: ['pl', 'de', 'zh', 'es', 'fr', 'ru', 'ko', 'ja']
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      
+      - name: Setup Node.js
+        uses: actions/setup-node@v6
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+      
+      - name: Install Translation Tools
+        run: |
+          npm install -g @anthropic-ai/sdk
+          pip install translatepy
+      
+      - name: Translate JSON Strings
+        env:
+          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+        run: |
+          echo "Translating JSON strings for ${{ matrix.language }}..."
+          
+          # Use AI for high-quality translation
+          if [ -f "website/i18n/en.json" ]; then
+            node << 'EOF'
+          const fs = require('fs');
+          const source = JSON.parse(fs.readFileSync('website/i18n/en.json', 'utf8'));
+          
+          // Placeholder for AI translation
+          // In production, use OpenAI/DeepL/Google Translate API
+          const targetLang = '${{ matrix.language }}';
+          
+          console.log(`Translating ${Object.keys(source).length} keys to ${targetLang}`);
+          
+          // Save translated file
+          const outputPath = `website/i18n/${targetLang}.json`;
+          // fs.writeFileSync(outputPath, JSON.stringify(translated, null, 2));
+          console.log(`Translation placeholder for ${outputPath}`);
+          EOF
+          fi
+      
+      - name: Translate Markdown Files
+        env:
+          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+        run: |
+          echo "Translating markdown files for ${{ matrix.language }}..."
+          
+          # Create language directory
+          mkdir -p website/i18n/${{ matrix.language }}/docusaurus-plugin-content-docs/current
+          
+          # Translate each markdown file
+          for file in website/docs/**/*.md; do
+            if [ -f "$file" ]; then
+              relative_path="${file#website/docs/}"
+              output_path="website/i18n/${{ matrix.language }}/docusaurus-plugin-content-docs/current/$relative_path"
+              
+              mkdir -p "$(dirname "$output_path")"
+              
+              echo "Processing: $file -> $output_path"
+              
+              # Placeholder: In production, use AI translation
+              # cp "$file" "$output_path"
+            fi
+          done
+
+      - name: Upload Translation
+        uses: actions/upload-artifact@v4
+        with:
+          name: translation-${{ matrix.language }}
+          path: website/i18n/${{ matrix.language }}/
+
+  validate-translations:
+    name: ✅ Validate Translations
+    runs-on: ubuntu-latest
+    needs: translate-content
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      
+      - name: Download All Translations
+        uses: actions/download-artifact@v4
+        with:
+          pattern: translation-*
+          path: website/i18n/
+          merge-multiple: true
+      
+      - name: Validate JSON Files
+        run: |
+          for lang in pl de zh es fr ru ko ja; do
+            if [ -f "website/i18n/$lang.json" ]; then
+              echo "Validating $lang.json..."
+              jq . "website/i18n/$lang.json" > /dev/null && echo "✅ $lang.json is valid JSON"
+            fi
+          done
+      
+      - name: Check Translation Coverage
+        run: |
+          echo "Checking translation coverage..."
+          
+          if [ -f "website/i18n/en.json" ]; then
+            TOTAL_KEYS=$(jq 'keys | length' website/i18n/en.json)
+            
+            for lang in pl de zh es fr ru ko ja; do
+              if [ -f "website/i18n/$lang.json" ]; then
+                TRANSLATED=$(jq 'keys | length' "website/i18n/$lang.json")
+                COVERAGE=$((TRANSLATED * 100 / TOTAL_KEYS))
+                echo "$lang: $COVERAGE% coverage ($TRANSLATED/$TOTAL_KEYS)"
+              fi
+            done
+          fi
+
+  commit-translations:
+    name: 📝 Commit Translations
+    runs-on: ubuntu-latest
+    needs: validate-translations
+    if: github.event_name == 'push'
+    permissions:
+      contents: write
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+      
+      - name: Download Translations
+        uses: actions/download-artifact@v4
+        with:
+          pattern: translation-*
+          path: website/i18n/
+          merge-multiple: true
+      
+      - name: Commit Changes
+        run: |
+          git config --local user.email "github-actions[bot]@users.noreply.github.com"
+          git config --local user.name "github-actions[bot]"
+          
+          git add website/i18n/
+          
+          if git diff --staged --quiet; then
+            echo "No translation changes to commit"
+          else
+            git commit -m "chore: update AI translations [skip ci]"
+            git push
+          fi
