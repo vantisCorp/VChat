@@ -22,8 +22,8 @@
   "author": "Vantis Corporation",
   "license": "MIT",
   "dependencies": {
-    "uuid": "^9.0.0",
-    "zod": "^3.22.4"
+    "uuid": "^13.0.0",
+    "zod": "^4.3.6"
   },
   "devDependencies": {
     "@types/node": "^20.10.0",

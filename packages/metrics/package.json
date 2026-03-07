@@ -23,7 +23,7 @@
   "license": "AGPL-3.0",
   "dependencies": {
     "prom-client": "^15.0.0",
-    "@sentry/node": "^7.86.0",
+    "@sentry/node": "^10.42.0",
     "@sentry/tracing": "^7.86.0"
   },
   "devDependencies": {
