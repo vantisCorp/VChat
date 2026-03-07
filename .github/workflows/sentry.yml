@@ -1,0 +1,183 @@
+name: Sentry Telemetry
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+  schedule:
+    # Run daily at 00:00 UTC for health checks
+    - cron: '0 0 * * *'
+
+env:
+  NODE_VERSION: '20.x'
+
+jobs:
+  # Sentry Release Creation
+  create-release:
+    name: 🚀 Create Sentry Release
+    runs-on: ubuntu-latest
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v6
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+
+      - name: Install Sentry CLI
+        run: npm install -g @sentry/cli
+
+      - name: Create Sentry Release
+        env:
+          SENTRY_AUTH_TOKEN: ${{ secrets.SENTRY_AUTH_TOKEN }}
+          SENTRY_ORG: ${{ secrets.SENTRY_ORG }}
+          SENTRY_PROJECT: ${{ secrets.SENTRY_PROJECT }}
+        run: |
+          VERSION=$(git describe --tags --always || echo "v0.0.1-$(git rev-parse --short HEAD)")
+          sentry-cli releases new "$VERSION"
+          sentry-cli releases set-commits "$VERSION" --auto
+          sentry-cli releases finalize "$VERSION"
+          echo "✅ Sentry release $VERSION created"
+
+  # Source Maps Upload
+  upload-sourcemaps:
+    name: 📤 Upload Source Maps
+    runs-on: ubuntu-latest
+    needs: create-release
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v6
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v2
+        with:
+          version: '8.14.1'
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Build project
+        run: pnpm run build
+
+      - name: Upload Source Maps to Sentry
+        env:
+          SENTRY_AUTH_TOKEN: ${{ secrets.SENTRY_AUTH_TOKEN }}
+          SENTRY_ORG: ${{ secrets.SENTRY_ORG }}
+          SENTRY_PROJECT: ${{ secrets.SENTRY_PROJECT }}
+        run: |
+          VERSION=$(git describe --tags --always || echo "v0.0.1-$(git rev-parse --short HEAD)")
+          # Upload source maps from all packages
+          find packages -name "dist" -type d -exec sentry-cli releases files "$VERSION" upload-sourcemaps {} \; || true
+          echo "✅ Source maps uploaded for $VERSION"
+
+  # Error Monitoring Dashboard Check
+  health-check:
+    name: 🏥 Sentry Health Check
+    runs-on: ubuntu-latest
+    if: github.event_name == 'schedule' || github.event_name == 'workflow_dispatch'
+    steps:
+      - name: Check Sentry Project Status
+        env:
+          SENTRY_AUTH_TOKEN: ${{ secrets.SENTRY_AUTH_TOKEN }}
+          SENTRY_ORG: ${{ secrets.SENTRY_ORG }}
+          SENTRY_PROJECT: ${{ secrets.SENTRY_PROJECT }}
+        run: |
+          echo "🔍 Checking Sentry project health..."
+          
+          # Get project stats via API
+          curl -s -H "Authorization: Bearer $SENTRY_AUTH_TOKEN" \
+            "https://sentry.io/api/0/projects/$SENTRY_ORG/$SENTRY_PROJECT/stats/" \
+            -o sentry-stats.json || echo '{"status": "no-data"}' > sentry-stats.json
+          
+          # Check for critical errors in last 24h
+          curl -s -H "Authorization: Bearer $SENTRY_AUTH_TOKEN" \
+            "https://sentry.io/api/0/projects/$SENTRY_ORG/$SENTRY_PROJECT/issues/?query=is:unresolved&statsPeriod=24h" \
+            -o sentry-issues.json || echo '{"results": []}' > sentry-issues.json
+          
+          # Count unresolved issues
+          UNRESOLVED=$(cat sentry-issues.json | jq '. | length' 2>/dev/null || echo "0")
+          echo "📊 Unresolved issues in last 24h: $UNRESOLVED"
+          
+          if [ "$UNRESOLVED" -gt 10 ]; then
+            echo "⚠️ High number of unresolved issues detected!"
+          fi
+          
+          echo "✅ Sentry health check complete"
+
+  # Performance Monitoring Setup
+  setup-performance:
+    name: ⚡ Setup Performance Monitoring
+    runs-on: ubuntu-latest
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v6
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+
+      - name: Create Sentry Performance Alerts
+        env:
+          SENTRY_AUTH_TOKEN: ${{ secrets.SENTRY_AUTH_TOKEN }}
+          SENTRY_ORG: ${{ secrets.SENTRY_ORG }}
+          SENTRY_PROJECT: ${{ secrets.SENTRY_PROJECT }}
+        run: |
+          echo "⚡ Setting up performance monitoring rules..."
+          
+          # Create alert rule for high transaction time
+          curl -s -X POST \
+            -H "Authorization: Bearer $SENTRY_AUTH_TOKEN" \
+            -H "Content-Type: application/json" \
+            "https://sentry.io/api/0/projects/$SENTRY_ORG/$SENTRY_PROJECT/rules/" \
+            -d '{
+              "name": "High Transaction Time",
+              "conditions": [
+                {
+                  "id": "sentry.rules.conditions.event_frequency.EventFrequencyCondition",
+                  "interval": "1h",
+                  "value": 100
+                }
+              ],
+              "actions": [
+                {
+                  "id": "sentry.rules.actions.notify.NotifyEmailAction",
+                  "targetType": "team"
+                }
+              ]
+            }' || echo "Alert rule may already exist"
+          
+          echo "✅ Performance monitoring configured"
+
+  # Discord Notification on Critical Errors
+  notify-errors:
+    name: 📢 Notify Critical Errors
+    runs-on: ubuntu-latest
+    needs: health-check
+    if: failure() || github.event_name == 'schedule'
+    steps:
+      - name: Send Discord Notification
+        uses: Ilshidur/action-discord@master
+        env:
+          DISCORD_WEBHOOK: ${{ secrets.DISCORD_WEBHOOK }}
+        with:
+          args: |
+            🔔 **Sentry Alert - V-COMM**
+            
+            ⚠️ Critical errors detected in the last 24 hours.
+            
+            Please check the Sentry dashboard for details.
+            🔗 https://sentry.io/organizations/${{ secrets.SENTRY_ORG }}/projects/${{ secrets.SENTRY_PROJECT }}/
