@@ -1,0 +1,106 @@
+{
+  "name": "V-COMM Documentation",
+  "short_name": "V-COMM Docs",
+  "description": "Next-Generation Secure Communication Platform Documentation",
+  "start_url": "/docs/",
+  "scope": "/docs/",
+  "display": "standalone",
+  "orientation": "portrait-primary",
+  "background_color": "#1a1a2e",
+  "theme_color": "#1a1a2e",
+  "categories": ["communication", "security", "productivity"],
+  "icons": [
+    {
+      "src": "/img/logo72.png",
+      "sizes": "72x72",
+      "type": "image/png",
+      "purpose": "maskable any"
+    },
+    {
+      "src": "/img/logo96.png",
+      "sizes": "96x96",
+      "type": "image/png",
+      "purpose": "maskable any"
+    },
+    {
+      "src": "/img/logo128.png",
+      "sizes": "128x128",
+      "type": "image/png",
+      "purpose": "maskable any"
+    },
+    {
+      "src": "/img/logo144.png",
+      "sizes": "144x144",
+      "type": "image/png",
+      "purpose": "maskable any"
+    },
+    {
+      "src": "/img/logo152.png",
+      "sizes": "152x152",
+      "type": "image/png",
+      "purpose": "maskable any"
+    },
+    {
+      "src": "/img/logo192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "maskable any"
+    },
+    {
+      "src": "/img/logo384.png",
+      "sizes": "384x384",
+      "type": "image/png",
+      "purpose": "maskable any"
+    },
+    {
+      "src": "/img/logo512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable any"
+    }
+  ],
+  "screenshots": [
+    {
+      "src": "/img/screenshot-wide.png",
+      "sizes": "1920x1080",
+      "type": "image/png",
+      "form_factor": "wide"
+    },
+    {
+      "src": "/img/screenshot-narrow.png",
+      "sizes": "390x844",
+      "type": "image/png",
+      "form_factor": "narrow"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "Getting Started",
+      "short_name": "Start",
+      "description": "Get started with V-COMM",
+      "url": "/docs/getting-started",
+      "icons": [{ "src": "/img/shortcut-start.png", "sizes": "192x192" }]
+    },
+    {
+      "name": "API Reference",
+      "short_name": "API",
+      "description": "View the API documentation",
+      "url": "/docs/api",
+      "icons": [{ "src": "/img/shortcut-api.png", "sizes": "192x192" }]
+    },
+    {
+      "name": "Security Guide",
+      "short_name": "Security",
+      "description": "Learn about V-COMM security",
+      "url": "/docs/security",
+      "icons": [{ "src": "/img/shortcut-security.png", "sizes": "192x192" }]
+    }
+  ],
+  "related_applications": [
+    {
+      "platform": "web",
+      "url": "https://vcomm.app"
+    }
+  ],
+  "prefer_related_applications": false
+}
