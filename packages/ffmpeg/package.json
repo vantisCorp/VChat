@@ -1,0 +1,35 @@
+{
+  "name": "@vcomm/ffmpeg",
+  "version": "1.0.0",
+  "description": "FFmpeg integration with hardware acceleration, AV1 encoding, and transcoding utilities",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "scripts": {
+    "build": "tsc",
+    "test": "jest",
+    "lint": "eslint src/**/*.ts"
+  },
+  "keywords": [
+    "ffmpeg",
+    "video",
+    "audio",
+    "transcoding",
+    "av1",
+    "hardware-acceleration"
+  ],
+  "author": "V-COMM Team",
+  "license": "MIT",
+  "dependencies": {
+    "fluent-ffmpeg": "^2.1.2"
+  },
+  "devDependencies": {
+    "@types/fluent-ffmpeg": "^2.1.24",
+    "@types/node": "^20.0.0",
+    "typescript": "^5.0.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/vantisCorp/VChat.git",
+    "directory": "packages/ffmpeg"
+  }
+}
