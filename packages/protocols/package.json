@@ -1,0 +1,30 @@
+{
+  "name": "@vcomm/protocols",
+  "version": "1.0.0",
+  "description": "Protocol definitions and implementations for V-COMM - WebSocket, WebRTC, UDP, RTP/RTCP, and more",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "scripts": {
+    "build": "tsc",
+    "test": "jest",
+    "lint": "eslint src/**/*.ts"
+  },
+  "keywords": [
+    "protocol",
+    "webrtc",
+    "websocket",
+    "rtp",
+    "udp",
+    "voice",
+    "communication"
+  ],
+  "author": "V-COMM Team",
+  "license": "MIT",
+  "dependencies": {
+    "@vcomm/types": "^1.0.0"
+  },
+  "devDependencies": {
+    "@types/node": "^20.0.0",
+    "typescript": "^5.3.0"
+  }
+}
