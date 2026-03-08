@@ -165,6 +165,16 @@ jobs:
         with:
           components: rustfmt, clippy
 
+      - name: Setup Node.js
+        uses: actions/setup-node@v6
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v2
+        with:
+          version: ${{ env.PNPM_VERSION }}
+
       - name: Cache cargo registry
         uses: actions/cache@v3
         with:
@@ -245,7 +255,7 @@ jobs:
           out: 'reports'
 
       - name: Upload OWASP report
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: owasp-report
           path: reports
@@ -275,7 +285,7 @@ jobs:
         continue-on-error: true
 
       - name: Upload chaos reports
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: chaos-reports
           path: chaos-reports/
@@ -357,7 +367,7 @@ jobs:
         continue-on-error: true
 
       - name: Upload performance report
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: performance-report
           path: lighthouse-report.html
