@@ -6,9 +6,9 @@
  */
 
 import {
-  BetaMetric,
+  // BetaMetric,
   MetricType,
-  MetricAggregation,
+  // MetricAggregation,
   MetricDataPoint,
   MetricQuery,
   MetricQueryResult,
@@ -198,7 +198,7 @@ export class Analytics {
     const startTime = Date.now();
     
     // Filter metrics by time range
-    let filtered = this.metrics.filter(m => {
+    const filtered = this.metrics.filter(m => {
       if (m.name !== query.metrics[0]) return false; // Single metric query for now
       if (m.timestamp < query.startTime) return false;
       if (m.timestamp > query.endTime) return false;

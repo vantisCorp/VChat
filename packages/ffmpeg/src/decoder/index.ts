@@ -7,11 +7,11 @@ import ffmpeg from 'fluent-ffmpeg';
 import * as fs from 'fs/promises';
 import * as path from 'path';
 import {
-  InputConfig,
+  // InputConfig,
   HardwareAccelConfig,
   FFmpegError,
   FFmpegErrorCode,
-  MediaInfo,
+  // MediaInfo,
   VideoStreamInfo,
   AudioStreamInfo,
 } from '../types';

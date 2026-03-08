@@ -7,8 +7,8 @@ import * as childProcess from 'child_process';
 import * as fs from 'fs/promises';
 import * as path from 'path';
 import {
-  FFmpegError,
-  FFmpegErrorCode,
+  // FFmpegError,
+  // FFmpegErrorCode,
   EncodingPreset,
   VideoConfig,
   AudioConfig,

@@ -12,7 +12,7 @@ import {
   InputConfig,
   TranscodeProgress,
   TranscodeEventHandler,
-  VideoCodec,
+  // VideoCodec,
   FFmpegError,
   FFmpegErrorCode,
   MediaInfo,
@@ -69,7 +69,7 @@ export class VideoEncoder {
     // Set up event handlers
     return new Promise((resolve, reject) => {
       command
-        .on('start', (commandLine) => {
+        .on('start', (_commandLine) => {
           onProgress?.('start', { frame: 0, fps: 0, quality: 0, size: 0, time: 0, bitrate: 0, speed: 0, progress: 0 });
         })
         .on('progress', (progress) => {
@@ -488,7 +488,7 @@ export class VideoEncoder {
   /**
    * Apply audio options to FFmpeg command
    */
-  private applyAudioOptions(command: ffmpeg.FfmpegCommand, audio: AudioConfig, index: number): void {
+  private applyAudioOptions(command: ffmpeg.FfmpegCommand, audio: AudioConfig, _index: number): void {
     // Codec
     command.audioCodec(audio.codec);
 
@@ -579,7 +579,7 @@ export class VideoEncoder {
     input: string,
     options: ThumbnailOptions
   ): Promise<string[]> {
-    const command = ffmpeg(input);
+    const _command = ffmpeg(input);
     const thumbnails: string[] = [];
 
     if (options.timestamps && options.timestamps.length > 0) {

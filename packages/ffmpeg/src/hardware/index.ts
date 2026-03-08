@@ -87,7 +87,7 @@ export class HardwareManager {
 
         this.devices.set(`nvenc_${index}`, device);
       }
-    } catch (error) {
+    } catch (_error) {
       // NVIDIA not available
     }
   }
@@ -123,7 +123,7 @@ export class HardwareManager {
    */
   private getNVIDIACapabilities(gpuName: string): HardwareCapabilities {
     const isRTX40 = gpuName.toLowerCase().includes('rtx 40');
-    const isRTX30 = gpuName.toLowerCase().includes('rtx 30');
+    const _isRTX30 = gpuName.toLowerCase().includes('rtx 30');
     
     return {
       maxResolution: { width: 7680, height: 4320 },
@@ -169,7 +169,7 @@ export class HardwareManager {
 
         this.devices.set('amf_0', device);
       }
-    } catch (error) {
+    } catch (_error) {
       // AMD not available
     }
   }
@@ -220,7 +220,7 @@ export class HardwareManager {
 
         this.devices.set('qsv_0', device);
       }
-    } catch (error) {
+    } catch (_error) {
       // Intel QSV not available
     }
   }
@@ -276,7 +276,7 @@ export class HardwareManager {
           this.devices.set('vaapi_0', device);
         }
       }
-    } catch (error) {
+    } catch (_error) {
       // VAAPI not available
     }
   }
@@ -329,7 +329,7 @@ export class HardwareManager {
 
         this.devices.set('videotoolbox_0', device);
       }
-    } catch (error) {
+    } catch (_error) {
       // VideoToolbox not available
     }
   }
