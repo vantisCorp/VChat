@@ -140,11 +140,11 @@ function encryptAEAD(
   
   // Set AAD if provided
   if (options.aad) {
-    cipher.setAAD(Buffer.from(options.aad));
+    (cipher as any).setAAD(Buffer.from(options.aad));
   }
-  
+
   const encrypted = Buffer.concat([cipher.update(plaintext), cipher.final()]);
-  const tag = cipher.getAuthTag();
+  const tag = (cipher as any).getAuthTag();
   
   return {
     ciphertext: new Uint8Array(encrypted),
@@ -170,7 +170,7 @@ function decryptAEAD(
   decipher.setAuthTag(Buffer.from(tag));
   
   if (options.aad) {
-    decipher.setAAD(Buffer.from(options.aad));
+    (decipher as any).setAAD(Buffer.from(options.aad));
   }
   
   const decrypted = Buffer.concat([

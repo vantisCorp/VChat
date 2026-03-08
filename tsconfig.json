@@ -41,9 +41,7 @@
       "@vcomm/ui/*": ["./packages/ui/src/*"],
       "@vcomm/types": ["./packages/types/src/index.ts"]
     },
-    "jsx": "react-jsx",
-    "jsxFactory": "createElement",
-    "jsxFragmentFactory": "Fragment"
+    "jsx": "react-jsx"
   },
   "include": [
     "apps/**/*",

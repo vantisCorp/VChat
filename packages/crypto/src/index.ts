@@ -105,6 +105,10 @@ export {
   exportPublicKeyPEM,
 } from './keys';
 
+<<<<<<< HEAD
+=======
+// Re-export generateKeyPairAsync as generateKeyPair
+>>>>>>> 6a949b1 (fix: resolve TypeScript build errors across multiple packages)
 import { generateKeyPairAsync } from './keys';
 export { generateKeyPairAsync as generateKeyPair };
 

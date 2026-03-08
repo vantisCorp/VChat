@@ -180,7 +180,7 @@ export class VCommMetrics {
     return new Counter({
       name: config.name,
       help: config.help,
-      labelNames: config.labelNames
+      ...(config.labelNames ? { labelNames: config.labelNames } : {})
     });
   }
 
@@ -188,8 +188,8 @@ export class VCommMetrics {
     return new Histogram({
       name: config.name,
       help: config.help,
-      labelNames: config.labelNames,
-      buckets: config.buckets
+      ...(config.labelNames ? { labelNames: config.labelNames } : {}),
+      ...(config.buckets ? { buckets: config.buckets } : {})
     });
   }
 
@@ -197,7 +197,7 @@ export class VCommMetrics {
     return new Gauge({
       name: config.name,
       help: config.help,
-      labelNames: config.labelNames
+      ...(config.labelNames ? { labelNames: config.labelNames } : {})
     });
   }
 }

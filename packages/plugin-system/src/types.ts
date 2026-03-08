@@ -666,6 +666,47 @@ export interface PluginSystemOptions extends PluginSystemConfig {
 }
 
 // ============================================================================
+// Plugin Error Codes
+// ============================================================================
+
+/**
+ * Plugin error codes
+ */
+export enum PluginErrorCode {
+  NOT_FOUND = 'PLUGIN_NOT_FOUND',
+  NOT_INITIALIZED = 'PLUGIN_NOT_INITIALIZED',
+  ALREADY_INITIALIZED = 'PLUGIN_ALREADY_INITIALIZED',
+  INVALID_MANIFEST = 'INVALID_MANIFEST',
+  INVALID_SOURCE = 'INVALID_SOURCE',
+  LOAD_IN_PROGRESS = 'LOAD_IN_PROGRESS',
+  PLUGIN_ALREADY_EXISTS = 'PLUGIN_ALREADY_EXISTS',
+  PLUGIN_ENABLED = 'PLUGIN_ENABLED',
+  DEPENDENCY_MISSING = 'DEPENDENCY_MISSING',
+  DEPENDENCY_CONFLICT = 'DEPENDENCY_CONFLICT',
+  PERMISSION_DENIED = 'PERMISSION_DENIED',
+  SANDBOX_VIOLATION = 'SANDBOX_VIOLATION',
+  EXECUTION_TIMEOUT = 'EXECUTION_TIMEOUT',
+  NOT_IMPLEMENTED = 'NOT_IMPLEMENTED',
+  REMOTE_LOAD_DISABLED = 'REMOTE_LOAD_DISABLED',
+  FETCH_FAILED = 'FETCH_FAILED',
+  LIMIT_EXCEEDED = 'LIMIT_EXCEEDED',
+}
+
+/**
+ * Plugin error class
+ */
+export class PluginError extends Error {
+  constructor(
+    message: string,
+    public readonly code: PluginErrorCode,
+    public readonly details?: unknown
+  ) {
+    super(message);
+    this.name = 'PluginError';
+  }
+}
+
+// ============================================================================
 // Plugin Events
 // ============================================================================
 
@@ -849,21 +890,6 @@ export interface MarketplaceVersion {
   changelog?: string;
   minAppVersion?: string;
   maxAppVersion?: string;
-  downloads?: number;
-}
-
-/**
- * Marketplace review
- */
-export interface MarketplaceReview {
-  id: string;
-  pluginId: string;
-  userId: string;
-  userName?: string;
-  rating: number;
-  comment?: string;
-  createdAt: Date;
-  helpful?: number;
 }
 
 /**
@@ -874,14 +900,4 @@ export interface PluginLoadResult {
   plugin?: PluginInstance;
   error?: Error;
   warnings?: string[];
-}
-
-/**
- * Plugin validation result
- */
-export interface PluginValidationResult {
-  valid: boolean;
-  errors: Array<{ field: string; message: string }>;
-  warnings: Array<{ field: string; message: string }>;
-  manifest?: PluginManifest;
 }

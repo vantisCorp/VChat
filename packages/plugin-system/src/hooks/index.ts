@@ -17,7 +17,7 @@ import {
 /**
  * Handler registration entry
  */
-interface HandlerEntry {
+interface HandlerEntry<T = unknown, R = unknown> {
   /** Unique handler ID */
   id: string;
   /** Plugin ID that registered this handler */

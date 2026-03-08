@@ -4,12 +4,7 @@
  */
 
 import { parentPort, workerData } from 'worker_threads';
-import * as msgpack from 'msgpack-lite';
 import { WorkerMessage, WorkerResponse } from './types';
-
-interface WorkerData {
-  workerId: number;
-}
 
 export function startBatchWorker(): void {
   if (!parentPort) {
@@ -75,7 +70,7 @@ async function handleSendBatch(data: WorkerMessage): Promise<WorkerResponse> {
   };
 }
 
-async function sendToRecipient(recipient: string, message: any): Promise<void> {
+async function sendToRecipient(recipient: string, _message: any): Promise<void> {
   // TODO: Implement actual message sending logic
   // This could be WebSocket, gRPC, HTTP, or any transport
   // For now, simulate with a delay

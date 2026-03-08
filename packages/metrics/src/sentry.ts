@@ -52,21 +52,21 @@ export class SentryIntegration {
   /**
    * Capture an exception
    */
-  captureException(error: Error, context?: Record<string, any>): void {
+  captureException(error: Error, context?: Record<string, unknown>): void {
     if (!this.initialized) {
       console.error('Error:', error.message);
       return;
     }
 
     Sentry.captureException(error, {
-      extra: context
+      extra: context ?? {}
     });
   }
 
   /**
    * Capture a message
    */
-  captureMessage(message: string, level: 'info' | 'warning' | 'error' = 'info', context?: Record<string, any>): void {
+  captureMessage(message: string, level: 'info' | 'warning' | 'error' = 'info', context?: Record<string, unknown>): void {
     if (!this.initialized) {
       console.log(`[${level.toUpperCase()}] ${message}`);
       return;
@@ -74,7 +74,7 @@ export class SentryIntegration {
 
     Sentry.captureMessage(message, {
       level,
-      extra: context
+      extra: context ?? {}
     });
   }
 

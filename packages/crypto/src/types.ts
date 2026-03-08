@@ -153,7 +153,7 @@ export interface DecryptOptions {
   
   /** Additional authenticated data */
   aad?: Uint8Array;
-  
+
   /** Authentication tag */
   tag?: Uint8Array;
 }
@@ -347,19 +347,19 @@ export interface SRTPParams {
 export interface SRTPHeader {
   /** Packet type */
   packetType: number;
-  
+
   /** Sequence number */
   sequenceNumber: number;
-  
+
   /** Timestamp */
   timestamp: number;
-  
+
   /** SSRC */
   ssrc: number;
-  
+
   /** Contributing source identifiers */
   csrc?: number[];
-  
+
   /** Header extension */
   extension?: Uint8Array;
   

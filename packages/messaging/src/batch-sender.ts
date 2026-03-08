@@ -30,8 +30,6 @@ export class BatchMessageSender {
    * Main entry point for batch message sending
    */
   async sendBatch(batch: MessageBatch): Promise<BatchResult> {
-    const startTime = Date.now();
-
     // 1. Group by node if requested (optimization for distributed systems)
     if (batch.options?.groupByNode && batch.recipients.length > 100) {
       const grouped = this.groupByNode(batch.recipients);
@@ -75,11 +73,11 @@ export class BatchMessageSender {
   ): Promise<BatchResult> {
     const results: BatchResult[] = [];
 
-    for (const [node, recipients] of Object.entries(nodeMap)) {
+    for (const [_node, recipients] of Object.entries(nodeMap)) {
       const batch: MessageBatch = {
         recipients,
         message: options?.packMode === 'binary' ? this.packMessage(message) : message,
-        options: { ...options, sendMode: 'direct' }
+        options: { ...options, sendMode: 'direct' } as BatchOptions
       };
 
       const result = await this.sendDirect(batch);
@@ -101,7 +99,7 @@ export class BatchMessageSender {
         type: 'SEND_BATCH',
         recipients: batch.recipients,
         message: batch.options?.packMode === 'binary' ? this.packMessage(batch.message) : batch.message,
-        options: batch.options
+        ...(batch.options ? { options: batch.options } : {})
       };
 
       worker.postMessage(workerMessage);
@@ -115,7 +113,7 @@ export class BatchMessageSender {
           errors: response.errors?.map(e => ({
             recipient: e.recipient,
             error: new Error(e.error)
-          }))
+          })) ?? []
         });
       });
 
@@ -167,13 +165,6 @@ export class BatchMessageSender {
    */
   private packMessage(message: any): Buffer {
     return Buffer.from(msgpack.encode(message));
-  }
-
-  /**
-   * Unpack message from binary format
-   */
-  private unpackMessage(buffer: Buffer): any {
-    return msgpack.decode(buffer);
   }
 
   /**
@@ -241,7 +232,8 @@ export class BatchMessageSender {
    * Send message to a single recipient
    * This should be overridden with actual implementation
    */
-  private async sendMessage(recipient: string, message: any): Promise<void> {
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  private async sendMessage(recipient: string, _message: any): Promise<void> {
     // TODO: Implement actual message sending logic
     // This could be WebSocket, gRPC, HTTP, or any transport
     // For now, simulate with a delay
