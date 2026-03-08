@@ -24,9 +24,9 @@ export default [
   js.configs.recommended,
   ...ts.configs.recommended,
   security.configs.recommended,
-  importPlugin.flatConfigs.recommended,
   prettierConfig,
   {
+    files: ['**/*.{ts,tsx,js,jsx}'],
     languageOptions: {
       ecmaVersion: 2022,
       sourceType: 'module',
@@ -50,14 +50,6 @@ export default [
         // WebExtension globals
         chrome: 'readonly',
         browser: 'readonly',
-      },
-    },
-    settings: {
-      'import/resolver': {
-        typescript: {
-          alwaysTryTypes: true,
-          project: './tsconfig.json',
-        },
       },
     },
     rules: {
