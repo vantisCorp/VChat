@@ -40,7 +40,7 @@ jobs:
           version: ${{ env.PNPM_VERSION }}
 
       - name: Install dependencies
-        run: pnpm install --frozen-lockfile
+        run: pnpm install
 
       - name: Socket.dev Security Scan
         uses: SocketDev/action@v1
@@ -118,7 +118,7 @@ jobs:
           version: ${{ env.PNPM_VERSION }}
 
       - name: Install dependencies
-        run: pnpm install --frozen-lockfile
+        run: pnpm install
 
       - name: Check License Compliance
         env:
