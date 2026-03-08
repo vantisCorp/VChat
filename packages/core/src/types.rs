@@ -425,7 +425,7 @@ mod tests {
         assert!(UserRole::Admin.can_moderate());
         assert!(UserRole::Moderator.can_moderate());
         assert!(!UserRole::User.can_moderate());
-        
+
         assert!(UserRole::Owner.is_admin());
         assert!(UserRole::Admin.is_admin());
         assert!(!UserRole::Moderator.is_admin());

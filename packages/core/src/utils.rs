@@ -78,7 +78,7 @@ impl Utils {
         Fut: std::future::Future<Output = Result<T, E>>,
     {
         let mut delay = initial_delay_ms;
-        
+
         for attempt in 1..=max_attempts {
             match func().await {
                 Ok(result) => return Ok(result),
@@ -90,7 +90,7 @@ impl Utils {
                 Err(e) => return Err(e),
             }
         }
-        
+
         unreachable!()
     }
 }

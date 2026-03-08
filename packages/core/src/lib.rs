@@ -119,7 +119,7 @@ pub fn init() {
             backtrace = %backtrace,
             "V-COMM panic occurred"
         );
-        
+
         // In production, we might want to securely wipe memory
         // before panicking to prevent data leaks
         #[cfg(feature = "telemetry")]
