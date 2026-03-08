@@ -616,7 +616,7 @@ export function deepMerge<T extends Record<string, any>>(target: T, ...sources: 
         if (!target[key]) {
           Object.assign(target, { [key]: {} });
         }
-        deepMerge(target[key], source[key]);
+        deepMerge(target[key] as Record<string, any>, source[key] as Record<string, any>);
       } else {
         Object.assign(target, { [key]: source[key] });
       }
@@ -892,17 +892,17 @@ export async function retry<T>(
  * Timeout wrapper for promises
  */
 export async function timeout<T>(promise: Promise<T>, ms: number, message: string = 'Timeout'): Promise<T> {
-  let timeoutId: ReturnType<typeof setTimeout>;
+  let timeoutId: ReturnType<typeof setTimeout> | undefined;
   const timeoutPromise = new Promise<never>((_, reject) => {
     timeoutId = setTimeout(() => reject(new Error(message)), ms);
   });
 
   try {
     const result = await Promise.race([promise, timeoutPromise]);
-    clearTimeout(timeoutId);
+    if (timeoutId) clearTimeout(timeoutId);
     return result;
   } catch (error) {
-    clearTimeout(timeoutId);
+    if (timeoutId) clearTimeout(timeoutId);
     throw error;
   }
 }

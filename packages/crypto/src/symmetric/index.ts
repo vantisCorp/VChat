@@ -3,7 +3,7 @@
  * @module @vcomm/crypto/symmetric
  */
 
-import { createCipheriv, createDecipheriv, randomBytes } from 'crypto';
+import { createCipheriv, createDecipheriv, randomBytes, CipherGCM, DecipherGCM } from 'crypto';
 import {
   SymmetricAlgorithm,
   SymmetricKey,
@@ -136,7 +136,7 @@ function encryptAEAD(
   algorithm: SymmetricAlgorithm,
   options: EncryptOptions
 ): EncryptionResult {
-  const cipher = createCipheriv(mapAlgorithm(algorithm), Buffer.from(key), Buffer.from(iv));
+  const cipher = createCipheriv(mapAlgorithm(algorithm), Buffer.from(key), Buffer.from(iv)) as CipherGCM;
   
   // Set AAD if provided
   if (options.aad) {
@@ -165,7 +165,7 @@ function decryptAEAD(
   tag: Uint8Array,
   options: DecryptOptions
 ): Uint8Array {
-  const decipher = createDecipheriv(mapAlgorithm(algorithm), Buffer.from(key), Buffer.from(iv));
+  const decipher = createDecipheriv(mapAlgorithm(algorithm), Buffer.from(key), Buffer.from(iv)) as DecipherGCM;
   
   decipher.setAuthTag(Buffer.from(tag));
   

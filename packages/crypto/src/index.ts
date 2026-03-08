@@ -100,11 +100,13 @@ export {
   generateX25519KeyPair,
   generateSecp256k1KeyPair,
   generateRSAKeyPair,
-  generateKeyPair: generateKeyPairAsync,
   sign,
   verify,
   exportPublicKeyPEM,
 } from './keys';
+
+import { generateKeyPairAsync } from './keys';
+export { generateKeyPairAsync as generateKeyPair };
 
 // ============================================================================
 // SRTP

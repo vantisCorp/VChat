@@ -276,6 +276,10 @@ export interface RolloutConfig {
   completedAt?: Date;
   /** Created by */
   createdBy: string;
+  /** Created at */
+  createdAt?: Date;
+  /** Updated at */
+  updatedAt?: Date;
   /** Target segments */
   targetSegments?: string[];
   /** Excluded segments */

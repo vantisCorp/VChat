@@ -241,7 +241,7 @@ export class VideoEncoder {
 
     // Overwrite
     if (output.overwrite) {
-      command.overwrite();
+      command.outputOptions('-y');
     }
 
     // Custom options

@@ -435,11 +435,11 @@ function generateSessionId(): string {
  */
 function readBigUInt48(buffer: Uint8Array, offset: number): bigint {
   return (
-    (BigInt(buffer[offset]) << 40) |
-    (BigInt(buffer[offset + 1]) << 32) |
-    (BigInt(buffer[offset + 2]) << 24) |
-    (BigInt(buffer[offset + 3]) << 16) |
-    (BigInt(buffer[offset + 4]) << 8) |
+    (BigInt(buffer[offset]) << 40n) |
+    (BigInt(buffer[offset + 1]) << 32n) |
+    (BigInt(buffer[offset + 2]) << 24n) |
+    (BigInt(buffer[offset + 3]) << 16n) |
+    (BigInt(buffer[offset + 4]) << 8n) |
     BigInt(buffer[offset + 5])
   );
 }

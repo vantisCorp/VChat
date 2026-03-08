@@ -23,6 +23,12 @@ export type VideoCodec =
   | 'hevc_amf'     // H.265 (AMD)
   | 'h264_vaapi'   // H.264 (VAAPI)
   | 'hevc_vaapi'   // H.265 (VAAPI)
+  | 'vp9_vaapi'    // VP9 (VAAPI)
+  | 'av1_vaapi'    // AV1 (VAAPI)
+  | 'h264_qsv'     // H.264 (Intel QSV)
+  | 'hevc_qsv'     // H.265 (Intel QSV)
+  | 'vp9_qsv'      // VP9 (Intel QSV)
+  | 'av1_qsv'      // AV1 (Intel QSV)
   | 'h264_videotoolbox'  // H.264 (macOS)
   | 'hevc_videotoolbox'; // H.265 (macOS)
 
@@ -70,6 +76,20 @@ export type HardwareAcceleration =
   | 'videotoolbox' // Apple VideoToolbox
   | 'd3d11va'      // Direct3D 11
   | 'opencl';      // OpenCL
+
+/**
+ * Hardware acceleration configuration
+ */
+export interface HardwareAccelConfig {
+  /** Acceleration type */
+  type: HardwareAcceleration;
+  
+  /** Device index (for multi-GPU) */
+  deviceIndex?: number;
+  
+  /** Device path (for VAAPI) */
+  devicePath?: string;
+}
 
 // ============================================================================
 // VIDEO CONFIGURATION
@@ -152,8 +172,8 @@ export interface VideoConfig {
   /** Pixel format (e.g., 'yuv420p', 'yuv420p10le') */
   pixelFormat?: string;
   
-  /** Hardware acceleration method */
-  hwAccel?: HardwareAcceleration;
+  /** Hardware acceleration configuration */
+  hwAccel?: HardwareAccelConfig;
   
   /** Number of B-frames */
   bFrames?: number;
@@ -728,7 +748,7 @@ export interface MediaInfo {
   subtitleStreams: SubtitleStreamInfo[];
   
   /** Metadata */
-  metadata: Record<string, string>;
+  metadata: Record<string, string | number>;
   
   /** Chapters */
   chapters?: ChapterInfo[];
@@ -745,10 +765,10 @@ export interface VideoStreamInfo {
   codec: string;
   
   /** Profile */
-  profile?: string;
+  profile?: string | number;
   
   /** Level */
-  level?: number;
+  level?: string | number;
   
   /** Width in pixels */
   width: number;
@@ -789,7 +809,7 @@ export interface AudioStreamInfo {
   codec: string;
   
   /** Profile */
-  profile?: string;
+  profile?: string | number;
   
   /** Sample rate */
   sampleRate: number;

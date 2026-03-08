@@ -94,8 +94,8 @@ export class PluginLoader {
     const sourceKey = `${pluginSource.type}:${pluginSource.location}`;
     if (this.loadingPlugins.has(sourceKey)) {
       throw new PluginError(
-        `Plugin is already being loaded: ${sourceKey}`,
-        PluginErrorCode.LOAD_IN_PROGRESS
+        PluginErrorCode.LOAD_IN_PROGRESS,
+        `Plugin is already being loaded: ${sourceKey}`
       );
     }
 
@@ -110,8 +110,8 @@ export class PluginLoader {
         const validation = this.validateManifest(manifest);
         if (!validation.valid) {
           throw new PluginError(
-            `Invalid plugin manifest: ${validation.errors.map(e => e.message).join(', ')}`,
-            PluginErrorCode.INVALID_MANIFEST
+            PluginErrorCode.INVALID_MANIFEST,
+            `Invalid plugin manifest: ${validation.errors.map(e => e.message).join(', ')}`
           );
         }
       }
@@ -119,8 +119,8 @@ export class PluginLoader {
       // Check if already registered
       if (this.registry.has(manifest.id)) {
         throw new PluginError(
-          `Plugin ${manifest.id} is already installed`,
-          PluginErrorCode.PLUGIN_ALREADY_EXISTS
+          PluginErrorCode.PLUGIN_ALREADY_EXISTS,
+          `Plugin ${manifest.id} is already installed`
         );
       }
 
@@ -151,8 +151,8 @@ export class PluginLoader {
     // Check if plugin is enabled
     if (instance.status === 'enabled') {
       throw new PluginError(
-        `Cannot unload enabled plugin ${pluginId}. Disable it first.`,
-        PluginErrorCode.PLUGIN_ENABLED
+        PluginErrorCode.PLUGIN_ENABLED,
+        `Cannot unload enabled plugin ${pluginId}. Disable it first.`
       );
     }
 
@@ -170,8 +170,8 @@ export class PluginLoader {
     const instance = this.registry.get(pluginId);
     if (!instance) {
       throw new PluginError(
-        `Plugin ${pluginId} is not installed`,
-        PluginErrorCode.NOT_FOUND
+        PluginErrorCode.NOT_FOUND,
+        `Plugin ${pluginId} is not installed`
       );
     }
 
@@ -226,8 +226,8 @@ export class PluginLoader {
         return this.fetchMarketplaceManifest(source.location);
       default:
         throw new PluginError(
-          `Unknown source type: ${(source as any).type}`,
-          PluginErrorCode.INVALID_SOURCE
+          PluginErrorCode.INVALID_SOURCE,
+          `Unknown source type: ${(source as any).type}`
         );
     }
   }
@@ -244,8 +244,8 @@ export class PluginLoader {
     // In production: const content = await fs.readFile(manifestPath, 'utf-8');
     
     throw new PluginError(
-      `Local plugin loading not implemented in this environment`,
-      PluginErrorCode.NOT_IMPLEMENTED
+      PluginErrorCode.NOT_IMPLEMENTED,
+      `Local plugin loading not implemented in this environment`
     );
   }
 
@@ -255,8 +255,8 @@ export class PluginLoader {
   private async fetchRemoteManifest(url: string): Promise<PluginManifest> {
     if (!this.config.allowRemoteLoad) {
       throw new PluginError(
-        'Remote plugin loading is disabled',
-        PluginErrorCode.REMOTE_LOAD_DISABLED
+        PluginErrorCode.REMOTE_LOAD_DISABLED,
+        'Remote plugin loading is disabled'
       );
     }
 
@@ -264,17 +264,17 @@ export class PluginLoader {
       const response = await fetch(`${url}/${this.config.manifestFileName}`);
       if (!response.ok) {
         throw new PluginError(
-          `Failed to fetch manifest: ${response.statusText}`,
-          PluginErrorCode.FETCH_FAILED
+          PluginErrorCode.FETCH_FAILED,
+          `Failed to fetch manifest: ${response.statusText}`
         );
       }
 
-      return await response.json();
+      return (await response.json()) as PluginManifest;
     } catch (error) {
       if (error instanceof PluginError) throw error;
       throw new PluginError(
-        `Failed to fetch remote manifest: ${error}`,
-        PluginErrorCode.FETCH_FAILED
+        PluginErrorCode.FETCH_FAILED,
+        `Failed to fetch remote manifest: ${error}`
       );
     }
   }
@@ -285,8 +285,8 @@ export class PluginLoader {
   private async fetchNpmManifest(packageName: string, version?: string): Promise<PluginManifest> {
     // In production, this would use npm registry API
     throw new PluginError(
-      'NPM plugin loading not implemented',
-      PluginErrorCode.NOT_IMPLEMENTED
+      PluginErrorCode.NOT_IMPLEMENTED,
+      'NPM plugin loading not implemented'
     );
   }
 
@@ -296,8 +296,8 @@ export class PluginLoader {
   private async fetchMarketplaceManifest(pluginId: string): Promise<PluginManifest> {
     // In production, this would query the marketplace API
     throw new PluginError(
-      'Marketplace loading not implemented',
-      PluginErrorCode.NOT_IMPLEMENTED
+      PluginErrorCode.NOT_IMPLEMENTED,
+      'Marketplace loading not implemented'
     );
   }
 
@@ -377,10 +377,10 @@ export class PluginLoader {
       ];
 
       for (const perm of manifest.permissions) {
-        if (!validPermissions.includes(perm)) {
+        if (!validPermissions.includes(perm.type)) {
           warnings.push({
             field: 'permissions',
-            message: `Unknown permission: ${perm}`,
+            message: `Unknown permission: ${perm.type}`,
           });
         }
       }

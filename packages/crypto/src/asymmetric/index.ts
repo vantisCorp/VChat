@@ -100,7 +100,7 @@ export async function encryptForRecipient(
   }
   
   // Generate ephemeral key pair
-  const ephemeralPrivateKey = secp256k1.utils.randomPrivateKey();
+  const ephemeralPrivateKey = secp256k1.utils.randomSecretKey();
   const ephemeralPublicKey = secp256k1.getPublicKey(ephemeralPrivateKey, true);
   
   // Derive shared secret
@@ -265,7 +265,7 @@ export async function hkdf(
   const blocks = Math.ceil(length / hashLength);
   
   const output = new Uint8Array(blocks * hashLength);
-  let previousBlock = new Uint8Array(0);
+  let previousBlock: Uint8Array = new Uint8Array(0);
   
   for (let i = 0; i < blocks; i++) {
     const input = new Uint8Array(previousBlock.length + info.length + 1);
@@ -273,7 +273,7 @@ export async function hkdf(
     input.set(info, previousBlock.length);
     input[input.length - 1] = i + 1;
     
-    previousBlock = hmac(input, prk, hashAlg);
+    previousBlock = new Uint8Array(hmac(input, prk, hashAlg));
     output.set(previousBlock, i * hashLength);
   }
   

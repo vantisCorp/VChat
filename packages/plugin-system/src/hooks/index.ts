@@ -23,7 +23,7 @@ interface HandlerEntry {
   /** Plugin ID that registered this handler */
   pluginId: string;
   /** The handler function */
-  handler: HookHandler;
+  handler: HookHandler<unknown, unknown>;
   /** Priority (lower = higher priority) */
   priority: number;
   /** Whether this handler can be async */
@@ -174,10 +174,10 @@ export class HookManager {
   /**
    * Register a handler for a hook type
    */
-  registerHandler(
+  registerHandler<T = unknown, R = unknown>(
     hookType: HookType,
     pluginId: string,
-    handler: HookHandler,
+    handler: HookHandler<T, R>,
     options: {
       priority?: number;
       async?: boolean;
@@ -195,7 +195,7 @@ export class HookManager {
     const entry: HandlerEntry = {
       id: handlerId,
       pluginId,
-      handler,
+      handler: handler as HookHandler<unknown, unknown>,
       priority,
       async,
       active: true,
@@ -368,7 +368,10 @@ export class HookManager {
       Promise.resolve(handler(context))
         .then((result) => {
           clearTimeout(timer);
-          resolve(result);
+          resolve({
+            success: true,
+            data: result,
+          });
         })
         .catch((error) => {
           clearTimeout(timer);

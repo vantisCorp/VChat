@@ -265,7 +265,7 @@ export class DistributedLock {
     const handle = await this.acquire();
     
     if (!handle) {
-      throw new AcquireTimeoutError(`Failed to acquire lock: ${this.key}`);
+      throw new AcquireTimeoutError(this.ttl, this.key);
     }
     
     try {
@@ -336,6 +336,13 @@ export class Redlock {
       retryCount: options.retryCount ?? 3,
       driftFactor: options.driftFactor ?? 0.01,
       quorum: options.quorum ?? Math.floor(servers.length / 2) + 1,
+      retryJitter: options.retryJitter ?? 100,
+      key: options.key ?? '',
+      waitTimeout: options.waitTimeout ?? 5000,
+      clockSkew: options.clockSkew ?? 100,
+      keyPrefix: options.keyPrefix ?? '',
+      autoExtend: options.autoExtend ?? false,
+      autoExtendInterval: options.autoExtendInterval ?? 5000,
     };
   }
   
@@ -494,7 +501,7 @@ export class LockManager {
       if (!handle) {
         // Release all acquired locks
         await Promise.all(handles.map(h => h.release()));
-        throw new AcquireTimeoutError(`Failed to acquire lock: ${key}`);
+        throw new AcquireTimeoutError(options?.ttl ?? this.defaultOptions.ttl ?? 10000, key);
       }
       
       handles.push(handle);

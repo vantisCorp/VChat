@@ -127,6 +127,13 @@ export interface AuditLogQuery {
   endDate?: Date;
   offset?: number;
   limit?: number;
+  sortOrder?: 'asc' | 'desc';
+}
+
+export interface AuditLogResult {
+  entries: AuditLogEntry[];
+  total: number;
+  hasMore: boolean;
 }
 
 // Session Types

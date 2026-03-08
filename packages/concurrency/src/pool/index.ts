@@ -81,7 +81,27 @@ export class ResourcePool<T> {
   private cleanupTimer: NodeJS.Timeout | null = null;
   
   constructor(options: ResourcePoolOptions<T>) {
-    this.factory = options.factory;
+    // Normalize factory to ResourceFactory interface
+    if (typeof options.factory === 'function') {
+      // It's a simple create function
+      this.factory = {
+        create: options.factory,
+        destroy: options.destroy ?? (async () => {}),
+        validate: options.validate,
+      };
+    } else if (options.factory) {
+      // It's already a ResourceFactory
+      this.factory = options.factory;
+    } else if (options.create) {
+      // Use create property
+      this.factory = {
+        create: options.create,
+        destroy: options.destroy ?? (async () => {}),
+        validate: options.validate,
+      };
+    } else {
+      throw new Error('Either factory or create must be provided');
+    }
     this.minResources = options.min ?? 0;
     this.maxResources = options.max ?? 10;
     this.acquireTimeout = options.acquireTimeout ?? 30000;
@@ -399,7 +419,8 @@ export class ResourcePool<T> {
         if (index !== -1) {
           this.waitQueue.splice(index, 1);
           reject(new AcquireTimeoutError(
-            `Timeout acquiring resource after ${this.acquireTimeout}ms`
+            this.acquireTimeout,
+            'resource-pool'
           ));
         }
       }, this.acquireTimeout);

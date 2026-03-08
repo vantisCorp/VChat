@@ -105,10 +105,13 @@ export interface RateLimitResult {
   remaining: number;
   
   /** Time until the limit resets in milliseconds */
-  resetTime: number;
+  resetTime?: number;
+  
+  /** Time when the limit resets (timestamp or Date) */
+  resetAt?: number | Date;
   
   /** Total limit */
-  limit: number;
+  limit?: number;
   
   /** Retry after time in milliseconds (if not allowed) */
   retryAfter?: number;
@@ -145,13 +148,22 @@ export type CircuitState = 'closed' | 'open' | 'half-open';
  */
 export interface CircuitBreakerOptions {
   /** Number of failures before opening */
-  failureThreshold: number;
+  failureThreshold?: number;
   
   /** Number of successes in half-open to close */
-  successThreshold: number;
+  successThreshold?: number;
   
   /** Time in ms before attempting to close from open state */
-  timeout: number;
+  timeout?: number;
+  
+  /** Alias for timeout - time before attempting reset */
+  resetTimeout?: number;
+  
+  /** Volume threshold for calculating failure rate */
+  volumeThreshold?: number;
+  
+  /** Sampling period for statistics */
+  samplingPeriod?: number;
   
   /** Time window for counting failures */
   rollingCountWindow?: number;
@@ -176,6 +188,35 @@ export interface CircuitBreakerOptions {
 }
 
 /**
+ * Circuit breaker statistics
+ */
+export interface CircuitBreakerStats {
+  /** Total calls made */
+  totalCalls: number;
+  
+  /** Successful calls */
+  successfulCalls: number;
+  
+  /** Failed calls */
+  failedCalls: number;
+  
+  /** Timeout count */
+  timeouts: number;
+  
+  /** Last failure time */
+  lastFailureTime: Date | null;
+  
+  /** Last success time */
+  lastSuccessTime: Date | null;
+  
+  /** Consecutive failures */
+  consecutiveFailures: number;
+  
+  /** Consecutive successes */
+  consecutiveSuccesses: number;
+}
+
+/**
  * Circuit breaker state info
  */
 export interface CircuitBreakerState {
@@ -183,25 +224,37 @@ export interface CircuitBreakerState {
   state: CircuitState;
   
   /** Number of failures in the current window */
-  failures: number;
+  failures?: number;
   
   /** Number of successes in the current window */
-  successes: number;
+  successes?: number;
+  
+  /** Failure count alias */
+  failureCount?: number;
+  
+  /** Success count alias */
+  successCount?: number;
+  
+  /** When the circuit was opened */
+  openedAt?: Date | null;
   
   /** Last failure time */
-  lastFailureTime?: Date;
+  lastFailureTime?: Date | null;
   
   /** Last state change time */
-  lastStateChange?: Date;
+  lastStateChange?: Date | null;
   
   /** Total requests made */
-  totalRequests: number;
+  totalRequests?: number;
   
   /** Total failures */
-  totalFailures: number;
+  totalFailures?: number;
   
   /** Total successes */
-  totalSuccesses: number;
+  totalSuccesses?: number;
+  
+  /** Statistics */
+  stats?: CircuitBreakerStats;
 }
 
 /**
@@ -232,14 +285,26 @@ export interface CircuitBreakerResult<T> {
  * Distributed lock options
  */
 export interface DistributedLockOptions {
+  /** Lock key */
+  key?: string;
+  
   /** Lock timeout in milliseconds */
-  ttl: number;
+  ttl?: number;
   
   /** Maximum time to wait for lock acquisition */
   waitTimeout?: number;
   
   /** Time between retry attempts in milliseconds */
   retryDelay?: number;
+  
+  /** Number of retry attempts */
+  retryCount?: number;
+  
+  /** Drift factor for clock skew calculation */
+  driftFactor?: number;
+  
+  /** Clock skew in milliseconds */
+  clockSkew?: number;
   
   /** Key prefix for the lock */
   keyPrefix?: string;
@@ -256,25 +321,37 @@ export interface DistributedLockOptions {
  */
 export interface LockHandle {
   /** Lock identifier */
-  id: string;
+  id?: string;
   
   /** Lock key */
-  key: string;
+  key?: string;
   
   /** Lock value/token */
-  value: string;
+  value?: string;
+  
+  /** Token for lock identification */
+  token?: string;
   
   /** Time when lock expires */
-  expiresAt: Date;
+  expiresAt?: Date;
+  
+  /** Time when lock was acquired */
+  acquiredAt?: Date;
+  
+  /** Whether the lock is held (alias) */
+  isHeld?: boolean | (() => boolean) | (() => Promise<boolean>);
   
   /** Release the lock */
-  release: () => Promise<boolean>;
+  release?: () => Promise<boolean>;
   
   /** Extend the lock TTL */
-  extend: (ttl?: number) => Promise<boolean>;
+  extend?: (ttl?: number) => Promise<boolean>;
   
   /** Check if lock is still held */
-  isValid: () => Promise<boolean>;
+  isValid?: () => Promise<boolean>;
+  
+  /** Get remaining TTL in milliseconds */
+  getRemainingTtl?: number | (() => number) | (() => Promise<number>);
 }
 
 /**
@@ -282,25 +359,37 @@ export interface LockHandle {
  */
 export interface LockState {
   /** Whether the lock is currently held */
-  locked: boolean;
+  locked?: boolean;
+  
+  /** Whether the lock is held (alias) */
+  isHeld?: boolean;
   
   /** Lock key */
-  key: string;
+  key?: string;
   
   /** Lock holder ID */
   holder?: string;
+  
+  /** Token for lock identification */
+  token?: string;
   
   /** Expiration time */
   expiresAt?: Date;
   
   /** TTL in milliseconds */
   ttl?: number;
+  
+  /** Time when lock was acquired */
+  acquiredAt?: Date;
 }
 
 /**
  * Redlock options (distributed lock with quorum)
  */
 export interface RedlockOptions extends DistributedLockOptions {
+  /** Lock timeout in milliseconds */
+  ttl?: number;
+  
   /** Number of replicas required for quorum */
   quorum?: number;
   
@@ -309,6 +398,15 @@ export interface RedlockOptions extends DistributedLockOptions {
   
   /** Maximum jitter for retries */
   retryJitter?: number;
+  
+  /** Key for the lock */
+  key?: string;
+  
+  /** Wait timeout for lock acquisition */
+  waitTimeout?: number;
+  
+  /** Clock skew tolerance */
+  clockSkew?: number;
 }
 
 // ============================================================================
@@ -316,20 +414,32 @@ export interface RedlockOptions extends DistributedLockOptions {
 // ============================================================================
 
 /**
+ * Resource factory interface
+ */
+export interface ResourceFactory<T> {
+  create: () => Promise<T>;
+  destroy: (resource: T) => Promise<void>;
+  validate?: (resource: T) => Promise<boolean>;
+}
+
+/**
  * Resource pool options
  */
 export interface ResourcePoolOptions<T> {
   /** Factory function to create new resources */
-  create: () => Promise<T>;
+  create?: () => Promise<T>;
+  
+  /** Factory function alias */
+  factory?: ResourceFactory<T> | (() => Promise<T>);
   
   /** Function to destroy resources */
-  destroy: (resource: T) => Promise<void>;
+  destroy?: (resource: T) => Promise<void>;
   
   /** Function to validate resources before use */
   validate?: (resource: T) => Promise<boolean>;
   
   /** Maximum number of resources */
-  max: number;
+  max?: number;
   
   /** Minimum number of resources to maintain */
   min?: number;
@@ -339,6 +449,12 @@ export interface ResourcePoolOptions<T> {
   
   /** Interval for eviction checks */
   evictionInterval?: number;
+  
+  /** Validation interval alias */
+  validationInterval?: number;
+  
+  /** Maximum uses per resource */
+  maxUses?: number;
   
   /** Maximum time to wait for acquiring a resource */
   acquireTimeout?: number;
@@ -352,7 +468,16 @@ export interface ResourcePoolOptions<T> {
  */
 export interface PooledResource<T> {
   /** The actual resource */
-  resource: T;
+  resource?: T;
+  
+  /** Resource data alias */
+  data?: T;
+  
+  /** Release function */
+  release?: () => void | Promise<void>;
+  
+  /** Destroy function */
+  destroy?: () => Promise<void>;
   
   /** Resource ID */
   id: string;
@@ -364,7 +489,7 @@ export interface PooledResource<T> {
   lastUsedAt: Date;
   
   /** Whether the resource is currently in use */
-  inUse: boolean;
+  inUse?: boolean;
   
   /** Number of times the resource has been used */
   useCount: number;
@@ -375,22 +500,31 @@ export interface PooledResource<T> {
  */
 export interface PoolState {
   /** Total resources in the pool */
-  total: number;
+  total?: number;
+  
+  /** Maximum resources allowed */
+  max?: number;
   
   /** Number of available resources */
-  available: number;
+  available?: number;
   
   /** Number of resources in use */
-  inUse: number;
+  inUse?: number;
   
   /** Number of pending acquire requests */
-  pending: number;
+  pending?: number;
+  
+  /** Number of waiting acquire requests */
+  waiting?: number;
+  
+  /** Minimum resources to maintain */
+  min?: number;
   
   /** Number of resources being created */
-  creating: number;
+  creating?: number;
   
   /** Number of resources being destroyed */
-  destroying: number;
+  destroying?: number;
 }
 
 /**

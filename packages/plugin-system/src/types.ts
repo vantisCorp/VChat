@@ -117,6 +117,8 @@ export interface PluginManifest {
   license: string;
   /** Plugin keywords for search */
   keywords?: string[];
+  /** Plugin tags */
+  tags?: string[];
   /** Plugin category */
   category: PluginCategory;
   /** Visibility in marketplace */
@@ -162,11 +164,11 @@ export interface PluginInstance {
   /** Current status */
   status: PluginStatus;
   /** Installation path */
-  installPath: string;
+  installPath?: string;
   /** Installed version */
-  installedVersion: string;
+  installedVersion?: string;
   /** Configuration */
-  config: Record<string, unknown>;
+  config?: Record<string, unknown>;
   /** Installation date */
   installedAt: Date;
   /** Last update date */
@@ -177,6 +179,12 @@ export interface PluginInstance {
   enabledScopes?: string[];
   /** Statistics */
   stats?: PluginStats;
+  /** Whether the plugin is enabled */
+  enabled?: boolean;
+  /** Plugin settings */
+  settings?: Record<string, unknown>;
+  /** Plugin permissions */
+  permissions?: PluginPermission[];
 }
 
 /**
@@ -184,17 +192,23 @@ export interface PluginInstance {
  */
 export interface PluginStats {
   /** Total activations */
-  activations: number;
+  activations?: number;
   /** Total deactivations */
-  deactivations: number;
+  deactivations?: number;
   /** Errors count */
-  errors: number;
+  errors?: number;
   /** Average execution time (ms) */
-  avgExecutionTime: number;
+  avgExecutionTime?: number;
   /** Last execution time */
   lastExecutionAt?: Date;
   /** Memory usage (bytes) */
   memoryUsage?: number;
+  /** Hook calls count */
+  hookCalls?: number;
+  /** Last error */
+  lastError?: Error;
+  /** Last active at */
+  lastActiveAt?: Date;
 }
 
 // ============================================================================
@@ -246,6 +260,32 @@ export interface PluginPermission {
   reason?: string;
   /** Permission scope (all, current-server, own-messages) */
   scope?: 'all' | 'server' | 'channel' | 'user';
+}
+
+/**
+ * Permission check context
+ */
+export interface PermissionCheckContext {
+  /** Plugin ID requesting permission */
+  pluginId: string;
+  /** Permission type to check */
+  permission: PluginPermissionType;
+  /** Resource being accessed */
+  resource?: string;
+  /** Additional context for the check */
+  context?: Record<string, unknown>;
+  /** Server ID */
+  serverId?: string;
+  /** Channel ID */
+  channelId?: string;
+  /** User ID */
+  userId?: string;
+  /** User roles */
+  userRoles?: string[];
+  /** Timestamp */
+  timestamp?: Date;
+  /** Metadata */
+  metadata?: Record<string, unknown>;
 }
 
 // ============================================================================
@@ -344,6 +384,24 @@ export interface HookContext<T = unknown> {
 }
 
 /**
+ * Hook execution result
+ */
+export interface HookResult<T = unknown> {
+  /** Whether the hook executed successfully */
+  success: boolean;
+  /** Result data */
+  data?: T;
+  /** Error if failed */
+  error?: Error;
+  /** All errors that occurred during execution */
+  errors?: Error[];
+  /** Whether propagation was stopped */
+  stopped?: boolean;
+  /** Execution duration in ms */
+  duration?: number;
+}
+
+/**
  * Hook registration
  */
 export interface HookRegistration {
@@ -354,7 +412,7 @@ export interface HookRegistration {
   /** Hook type */
   type: HookType;
   /** Handler function */
-  handler: HookHandler;
+  handler: HookHandler<unknown, unknown>;
   /** Priority */
   priority: number;
   /** Whether hook can mutate data */
@@ -567,14 +625,20 @@ export interface PluginStorage {
 export interface PluginSystemConfig {
   /** Plugins directory */
   pluginsDir?: string;
+  /** Plugin directories (alias) */
+  pluginDirs?: string[];
   /** Maximum plugins per server */
   maxPluginsPerServer?: number;
+  /** Maximum plugins total */
+  maxPlugins?: number;
   /** Enable sandbox */
   enableSandbox?: boolean;
   /** Sandbox memory limit (MB) */
   sandboxMemoryLimit?: number;
   /** Sandbox execution timeout (ms) */
   sandboxTimeout?: number;
+  /** Execution timeout (alias) */
+  executionTimeout?: number;
   /** Marketplace URL */
   marketplaceUrl?: string;
   /** Enable marketplace */
@@ -585,6 +649,10 @@ export interface PluginSystemConfig {
   requireApproval?: boolean;
   /** Plugin audit logging */
   enableAuditLog?: boolean;
+  /** Enforce permissions */
+  enforcePermissions?: boolean;
+  /** Debug mode */
+  debug?: boolean;
 }
 
 /**
@@ -633,3 +701,187 @@ export interface PluginEvent {
  * Plugin event handler
  */
 export type PluginEventHandler = (event: PluginEvent) => void | Promise<void>;
+
+// ============================================================================
+// Plugin Errors
+// ============================================================================
+
+/**
+ * Plugin error codes
+ */
+export enum PluginErrorCode {
+  NOT_FOUND = 'NOT_FOUND',
+  ALREADY_INSTALLED = 'ALREADY_INSTALLED',
+  PLUGIN_ALREADY_EXISTS = 'PLUGIN_ALREADY_EXISTS',
+  VERSION_MISMATCH = 'VERSION_MISMATCH',
+  DEPENDENCY_MISSING = 'DEPENDENCY_MISSING',
+  DEPENDENCY_CONFLICT = 'DEPENDENCY_CONFLICT',
+  PERMISSION_DENIED = 'PERMISSION_DENIED',
+  INSTALLATION_FAILED = 'INSTALLATION_FAILED',
+  LOAD_FAILED = 'LOAD_FAILED',
+  ENABLE_FAILED = 'ENABLE_FAILED',
+  DISABLE_FAILED = 'DISABLE_FAILED',
+  UNINSTALL_FAILED = 'UNINSTALL_FAILED',
+  CONFIG_ERROR = 'CONFIG_ERROR',
+  HOOK_ERROR = 'HOOK_ERROR',
+  MANIFEST_INVALID = 'MANIFEST_INVALID',
+  INVALID_MANIFEST = 'INVALID_MANIFEST',
+  LIMIT_EXCEEDED = 'LIMIT_EXCEEDED',
+  EXECUTION_TIMEOUT = 'EXECUTION_TIMEOUT',
+  NOT_INITIALIZED = 'NOT_INITIALIZED',
+  UNKNOWN = 'UNKNOWN',
+  PLUGIN_ENABLED = 'PLUGIN_ENABLED',
+  INVALID_SOURCE = 'INVALID_SOURCE',
+  NOT_IMPLEMENTED = 'NOT_IMPLEMENTED',
+  REMOTE_LOAD_DISABLED = 'REMOTE_LOAD_DISABLED',
+  FETCH_FAILED = 'FETCH_FAILED',
+  LOAD_IN_PROGRESS = 'LOAD_IN_PROGRESS',
+}
+
+/**
+ * Plugin error class
+ */
+export class PluginError extends Error {
+  constructor(
+    public code: PluginErrorCode,
+    message: string,
+    public details?: Record<string, unknown>
+  ) {
+    super(message);
+    this.name = 'PluginError';
+  }
+}
+
+// ============================================================================
+// Additional Plugin Types
+// ============================================================================
+
+/**
+ * Plugin lifecycle
+ */
+export type PluginLifecycle = 'install' | 'enable' | 'disable' | 'uninstall' | 'update';
+
+/**
+ * Plugin lifecycle event
+ */
+export interface PluginLifecycleEvent {
+  pluginId: string;
+  lifecycle: PluginLifecycle;
+  timestamp: Date;
+  success: boolean;
+  error?: Error;
+}
+
+/**
+ * Plugin lifecycle callback
+ */
+export type PluginLifecycleCallback = (event: PluginLifecycleEvent) => void | Promise<void>;
+
+/**
+ * Permission grant
+ */
+export interface PermissionGrant {
+  pluginId: string;
+  permission: PluginPermissionType;
+  granted: boolean;
+  grantedAt: Date;
+  grantedBy?: string;
+}
+
+/**
+ * Hook registration options
+ */
+export interface HookRegistrationOptions {
+  priority?: number;
+  once?: boolean;
+  async?: boolean;
+}
+
+/**
+ * Plugin config field
+ */
+export interface PluginConfigField {
+  key: string;
+  type: 'string' | 'number' | 'boolean' | 'array' | 'object';
+  label: string;
+  description?: string;
+  default?: PluginConfigValue;
+  required?: boolean;
+  validation?: {
+    min?: number;
+    max?: number;
+    pattern?: string;
+    enum?: PluginConfigValue[];
+  };
+}
+
+/**
+ * Plugin config value
+ */
+export type PluginConfigValue = string | number | boolean | PluginConfigValueArray | PluginConfigValueRecord;
+
+/**
+ * Plugin config value array
+ */
+export interface PluginConfigValueArray extends Array<PluginConfigValue> {}
+
+/**
+ * Plugin config value record
+ */
+export interface PluginConfigValueRecord extends Record<string, PluginConfigValue> {}
+
+/**
+ * Plugin user settings
+ */
+export interface PluginUserSettings {
+  pluginId: string;
+  userId: string;
+  settings: Record<string, PluginConfigValue>;
+  updatedAt: Date;
+}
+
+/**
+ * Marketplace version
+ */
+export interface MarketplaceVersion {
+  version: string;
+  publishedAt: Date;
+  changelog?: string;
+  minAppVersion?: string;
+  maxAppVersion?: string;
+  downloads?: number;
+}
+
+/**
+ * Marketplace review
+ */
+export interface MarketplaceReview {
+  id: string;
+  pluginId: string;
+  userId: string;
+  userName?: string;
+  rating: number;
+  comment?: string;
+  createdAt: Date;
+  helpful?: number;
+}
+
+/**
+ * Plugin load result
+ */
+export interface PluginLoadResult {
+  success: boolean;
+  plugin?: PluginInstance;
+  error?: Error;
+  warnings?: string[];
+}
+
+/**
+ * Plugin validation result
+ */
+export interface PluginValidationResult {
+  valid: boolean;
+  errors: Array<{ field: string; message: string }>;
+  warnings: Array<{ field: string; message: string }>;
+  manifest?: PluginManifest;
+}
