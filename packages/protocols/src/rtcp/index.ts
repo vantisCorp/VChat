@@ -146,7 +146,7 @@ export class RTCPPacketHandler {
   /**
    * Parse SDES
    */
-  private static parseSDES(data: Uint8Array, header: RTCPHeader): RTCPSDES[] {
+  private static parseSDES(data: Uint8Array, header: RTCPHeader): RTCPSDES {
     const sdesList: RTCPSDES[] = [];
     let offset = 4;
     

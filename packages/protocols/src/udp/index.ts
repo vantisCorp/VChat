@@ -737,17 +737,3 @@ export class UDPAddressUtils {
     return a.ip === b.ip && a.port === b.port;
   }
 }
-
-// ============================================================================
-// EXPORTS
-// ============================================================================
-
-export {
-  UDPPacketHandler,
-  UDPPacketBuffer,
-  UDPStatistics,
-  UDPQoSManager,
-  UDPCongestionControl,
-  UDPSequenceManager,
-  UDPAddressUtils,
-};

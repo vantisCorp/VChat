@@ -439,7 +439,7 @@ export class SDPParser {
   /**
    * Parse ICE candidate
    */
-  private static parseCandidate(content: string): ICECandidate {
+  public static parseCandidate(content: string): ICECandidate {
     const parts = content.split(' ');
     const candidate: ICECandidate = {
       foundation: parts[0],
@@ -476,7 +476,7 @@ export class SDPParser {
   /**
    * Build ICE candidate string
    */
-  private static buildCandidate(candidate: ICECandidate): string {
+  public static buildCandidate(candidate: ICECandidate): string {
     let line = `candidate:${candidate.foundation} ${candidate.component} ${candidate.protocol} ${candidate.port} ${candidate.priority} typ ${candidate.type}`;
 
     if (candidate.relatedAddress) {
@@ -542,7 +542,7 @@ export class SDPParser {
     content: string
   ): { id: string; direction: 'send' | 'recv'; params?: Map<string, string> } {
     const parts = content.split(' ');
-    const rid = {
+    const rid: { id: string; direction: 'send' | 'recv'; params?: Map<string, string> } = {
       id: parts[0],
       direction: parts[1] as 'send' | 'recv',
     };
@@ -1117,11 +1117,4 @@ export class WebRTCSession {
 // ============================================================================
 // EXPORTS
 // ============================================================================
-
-export {
-  SDPParser,
-  ICEHandler,
-  DTLSHandler,
-  SDPUtils,
-  WebRTCSession,
-};
+// All classes are already exported at their declaration
