@@ -30,11 +30,7 @@ impl Crypto {
 
     /// Encrypt data using AES-256-GCM
     #[cfg(feature = "full")]
-    pub fn encrypt(
-        plaintext: &[u8],
-        key: &[u8; 32],
-        nonce: &[u8; 12],
-    ) -> VCommResult<Vec<u8>> {
+    pub fn encrypt(plaintext: &[u8], key: &[u8; 32], nonce: &[u8; 12]) -> VCommResult<Vec<u8>> {
         use aes_gcm::{
             aead::{Aead, KeyInit},
             Aes256Gcm, Nonce,
@@ -50,11 +46,7 @@ impl Crypto {
 
     /// Decrypt data using AES-256-GCM
     #[cfg(feature = "full")]
-    pub fn decrypt(
-        ciphertext: &[u8],
-        key: &[u8; 32],
-        nonce: &[u8; 12],
-    ) -> VCommResult<Vec<u8>> {
+    pub fn decrypt(ciphertext: &[u8], key: &[u8; 32], nonce: &[u8; 12]) -> VCommResult<Vec<u8>> {
         use aes_gcm::{
             aead::{Aead, KeyInit},
             Aes256Gcm, Nonce,

@@ -12,10 +12,7 @@ pub struct Messaging;
 
 impl Messaging {
     /// Send a message
-    pub async fn send_message(
-        channel_id: &ChannelId,
-        content: &str,
-    ) -> VCommResult<MessageId> {
+    pub async fn send_message(channel_id: &ChannelId, content: &str) -> VCommResult<MessageId> {
         // Message sending logic will be implemented
         let message_id = uuid::Uuid::new_v4().to_string();
         Ok(message_id)
@@ -28,10 +25,7 @@ impl Messaging {
     }
 
     /// Edit a message
-    pub async fn edit_message(
-        message_id: &MessageId,
-        new_content: &str,
-    ) -> VCommResult<()> {
+    pub async fn edit_message(message_id: &MessageId, new_content: &str) -> VCommResult<()> {
         // Message editing logic will be implemented
         Ok(())
     }

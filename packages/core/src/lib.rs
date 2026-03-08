@@ -125,21 +125,19 @@ pub fn init() {
         #[cfg(feature = "telemetry")]
         {
             if let Some(location) = panic_info.location() {
-                sentry::capture_event(
-                    sentry::protocol::Event {
-                        level: sentry::Level::Fatal,
-                        message: Some(panic_info.to_string()),
-                        extra: {
-                            let mut map = std::collections::HashMap::new();
-                            map.insert("file".to_string(), location.file().to_string());
-                            map.insert("line".to_string(), location.line().to_string());
-                            map.insert("column".to_string(), location.column().to_string());
-                            map.insert("backtrace".to_string(), backtrace.to_string());
-                            map
-                        },
-                        ..Default::default()
-                    }
-                );
+                sentry::capture_event(sentry::protocol::Event {
+                    level: sentry::Level::Fatal,
+                    message: Some(panic_info.to_string()),
+                    extra: {
+                        let mut map = std::collections::HashMap::new();
+                        map.insert("file".to_string(), location.file().to_string());
+                        map.insert("line".to_string(), location.line().to_string());
+                        map.insert("column".to_string(), location.column().to_string());
+                        map.insert("backtrace".to_string(), backtrace.to_string());
+                        map
+                    },
+                    ..Default::default()
+                });
             }
         }
     }));
@@ -149,7 +147,7 @@ pub fn init() {
         .with_env_filter(
             tracing_subscriber::EnvFilter::from_default_env()
                 .add_directive(tracing::Level::INFO.into())
-                .add_directive("vcomm_core=debug".parse().unwrap())
+                .add_directive("vcomm_core=debug".parse().unwrap()),
         )
         .with_target(true)
         .with_thread_ids(true)

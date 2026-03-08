@@ -11,7 +11,7 @@ import {
   BatchResult,
   NodeMap,
   WorkerMessage,
-  WorkerResponse
+  WorkerResponse,
 } from './types';
 
 export class BatchMessageSender {
@@ -30,7 +30,7 @@ export class BatchMessageSender {
    * Main entry point for batch message sending
    */
   async sendBatch(batch: MessageBatch): Promise<BatchResult> {
-    const startTime = Date.now();
+    const _startTime = Date.now();
 
     // 1. Group by node if requested (optimization for distributed systems)
     if (batch.options?.groupByNode && batch.recipients.length > 100) {
@@ -75,11 +75,11 @@ export class BatchMessageSender {
   ): Promise<BatchResult> {
     const results: BatchResult[] = [];
 
-    for (const [node, recipients] of Object.entries(nodeMap)) {
+    for (const [_node, recipients] of Object.entries(nodeMap)) {
       const batch: MessageBatch = {
         recipients,
         message: options?.packMode === 'binary' ? this.packMessage(message) : message,
-        options: { ...options, sendMode: 'direct' }
+        options: { ...options, sendMode: 'direct' },
       };
 
       const result = await this.sendDirect(batch);
@@ -100,8 +100,9 @@ export class BatchMessageSender {
       const workerMessage: WorkerMessage = {
         type: 'SEND_BATCH',
         recipients: batch.recipients,
-        message: batch.options?.packMode === 'binary' ? this.packMessage(batch.message) : batch.message,
-        options: batch.options
+        message:
+          batch.options?.packMode === 'binary' ? this.packMessage(batch.message) : batch.message,
+        options: batch.options,
       };
 
       worker.postMessage(workerMessage);
@@ -112,10 +113,10 @@ export class BatchMessageSender {
           failed: response.failed,
           duration: response.duration,
           recipients: response.recipients,
-          errors: response.errors?.map(e => ({
+          errors: response.errors?.map((e) => ({
             recipient: e.recipient,
-            error: new Error(e.error)
-          }))
+            error: new Error(e.error),
+          })),
         });
       });
 
@@ -157,7 +158,7 @@ export class BatchMessageSender {
       failed,
       duration: Date.now() - Date.now(), // Will be calculated by caller
       recipients: batch.recipients,
-      errors
+      errors,
     };
   }
 
@@ -182,7 +183,7 @@ export class BatchMessageSender {
   private getAvailableWorker(): Worker {
     if (this.workers.length < this.maxWorkers) {
       const worker = new Worker('./batch-worker.ts', {
-        workerData: { workerId: this.workers.length }
+        workerData: { workerId: this.workers.length },
       });
       this.workers.push(worker);
       return worker;
@@ -212,7 +213,7 @@ export class BatchMessageSender {
     let hash = 0;
     for (let i = 0; i < str.length; i++) {
       const char = str.charCodeAt(i);
-      hash = ((hash << 5) - hash) + char;
+      hash = (hash << 5) - hash + char;
       hash = hash & hash; // Convert to 32bit integer
     }
     return Math.abs(hash);
@@ -222,33 +223,37 @@ export class BatchMessageSender {
    * Merge multiple batch results
    */
   private mergeResults(results: BatchResult[]): BatchResult {
-    return results.reduce((acc, result) => ({
-      sent: acc.sent + result.sent,
-      failed: acc.failed + result.failed,
-      duration: acc.duration + result.duration,
-      recipients: [...acc.recipients, ...result.recipients],
-      errors: [...(acc.errors || []), ...(result.errors || [])]
-    }), {
-      sent: 0,
-      failed: 0,
-      duration: 0,
-      recipients: [],
-      errors: []
-    });
+    return results.reduce(
+      (acc, result) => ({
+        sent: acc.sent + result.sent,
+        failed: acc.failed + result.failed,
+        duration: acc.duration + result.duration,
+        recipients: [...acc.recipients, ...result.recipients],
+        errors: [...(acc.errors || []), ...(result.errors || [])],
+      }),
+      {
+        sent: 0,
+        failed: 0,
+        duration: 0,
+        recipients: [],
+        errors: [],
+      }
+    );
   }
 
   /**
    * Send message to a single recipient
    * This should be overridden with actual implementation
    */
-  private async sendMessage(recipient: string, message: any): Promise<void> {
+  private async sendMessage(recipient: string, _message: any): Promise<void> {
     // TODO: Implement actual message sending logic
     // This could be WebSocket, gRPC, HTTP, or any transport
     // For now, simulate with a delay
-    await new Promise(resolve => setTimeout(resolve, Math.random() * 10));
+    await new Promise((resolve) => setTimeout(resolve, Math.random() * 10));
 
     // Simulate occasional failures
-    if (Math.random() < 0.01) { // 1% failure rate
+    if (Math.random() < 0.01) {
+      // 1% failure rate
       throw new Error(`Failed to send to ${recipient}`);
     }
   }
@@ -282,7 +287,7 @@ export class BatchMessageSender {
     return {
       workersCount: this.workers.length,
       nodesCount: this.nodeMap.size,
-      maxWorkers: this.maxWorkers
+      maxWorkers: this.maxWorkers,
     };
   }
 
@@ -290,7 +295,7 @@ export class BatchMessageSender {
    * Clean up resources
    */
   destroy(): void {
-    this.workers.forEach(worker => {
+    this.workers.forEach((worker) => {
       worker.terminate();
     });
     this.workers = [];

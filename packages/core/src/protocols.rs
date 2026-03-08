@@ -38,10 +38,7 @@ impl Protocols {
 
     /// Process key exchange
     #[cfg(feature = "signal")]
-    pub async fn process_key_exchange(
-        user_id: &str,
-        key_exchange: &str,
-    ) -> VCommResult<()> {
+    pub async fn process_key_exchange(user_id: &str, key_exchange: &str) -> VCommResult<()> {
         // Key exchange processing will be implemented
         Err(VCommError::not_implemented("Key exchange processing"))
     }

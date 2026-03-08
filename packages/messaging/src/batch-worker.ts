@@ -4,10 +4,11 @@
  */
 
 import { parentPort, workerData } from 'worker_threads';
-import * as msgpack from 'msgpack-lite';
+// msgpack is available for future binary encoding needs
+// import * as msgpack from 'msgpack-lite';
 import { WorkerMessage, WorkerResponse } from './types';
 
-interface WorkerData {
+interface _WorkerData {
   workerId: number;
 }
 
@@ -29,10 +30,10 @@ export function startBatchWorker(): void {
           failed: data.recipients.length,
           duration: 0,
           recipients: data.recipients,
-          errors: data.recipients.map(r => ({
+          errors: data.recipients.map((r) => ({
             recipient: r,
-            error: (error as Error).message
-          }))
+            error: (error as Error).message,
+          })),
         });
       }
     }
@@ -52,18 +53,20 @@ async function handleSendBatch(data: WorkerMessage): Promise<WorkerResponse> {
   const chunks = chunkArray(data.recipients, concurrencyLimit);
 
   for (const chunk of chunks) {
-    await Promise.all(chunk.map(async (recipient) => {
-      try {
-        await sendToRecipient(recipient, data.message);
-        sent++;
-      } catch (error) {
-        failed++;
-        errors.push({
-          recipient,
-          error: (error as Error).message
-        });
-      }
-    }));
+    await Promise.all(
+      chunk.map(async (recipient) => {
+        try {
+          await sendToRecipient(recipient, data.message);
+          sent++;
+        } catch (error) {
+          failed++;
+          errors.push({
+            recipient,
+            error: (error as Error).message,
+          });
+        }
+      })
+    );
   }
 
   return {
@@ -71,18 +74,19 @@ async function handleSendBatch(data: WorkerMessage): Promise<WorkerResponse> {
     failed,
     duration: Date.now() - startTime,
     recipients: data.recipients,
-    errors
+    errors,
   };
 }
 
-async function sendToRecipient(recipient: string, message: any): Promise<void> {
+async function sendToRecipient(recipient: string, _message: any): Promise<void> {
   // TODO: Implement actual message sending logic
   // This could be WebSocket, gRPC, HTTP, or any transport
   // For now, simulate with a delay
-  await new Promise(resolve => setTimeout(resolve, Math.random() * 10));
+  await new Promise((resolve) => setTimeout(resolve, Math.random() * 10));
 
   // Simulate occasional failures
-  if (Math.random() < 0.01) { // 1% failure rate
+  if (Math.random() < 0.01) {
+    // 1% failure rate
     throw new Error(`Failed to send to ${recipient}`);
   }
 }
