@@ -22,23 +22,22 @@ export class SentryIntegration {
       environment: config.environment,
       tracesSampleRate: config.sampleRate || 1.0,
       integrations: [
-        new Sentry.Integrations.Http({ tracing: true }),
-        new Sentry.Integrations.Express(),
-        new Sentry.Integrations.FunctionToString(),
+        Sentry.httpIntegration(),
+        Sentry.expressIntegration(),
       ],
-      beforeSend(event, hint) {
+      beforeSend(event) {
         // Add custom context
         event.tags = {
           ...event.tags,
           service: 'vcomm-api',
-          version: process.env.APP_VERSION || 'unknown'
+          version: process.env['APP_VERSION'] || 'unknown'
         };
 
         // Filter out sensitive data
         if (event.request) {
           delete event.request.cookies;
           if (event.request.headers) {
-            delete event.request.headers.authorization;
+            delete event.request.headers['authorization'];
           }
         }
 
@@ -82,12 +81,12 @@ export class SentryIntegration {
   /**
    * Start a performance transaction
    */
-  startTransaction(name: string, op: string): Sentry.Transaction | undefined {
+  startTransaction(name: string, op: string): Sentry.Span | undefined {
     if (!this.initialized) {
       return undefined;
     }
 
-    return Sentry.startTransaction({
+    return Sentry.startInactiveSpan({
       name,
       op
     });

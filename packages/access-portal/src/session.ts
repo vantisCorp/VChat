@@ -107,7 +107,8 @@ export class SessionManager {
 
   parseUserAgent(userAgent: string): Session['device'] {
     const ua = userAgent.toLowerCase();
-    let type: Session['device']['type'] = 'unknown';
+    type DeviceType = 'desktop' | 'mobile' | 'tablet' | 'unknown';
+    let type: DeviceType = 'unknown';
     if (/mobile|android|iphone/.test(ua)) type = 'mobile';
     else if (/tablet|ipad/.test(ua)) type = 'tablet';
     else if (/windows|macintosh|linux/.test(ua)) type = 'desktop';

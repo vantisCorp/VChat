@@ -6,7 +6,7 @@
 import { generateKeyPair, createSign, createVerify, constants } from 'crypto';
 import * as ed25519 from '@noble/ed25519';
 import * as secp256k1 from '@noble/secp256k1';
-import { sha512 } from '../hash';
+import { sha256, sha512 } from '../hash';
 import { randomBytes } from '../random';
 import {
   KeyAlgorithm,
@@ -115,7 +115,7 @@ export async function generateSecp256k1KeyPair(
 ): Promise<KeyPair> {
   try {
     // Generate random private key
-    const privateKeyRaw = secp256k1.utils.randomPrivateKey();
+    const privateKeyRaw = secp256k1.utils.randomSecretKey();
     
     // Derive public key (compressed)
     const publicKeyRaw = secp256k1.getPublicKey(privateKeyRaw, true);
@@ -258,11 +258,10 @@ export async function sign(
         if (!privateKey.raw) {
           throw new SignatureError('Private key not extractable');
         }
-        const hash = secp256k1.utils.sha256(dataBytes);
-        const signature = await secp256k1.signAsync(hash, privateKey.raw);
-        const derSignature = signature.toDERRawBytes();
+        // secp256k1 v3: signAsync prehashes with sha256 by default
+        const signatureBytes = await secp256k1.signAsync(dataBytes, privateKey.raw, { format: 'der' });
         return {
-          raw: derSignature,
+          raw: signatureBytes,
           algorithm: 'ecdsa-secp256k1',
         };
       }
@@ -322,9 +321,8 @@ export async function verify(
       }
       
       case 'ecdsa-secp256k1': {
-        const hash = secp256k1.utils.sha256(dataBytes);
-        const sig = secp256k1.Signature.fromDERRawBytes(signature.raw);
-        return secp256k1.verifyAsync(sig, hash, publicKey.raw);
+        // secp256k1 v3: verify handles prehashing by default, uses DER format
+        return secp256k1.verify(signature.raw, dataBytes, publicKey.raw, { format: 'der' });
       }
       
       case 'rsa-pss':

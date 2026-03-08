@@ -185,9 +185,12 @@ export class PluginSystem {
 
     // Fire installation hooks
     await this.hookManager.execute('plugin.after-install', {
+      type: 'plugin:install' as const,
       pluginId: instance.id,
       data: instance,
       timestamp: new Date(),
+      mutable: false,
+      stopped: false,
     });
 
     return instance;
@@ -202,8 +205,8 @@ export class PluginSystem {
     const instance = this.registry.get(pluginId);
     if (!instance) {
       throw new PluginError(
-        `Plugin ${pluginId} not found`,
-        PluginErrorCode.NOT_FOUND
+        PluginErrorCode.NOT_FOUND,
+        `Plugin ${pluginId} not found`
       );
     }
 
@@ -214,9 +217,12 @@ export class PluginSystem {
 
     // Fire uninstallation hooks
     await this.hookManager.execute('plugin.before-uninstall', {
+      type: 'plugin:uninstall' as const,
       pluginId,
       data: instance,
       timestamp: new Date(),
+      mutable: false,
+      stopped: false,
     });
 
     // Cleanup sandbox
@@ -230,9 +236,12 @@ export class PluginSystem {
 
     if (result) {
       await this.hookManager.execute('plugin.after-uninstall', {
+        type: 'plugin:uninstall' as const,
         pluginId,
         data: { id: pluginId },
         timestamp: new Date(),
+        mutable: false,
+        stopped: false,
       });
     }
 
@@ -248,8 +257,8 @@ export class PluginSystem {
     const instance = this.registry.get(pluginId);
     if (!instance) {
       throw new PluginError(
-        `Plugin ${pluginId} not found`,
-        PluginErrorCode.NOT_FOUND
+        PluginErrorCode.NOT_FOUND,
+        `Plugin ${pluginId} not found`
       );
     }
 
@@ -261,8 +270,8 @@ export class PluginSystem {
         if (!depPlugin || depPlugin.status !== 'enabled') {
           if (!dep.optional) {
             throw new PluginError(
-              `Required dependency ${dep.pluginId} is not enabled`,
-              PluginErrorCode.DEPENDENCY_MISSING
+              PluginErrorCode.DEPENDENCY_MISSING,
+              `Required dependency ${dep.pluginId} is not enabled`
             );
           }
         }
@@ -271,9 +280,12 @@ export class PluginSystem {
 
     // Fire before-enable hooks
     await this.hookManager.execute('plugin.before-enable', {
+      type: 'plugin:enable' as const,
       pluginId,
       data: instance,
       timestamp: new Date(),
+      mutable: false,
+      stopped: false,
     });
 
     // Update status
@@ -281,9 +293,12 @@ export class PluginSystem {
 
     // Fire after-enable hooks
     await this.hookManager.execute('plugin.after-enable', {
+      type: 'plugin:enable' as const,
       pluginId,
       data: instance,
       timestamp: new Date(),
+      mutable: false,
+      stopped: false,
     });
 
     return true;
@@ -298,8 +313,8 @@ export class PluginSystem {
     const instance = this.registry.get(pluginId);
     if (!instance) {
       throw new PluginError(
-        `Plugin ${pluginId} not found`,
-        PluginErrorCode.NOT_FOUND
+        PluginErrorCode.NOT_FOUND,
+        `Plugin ${pluginId} not found`
       );
     }
 
@@ -312,16 +327,19 @@ export class PluginSystem {
 
     if (enabledDependents.length > 0) {
       throw new PluginError(
-        `Cannot disable: plugins [${enabledDependents.join(', ')}] depend on this plugin`,
-        PluginErrorCode.DEPENDENCY_CONFLICT
+        PluginErrorCode.DEPENDENCY_CONFLICT,
+        `Cannot disable: plugins [${enabledDependents.join(', ')}] depend on this plugin`
       );
     }
 
     // Fire before-disable hooks
     await this.hookManager.execute('plugin.before-disable', {
+      type: 'plugin:disable' as const,
       pluginId,
       data: instance,
       timestamp: new Date(),
+      mutable: false,
+      stopped: false,
     });
 
     // Update status
@@ -329,9 +347,12 @@ export class PluginSystem {
 
     // Fire after-disable hooks
     await this.hookManager.execute('plugin.after-disable', {
+      type: 'plugin:disable' as const,
       pluginId,
       data: instance,
       timestamp: new Date(),
+      mutable: false,
+      stopped: false,
     });
 
     return true;
@@ -428,7 +449,7 @@ export class PluginSystem {
    */
   checkPermission(
     pluginId: string,
-    permission: PluginPermission,
+    permission: string,
     context?: PermissionCheckContext
   ): boolean {
     const plugin = this.registry.get(pluginId);
@@ -448,8 +469,8 @@ export class PluginSystem {
     const plugin = this.registry.get(pluginId);
     if (!plugin) {
       throw new PluginError(
-        `Plugin ${pluginId} not found`,
-        PluginErrorCode.NOT_FOUND
+        PluginErrorCode.NOT_FOUND,
+        `Plugin ${pluginId} not found`
       );
     }
     return this.sandbox.execute(plugin, fn);
@@ -539,8 +560,8 @@ export class PluginSystem {
   private ensureInitialized(): void {
     if (!this.initialized) {
       throw new PluginError(
-        'Plugin system not initialized. Call initialize() first.',
-        PluginErrorCode.NOT_INITIALIZED
+        PluginErrorCode.NOT_INITIALIZED,
+        'Plugin system not initialized. Call initialize() first.'
       );
     }
   }

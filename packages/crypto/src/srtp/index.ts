@@ -253,15 +253,24 @@ export class SRTPSession {
     const hasExtension = (firstByte & 0x10) !== 0;
     const csrcCount = firstByte & 0x0f;
     
+    let headerLength = 12 + (csrcCount * 4);
+    
+    // Handle extension header
+    if (hasExtension && packet.length >= headerLength + 4) {
+      const extLength = (packet[headerLength + 2] << 8) | packet[headerLength + 3];
+      headerLength += 4 + (extLength * 4);
+    }
+    
+    const rawHeader = packet.slice(0, headerLength);
+    
     const header: SRTPHeader = {
       packetType: packet[1] & 0x7f,
       sequenceNumber: (packet[2] << 8) | packet[3],
       timestamp: (packet[4] << 24) | (packet[5] << 16) | (packet[6] << 8) | packet[7],
       ssrc: (packet[8] << 24) | (packet[9] << 16) | (packet[10] << 8) | packet[11],
       csrc: [],
+      raw: rawHeader,
     };
-    
-    let headerLength = 12 + (csrcCount * 4);
     
     // Parse CSRCs
     for (let i = 0; i < csrcCount; i++) {
@@ -272,16 +281,10 @@ export class SRTPSession {
       );
     }
     
-    // Handle extension header
-    if (hasExtension && packet.length >= headerLength + 4) {
-      const extLength = (packet[headerLength + 2] << 8) | packet[headerLength + 3];
-      headerLength += 4 + (extLength * 4);
-    }
-    
     return {
       header,
       payload: packet.slice(headerLength),
-      raw: packet.slice(0, headerLength),
+      raw: rawHeader,
     };
   }
   

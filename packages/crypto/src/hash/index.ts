@@ -115,6 +115,13 @@ export function verifyHmac(
 }
 
 /**
+ * SHA-1 hash (deprecated for most uses, but needed for SRTP)
+ */
+export function sha1(data: Uint8Array | string): Uint8Array {
+  return hash(data, 'sha1');
+}
+
+/**
  * SHA-256 hash
  */
 export function sha256(data: Uint8Array | string): Uint8Array {
@@ -213,6 +220,7 @@ export function hash160(data: Uint8Array | string): Uint8Array {
  */
 function mapAlgorithm(algorithm: HashAlgorithm): string {
   const mapping: Record<HashAlgorithm, string> = {
+    'sha1': 'sha1',
     'sha256': 'sha256',
     'sha384': 'sha384',
     'sha512': 'sha512',

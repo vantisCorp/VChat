@@ -191,7 +191,7 @@ export class BatchMessageSender {
     // Round-robin selection
     const index = this.workerIndex % this.workers.length;
     this.workerIndex++;
-    return this.workers[index];
+    return this.workers[index]!;
   }
 
   /**

@@ -460,7 +460,9 @@ export function rateLimit<T extends (...args: any[]) => Promise<any>>(
     
     if (!result.allowed) {
       throw new RateLimitExceededError(
-        `Rate limit exceeded. Retry after ${result.retryAfter}ms`
+        result.limit ?? options.maxRequests,
+        result.resetTime ?? 0,
+        result.retryAfter ?? 0
       );
     }
     

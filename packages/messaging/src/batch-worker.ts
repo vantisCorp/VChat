@@ -16,13 +16,15 @@ export function startBatchWorker(): void {
     throw new Error('Worker must be created with parentPort');
   }
 
-  parentPort.on('message', async (data: WorkerMessage) => {
+  const port = parentPort;
+
+  port.on('message', async (data: WorkerMessage) => {
     if (data.type === 'SEND_BATCH') {
       try {
         const result = await handleSendBatch(data);
-        parentPort.postMessage(result);
+        port.postMessage(result);
       } catch (error) {
-        parentPort.postMessage({
+        port.postMessage({
           sent: 0,
           failed: data.recipients.length,
           duration: 0,

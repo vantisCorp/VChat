@@ -7,7 +7,6 @@
 
 import {
   PluginInstance,
-  PluginPermission,
   PluginError,
   PluginErrorCode,
   PermissionCheckContext,
@@ -48,7 +47,7 @@ const DEFAULT_SANDBOX_CONFIG: Required<SandboxConfig> = {
  */
 interface PermissionRule {
   /** Permission being controlled */
-  permission: PluginPermission;
+  permission: string;
   /** Whether permission is granted */
   granted: boolean;
   /** Optional conditions */
@@ -125,9 +124,10 @@ export class PluginSandbox {
     // Initialize permission rules from manifest
     const rules: PermissionRule[] = [];
     
-    for (const permission of plugin.permissions) {
+    for (const permission of (plugin.permissions || [])) {
+      const permType = typeof permission === 'string' ? permission : permission.type;
       rules.push({
-        permission,
+        permission: permType,
         granted: true,
         source: 'manifest',
       });
@@ -163,7 +163,7 @@ export class PluginSandbox {
    */
   checkPermission(
     plugin: PluginInstance,
-    permission: PluginPermission,
+    permission: string,
     context?: PermissionCheckContext
   ): boolean {
     if (!this.config.enforcePermissions) {
@@ -171,9 +171,9 @@ export class PluginSandbox {
     }
 
     const rules = this.permissionRules.get(plugin.id) || [];
-    
+
     // Find applicable rules
-    const applicableRules = rules.filter(r => 
+    const applicableRules = rules.filter(r =>
       r.permission === permission || this.isWildcardMatch(r.permission, permission)
     );
 
@@ -206,9 +206,9 @@ export class PluginSandbox {
    */
   checkPermissions(
     plugin: PluginInstance,
-    permissions: PluginPermission[],
+    permissions: string[],
     context?: PermissionCheckContext
-  ): { permission: PluginPermission; granted: boolean }[] {
+  ): { permission: string; granted: boolean }[] {
     return permissions.map(permission => ({
       permission,
       granted: this.checkPermission(plugin, permission, context),
@@ -220,11 +220,11 @@ export class PluginSandbox {
    */
   grantPermission(
     pluginId: string,
-    permission: PluginPermission,
+    permission: string,
     source: 'user' | 'system' = 'user'
   ): void {
     const rules = this.permissionRules.get(pluginId) || [];
-    
+
     // Check if already granted
     const existing = rules.find(r => r.permission === permission);
     if (existing) {
@@ -244,10 +244,10 @@ export class PluginSandbox {
   /**
    * Revoke permission from a plugin
    */
-  revokePermission(pluginId: string, permission: PluginPermission): void {
+  revokePermission(pluginId: string, permission: string): void {
     const rules = this.permissionRules.get(pluginId) || [];
     const existing = rules.find(r => r.permission === permission);
-    
+
     if (existing) {
       existing.granted = false;
     } else {
@@ -313,8 +313,8 @@ export class PluginSandbox {
     return new Promise((resolve, reject) => {
       const timer = setTimeout(() => {
         reject(new PluginError(
-          `Execution timed out after ${timeout}ms`,
-          PluginErrorCode.EXECUTION_TIMEOUT
+          PluginErrorCode.EXECUTION_TIMEOUT,
+          `Execution timed out after ${timeout}ms`
         ));
       }, timeout);
 
@@ -333,7 +333,7 @@ export class PluginSandbox {
   /**
    * Check wildcard permission match
    */
-  private isWildcardMatch(pattern: string, permission: PluginPermission): boolean {
+  private isWildcardMatch(pattern: string, permission: string): boolean {
     if (!pattern.includes('*')) {
       return false;
     }
@@ -370,7 +370,7 @@ export class PluginSandbox {
           return context.serverId === condition.value;
         }
         if (Array.isArray(condition.value)) {
-          return condition.value.includes(context.serverId);
+          return context.serverId ? condition.value.includes(context.serverId) : false;
         }
         return true;
 
@@ -379,7 +379,7 @@ export class PluginSandbox {
           return context.channelId === condition.value;
         }
         if (Array.isArray(condition.value)) {
-          return condition.value.includes(context.channelId || '');
+          return context.channelId ? condition.value.includes(context.channelId) : false;
         }
         return true;
 
@@ -388,7 +388,7 @@ export class PluginSandbox {
           return context.userId === condition.value;
         }
         if (Array.isArray(condition.value)) {
-          return condition.value.includes(context.userId);
+          return context.userId ? condition.value.includes(context.userId) : false;
         }
         return true;
 
@@ -414,7 +414,7 @@ export class PluginSandbox {
    */
   private logPermissionCheck(
     pluginId: string,
-    permission: PluginPermission,
+    permission: string,
     granted: boolean,
     reason: string
   ): void {
@@ -477,6 +477,7 @@ export class PluginSandbox {
    */
   createContext(context: Partial<PermissionCheckContext>): PermissionCheckContext {
     return {
+      permission: context.permission || 'user:read',
       pluginId: context.pluginId || '',
       userId: context.userId || '',
       serverId: context.serverId || '',

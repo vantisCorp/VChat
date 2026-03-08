@@ -9,6 +9,7 @@ import {
   CircuitState,
   CircuitOpenError,
   ConcurrencyError,
+  ConcurrencyErrorCode,
 } from '../types';
 
 /**
@@ -261,7 +262,7 @@ export class CircuitBreaker {
   private executeWithTimeout<T>(fn: () => Promise<T>): Promise<T> {
     return new Promise((resolve, reject) => {
       const timeoutId = setTimeout(() => {
-        reject(new ConcurrencyError(`Operation timed out after ${this.timeout}ms`));
+        reject(new ConcurrencyError(`Operation timed out after ${this.timeout}ms`, ConcurrencyErrorCode.ACQUIRE_TIMEOUT));
       }, this.timeout);
       
       fn()

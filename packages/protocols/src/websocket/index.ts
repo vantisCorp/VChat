@@ -337,7 +337,7 @@ export class WSMessageParser {
   static stringify<T>(message: WSMessage<T>): string {
     // Convert Uint8Array to array for JSON serialization
     if (message.header.type === WSMessageType.VOICE_DATA && message.payload) {
-      const payload = message.payload as WSVoiceDataPayload;
+      const payload = message.payload as unknown as WSVoiceDataPayload;
       if (payload.data instanceof Uint8Array) {
         return JSON.stringify({
           ...message,
@@ -766,12 +766,4 @@ export class WSMessageQueue {
 // ============================================================================
 // EXPORTS
 // ============================================================================
-
-export {
-  WSMessageBuilder,
-  WSMessageParser,
-  WSMessageValidator,
-  WSHeartbeatManager,
-  WSReconnectManager,
-  WSMessageQueue,
-};
+// All classes are already exported at their declaration

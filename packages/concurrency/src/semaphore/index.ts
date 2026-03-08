@@ -228,7 +228,8 @@ export class Semaphore {
         if (index !== -1) {
           this.waitQueue.splice(index, 1);
           reject(new AcquireTimeoutError(
-            `Timeout acquiring permit from ${this.name} after ${this.timeout}ms`
+            this.timeout,
+            this.name ?? 'semaphore'
           ));
         }
       }, this.timeout);

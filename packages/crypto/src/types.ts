@@ -145,11 +145,11 @@ export interface EncryptionResult {
  * Decryption options
  */
 export interface DecryptOptions {
-  /** Algorithm (must match encryption) */
-  algorithm: SymmetricAlgorithm;
+  /** Algorithm (must match encryption, derived from EncryptionResult if not provided) */
+  algorithm?: SymmetricAlgorithm;
   
   /** Initialization vector */
-  iv: Uint8Array;
+  iv?: Uint8Array;
   
   /** Additional authenticated data */
   aad?: Uint8Array;
@@ -216,7 +216,7 @@ export interface Signature {
 /**
  * Hash algorithms
  */
-export type HashAlgorithm = 'sha256' | 'sha384' | 'sha512' | 'sha3-256' | 'sha3-512' | 'blake2b' | 'blake2s';
+export type HashAlgorithm = 'sha1' | 'sha256' | 'sha384' | 'sha512' | 'sha3-256' | 'sha3-512' | 'blake2b' | 'blake2s';
 
 /**
  * Hash options
@@ -362,6 +362,9 @@ export interface SRTPHeader {
   
   /** Header extension */
   extension?: Uint8Array;
+  
+  /** Raw header bytes */
+  raw: Uint8Array;
 }
 
 // ============================================================================

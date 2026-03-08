@@ -101,16 +101,16 @@ export class PluginRegistry {
     // Check if already registered
     if (this.plugins.has(manifest.id)) {
       throw new PluginError(
-        `Plugin ${manifest.id} is already registered`,
-        PluginErrorCode.PLUGIN_ALREADY_EXISTS
+        PluginErrorCode.PLUGIN_ALREADY_EXISTS,
+        `Plugin ${manifest.id} is already registered`
       );
     }
 
     // Check max plugins limit
     if (this.plugins.size >= this.config.maxPlugins) {
       throw new PluginError(
-        `Maximum plugins limit (${this.config.maxPlugins}) reached`,
-        PluginErrorCode.LIMIT_EXCEEDED
+        PluginErrorCode.LIMIT_EXCEEDED,
+        `Maximum plugins limit (${this.config.maxPlugins}) reached`
       );
     }
 
@@ -119,8 +119,8 @@ export class PluginRegistry {
       const missingDeps = this.checkDependencies(manifest);
       if (missingDeps.length > 0 && !this.config.autoResolveDependencies) {
         throw new PluginError(
-          `Missing dependencies: ${missingDeps.map(d => d.pluginId).join(', ')}`,
-          PluginErrorCode.DEPENDENCY_MISSING
+          PluginErrorCode.DEPENDENCY_MISSING,
+          `Missing dependencies: ${missingDeps.map(d => d.pluginId).join(', ')}`
         );
       }
     }
@@ -166,8 +166,8 @@ export class PluginRegistry {
     const dependents = this.getDependents(pluginId);
     if (dependents.length > 0) {
       throw new PluginError(
-        `Cannot unregister: plugins [${dependents.join(', ')}] depend on ${pluginId}`,
-        PluginErrorCode.DEPENDENCY_CONFLICT
+        PluginErrorCode.DEPENDENCY_CONFLICT,
+        `Cannot unregister: plugins [${dependents.join(', ')}] depend on ${pluginId}`
       );
     }
 
@@ -264,22 +264,22 @@ export class PluginRegistry {
   private validateManifest(manifest: PluginManifest): void {
     if (!manifest.id) {
       throw new PluginError(
-        'Plugin manifest must have an id',
-        PluginErrorCode.INVALID_MANIFEST
+        PluginErrorCode.INVALID_MANIFEST,
+        'Plugin manifest must have an id'
       );
     }
 
     if (!manifest.name) {
       throw new PluginError(
-        'Plugin manifest must have a name',
-        PluginErrorCode.INVALID_MANIFEST
+        PluginErrorCode.INVALID_MANIFEST,
+        'Plugin manifest must have a name'
       );
     }
 
     if (!manifest.version) {
       throw new PluginError(
-        'Plugin manifest must have a version',
-        PluginErrorCode.INVALID_MANIFEST
+        PluginErrorCode.INVALID_MANIFEST,
+        'Plugin manifest must have a version'
       );
     }
 
@@ -293,8 +293,8 @@ export class PluginRegistry {
     const versionPattern = /^\d+\.\d+\.\d+(-[a-zA-Z0-9.]+)?$/;
     if (!versionPattern.test(manifest.version)) {
       throw new PluginError(
-        `Invalid version format: ${manifest.version}. Expected semantic versioning (e.g., 1.0.0)`,
-        PluginErrorCode.INVALID_MANIFEST
+        PluginErrorCode.INVALID_MANIFEST,
+        `Invalid version format: ${manifest.version}. Expected semantic versioning (e.g., 1.0.0)`
       );
     }
   }
@@ -438,22 +438,21 @@ export class PluginRegistry {
     }
 
     // Check for permission conflicts (plugins requesting same sensitive permissions)
-    const permissionMap = new Map<PluginPermission, string[]>();
+    const permissionMap = new Map<string, string[]>();
     for (const plugin of plugins) {
-      for (const perm of plugin.permissions) {
-        const existing = permissionMap.get(perm) || [];
+      for (const perm of (plugin.permissions || [])) {
+        const permType = typeof perm === 'string' ? perm : perm.type;
+        const existing = permissionMap.get(permType) || [];
         existing.push(plugin.id);
-        permissionMap.set(perm, existing);
+        permissionMap.set(permType, existing);
       }
     }
 
-    const sensitivePermissions: PluginPermission[] = [
-      'server.manage',
-      'user.ban',
-      'user.kick',
-      'message.delete.any',
-      'channel.manage',
-      'permissions.manage',
+    const sensitivePermissions: string[] = [
+      'server:manage',
+      'server:config',
+      'message:delete',
+      'channel:delete',
     ];
 
     for (const [perm, pluginIds] of permissionMap) {
