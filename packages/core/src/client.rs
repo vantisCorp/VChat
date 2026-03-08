@@ -25,7 +25,7 @@ impl VCommClient {
     /// Create a new V-COMM client
     pub async fn new(config: Config) -> VCommResult<Self> {
         tracing::info!("Creating V-COMM client with config: {:?}", config);
-        
+
         Ok(Self {
             config,
             state: Arc::new(RwLock::new(ClientState::default())),
@@ -35,11 +35,11 @@ impl VCommClient {
     /// Connect to the V-COMM server
     pub async fn connect(&self) -> VCommResult<()> {
         tracing::info!("Connecting to {}", self.config.server_url);
-        
+
         // Connection logic will be implemented
         let mut state = self.state.write().await;
         state.connected = true;
-        
+
         tracing::info!("Connected successfully");
         Ok(())
     }
@@ -47,11 +47,11 @@ impl VCommClient {
     /// Disconnect from the server
     pub async fn disconnect(&self) -> VCommResult<()> {
         tracing::info!("Disconnecting");
-        
+
         let mut state = self.state.write().await;
         state.connected = false;
         state.authenticated = false;
-        
+
         tracing::info!("Disconnected successfully");
         Ok(())
     }
