@@ -19,6 +19,8 @@ export default [
       '**/target/**',
       '**/coverage/**',
       '**/*.d.ts',
+      '**/*.test.ts',
+      '**/*.spec.ts',
     ],
   },
   js.configs.recommended,
