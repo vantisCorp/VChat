@@ -29,12 +29,11 @@
       "persistent": true
     },
     "lint": {
-      "dependsOn": ["^lint"],
       "outputs": [],
       "cache": true
     },
     "test": {
-      "dependsOn": ["^build"],
+      "dependsOn": ["build"],
       "outputs": [],
       "cache": true
     },
@@ -43,7 +42,7 @@
       "cache": true
     },
     "type-check": {
-      "dependsOn": ["^build"],
+      "dependsOn": ["build"],
       "outputs": [],
       "cache": true
     },
@@ -51,7 +50,6 @@
       "cache": false
     },
     "cargo:build": {
-      "dependsOn": ["^cargo:build"],
       "outputs": [
         "target/**"
       ],
@@ -68,7 +66,7 @@
       "cache": true
     },
     "docs:build": {
-      "dependsOn": ["^build"],
+      "dependsOn": ["build"],
       "outputs": [
         "docs/build/**",
         "docs/.docusaurus/**"

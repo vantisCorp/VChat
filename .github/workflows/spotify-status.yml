@@ -21,10 +21,40 @@ jobs:
 
       - name: Fetch Current Playing
         id: spotify
-        uses: spencerwooo/spotify-now-playing@v1
-        with:
-          access-token: ${{ secrets.SPOTIFY_ACCESS_TOKEN }}
-        continue-on-error: true
+        env:
+          SPOTIFY_ACCESS_TOKEN: ${{ secrets.SPOTIFY_ACCESS_TOKEN }}
+        run: |
+          echo "🎵 Checking Spotify status..."
+          
+          # Create badges directory
+          mkdir -p .github/badges
+          
+          # Check if we have credentials
+          if [ -z "$SPOTIFY_ACCESS_TOKEN" ]; then
+            echo "No Spotify credentials configured"
+            echo "track-name=" >> $GITHUB_OUTPUT
+            exit 0
+          fi
+          
+          # Try to fetch currently playing track
+          RESPONSE=$(curl -s -H "Authorization: Bearer $SPOTIFY_ACCESS_TOKEN" \
+            "https://api.spotify.com/v1/me/player/currently-playing" 2>/dev/null || echo "")
+          
+          if [ -z "$RESPONSE" ] || [ "$RESPONSE" = "" ]; then
+            echo "No track currently playing"
+            echo "track-name=" >> $GITHUB_OUTPUT
+          else
+            # Parse JSON response
+            TRACK_NAME=$(echo "$RESPONSE" | jq -r '.item.name // empty' 2>/dev/null || echo "")
+            ARTIST_NAME=$(echo "$RESPONSE" | jq -r '.item.artists[0].name // empty' 2>/dev/null || echo "")
+            TRACK_URL=$(echo "$RESPONSE" | jq -r '.item.external_urls.spotify // empty' 2>/dev/null || echo "")
+            
+            echo "track-name=$TRACK_NAME" >> $GITHUB_OUTPUT
+            echo "artist-name=$ARTIST_NAME" >> $GITHUB_OUTPUT
+            echo "track-url=$TRACK_URL" >> $GITHUB_OUTPUT
+            
+            echo "🎵 Currently Playing: $TRACK_NAME by $ARTIST_NAME"
+          fi
 
       - name: Update README
         if: steps.spotify.outputs.track-name != ''
@@ -95,57 +125,3 @@ jobs:
             git commit -m "chore: update Spotify status [skip ci]"
             git push
           fi
-
-  # Generate Spotify Stats
-  spotify-stats:
-    name: 📊 Spotify Stats
-    runs-on: ubuntu-latest
-    if: github.event_name == 'schedule'
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-
-      - name: Setup Python
-        uses: actions/setup-python@v5
-        with:
-          python-version: '3.11'
-
-      - name: Generate Top Tracks
-        env:
-          SPOTIFY_CLIENT_ID: ${{ secrets.SPOTIFY_CLIENT_ID }}
-          SPOTIFY_CLIENT_SECRET: ${{ secrets.SPOTIFY_CLIENT_SECRET }}
-          SPOTIFY_REFRESH_TOKEN: ${{ secrets.SPOTIFY_REFRESH_TOKEN }}
-        run: |
-          python3 << 'PYEOF'
-          import json
-          import os
-          from datetime import datetime
-          
-          # Create stats file (placeholder if no credentials)
-          stats = {
-              "top_tracks": [
-                  {"name": "Track 1", "artist": "Artist 1", "plays": 100},
-                  {"name": "Track 2", "artist": "Artist 2", "plays": 80},
-                  {"name": "Track 3", "artist": "Artist 3", "plays": 60},
-              ],
-              "top_artists": [
-                  {"name": "Artist 1", "plays": 200},
-                  {"name": "Artist 2", "plays": 150},
-                  {"name": "Artist 3", "plays": 100},
-              ],
-              "total_minutes": 5000,
-              "updated_at": datetime.utcnow().isoformat()
-          }
-          
-          os.makedirs('.github/badges', exist_ok=True)
-          with open('.github/badges/spotify-stats.json', 'w') as f:
-              json.dump(stats, f, indent=2)
-          
-          print("✅ Spotify stats generated")
-          PYEOF
-
-      - name: Upload Stats
-        uses: actions/upload-artifact@v4
-        with:
-          name: spotify-stats
-          path: .github/badges/spotify-stats.json
