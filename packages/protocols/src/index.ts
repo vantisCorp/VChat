@@ -81,15 +81,15 @@ export {
 export {
   RTPPacketHandler,
   RTPStatsTracker,
-  RTPSequenceGenerator,
-  RTPTimestampGenerator,
+  createSequenceGenerator,
+  createTimestampGenerator,
 } from './rtp';
 
 // RTCP Module
 export {
   RTCPPacketHandler,
-  RTCPReportBuilder,
-  NTPTimeUtils,
+  getNTPTime,
+  ntpToDate,
 } from './rtcp';
 
 // WebRTC Module
