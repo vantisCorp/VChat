@@ -10,7 +10,7 @@
     "CARGO_HOME",
     "GITHUB_TOKEN"
   ],
-  "pipeline": {
+  "tasks": {
     "build": {
       "dependsOn": ["^build"],
       "outputs": [
