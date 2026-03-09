@@ -12,7 +12,6 @@ on:
 
 env:
   NODE_VERSION: '20.x'
-  PNPM_VERSION: '8.14.1'
 
 jobs:
   # Socket.dev Security Analysis
@@ -35,10 +34,7 @@ jobs:
           node-version: ${{ env.NODE_VERSION }}
 
       - name: Setup pnpm
-        uses: pnpm/action-setup@v2
-        with:
-          version: ${{ env.PNPM_VERSION }}
-
+        uses: pnpm/action-setup@v4
       - name: Install dependencies
         run: pnpm install
 
@@ -65,10 +61,7 @@ jobs:
           node-version: ${{ env.NODE_VERSION }}
 
       - name: Setup pnpm
-        uses: pnpm/action-setup@v2
-        with:
-          version: ${{ env.PNPM_VERSION }}
-
+        uses: pnpm/action-setup@v4
       - name: Install Socket CLI
         run: echo "Socket CLI installation skipped - using Socket Firewall instead"
 
@@ -95,10 +88,7 @@ jobs:
           node-version: ${{ env.NODE_VERSION }}
 
       - name: Setup pnpm
-        uses: pnpm/action-setup@v2
-        with:
-          version: ${{ env.PNPM_VERSION }}
-
+        uses: pnpm/action-setup@v4
       - name: Install dependencies
         run: pnpm install
 
@@ -134,10 +124,7 @@ jobs:
           node-version: ${{ env.NODE_VERSION }}
 
       - name: Setup pnpm
-        uses: pnpm/action-setup@v2
-        with:
-          version: ${{ env.PNPM_VERSION }}
-
+        uses: pnpm/action-setup@v4
       - name: Run Malware Scan
         env:
           SOCKET_SECURITY_API_KEY: ${{ secrets.SOCKET_SECURITY_API_KEY }}

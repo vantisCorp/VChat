@@ -2,7 +2,7 @@ name: V-COMM CI/CD Pipeline
 
 on:
   push:
-    branches: [main, develop, 'feature/**', 'release/**']
+    branches: [main, develop, 'feature/**', 'release/**', 'fix/**']
   pull_request:
     branches: [main, develop, 'release/**']
   workflow_dispatch:
@@ -11,7 +11,6 @@ env:
   CARGO_TERM_COLOR: always
   RUST_BACKTRACE: 1
   NODE_VERSION: '20.x'
-  PNPM_VERSION: '8.14.1'
 
 jobs:
   # Security Scanning
@@ -31,9 +30,7 @@ jobs:
           GITLEAKS_LICENSE: ${{ secrets.GITLEAKS_LICENSE }}
 
       - name: Setup pnpm
-        uses: pnpm/action-setup@v2
-        with:
-          version: ${{ env.PNPM_VERSION }}
+        uses: pnpm/action-setup@v4
 
       - name: Install dependencies
         run: pnpm install
@@ -64,15 +61,14 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
           node-version: ${{ env.NODE_VERSION }}
-
-      - name: Setup pnpm
-        uses: pnpm/action-setup@v4
-        with:
-          version: ${{ env.PNPM_VERSION }}
+          cache: 'pnpm'
 
       - name: Install dependencies
         run: pnpm install
@@ -97,15 +93,14 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
           node-version: ${{ env.NODE_VERSION }}
-
-      - name: Setup pnpm
-        uses: pnpm/action-setup@v4
-        with:
-          version: ${{ env.PNPM_VERSION }}
+          cache: 'pnpm'
 
       - name: Install dependencies
         run: pnpm install
@@ -115,8 +110,8 @@ jobs:
 
   # Build
   build:
-    name: 🏗️ Build
-    runs-on: ubuntu-latest
+    name: 🏗️ Build (${{ matrix.os }})
+    runs-on: ${{ matrix.os }}
     needs: [code-quality, type-check]
     strategy:
       matrix:
@@ -125,15 +120,14 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
           node-version: ${{ env.NODE_VERSION }}
-
-      - name: Setup pnpm
-        uses: pnpm/action-setup@v4
-        with:
-          version: ${{ env.PNPM_VERSION }}
+          cache: 'pnpm'
 
       - name: Install dependencies
         run: pnpm install
@@ -172,9 +166,7 @@ jobs:
           node-version: ${{ env.NODE_VERSION }}
 
       - name: Setup pnpm
-        uses: pnpm/action-setup@v2
-        with:
-          version: ${{ env.PNPM_VERSION }}
+        uses: pnpm/action-setup@v4
 
       - name: Install dependencies
         run: pnpm install
@@ -218,15 +210,14 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
           node-version: ${{ env.NODE_VERSION }}
-
-      - name: Setup pnpm
-        uses: pnpm/action-setup@v4
-        with:
-          version: ${{ env.PNPM_VERSION }}
+          cache: 'pnpm'
 
       - name: Install dependencies
         run: pnpm install
@@ -303,15 +294,14 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
           node-version: ${{ env.NODE_VERSION }}
-
-      - name: Setup pnpm
-        uses: pnpm/action-setup@v4
-        with:
-          version: ${{ env.PNPM_VERSION }}
+          cache: 'pnpm'
 
       - name: Install dependencies
         run: pnpm install
@@ -351,15 +341,14 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
           node-version: ${{ env.NODE_VERSION }}
-
-      - name: Setup pnpm
-        uses: pnpm/action-setup@v4
-        with:
-          version: ${{ env.PNPM_VERSION }}
+          cache: 'pnpm'
 
       - name: Install dependencies
         run: pnpm install
