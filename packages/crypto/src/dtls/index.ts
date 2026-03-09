@@ -333,7 +333,7 @@ export class DTLSSession {
   /**
    * Handle ChangeCipherSpec
    */
-  private handleChangeCipherSpec(packet: Uint8Array): Uint8Array | null {
+  private handleChangeCipherSpec(_packet: Uint8Array): Uint8Array | null {
     // Process CCS
     return null;
   }
