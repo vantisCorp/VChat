@@ -1,0 +1,17 @@
+{
+  "tag": {
+    "label": "infrastructure",
+    "permalink": "/docs/docs/current/tags/infrastructure",
+    "allTagsPath": "/docs/docs/current/tags",
+    "count": 1,
+    "items": [
+      {
+        "id": "deployment/terraform",
+        "title": "Terraform Infrastructure",
+        "description": "Deploy V-COMM infrastructure using Terraform with Infrastructure as Code best practices",
+        "permalink": "/docs/docs/current/deployment/terraform"
+      }
+    ],
+    "unlisted": false
+  }
+}

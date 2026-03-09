@@ -1,6 +1,6 @@
 /**
  * @vcomm/beta-release - Feature Flags System
- * 
+ *
  * Provides comprehensive feature flag management with targeting rules,
  * A/B testing variants, and percentage rollouts.
  */
@@ -8,12 +8,10 @@
 import {
   FeatureFlagConfig,
   FeatureFlagStatus,
-  _FeatureFlagType,
   FeatureFlagResult,
   FeatureVariant,
   TargetingRule,
   TargetingCondition,
-  _TargetingOperator,
   EvaluationContext,
   BetaReleaseError,
   BetaReleaseErrorCode,
@@ -53,11 +51,11 @@ interface CacheEntry {
 
 /**
  * FeatureFlags - Manages feature flags with targeting and variants
- * 
+ *
  * @example
  * ```typescript
  * const flags = new FeatureFlags();
- * 
+ *
  * // Create a flag
  * flags.create({
  *   key: 'new-feature',
@@ -70,7 +68,7 @@ interface CacheEntry {
  *   updatedAt: new Date(),
  *   createdBy: 'admin',
  * });
- * 
+ *
  * // Evaluate for a user
  * const result = flags.evaluate('new-feature', {
  *   userId: 'user123',
@@ -214,7 +212,7 @@ export class FeatureFlags {
   private evaluateRules(flag: FeatureFlagConfig, context: EvaluationContext): FeatureFlagResult {
     // Sort rules by priority
     const sortedRules = [...flag.rules]
-      .filter(r => r.enabled)
+      .filter((r) => r.enabled)
       .sort((a, b) => a.priority - b.priority);
 
     for (const rule of sortedRules) {
@@ -243,13 +241,9 @@ export class FeatureFlags {
       return true;
     }
 
-    const results = rule.conditions.map(condition => 
-      this.matchesCondition(condition, context)
-    );
+    const results = rule.conditions.map((condition) => this.matchesCondition(condition, context));
 
-    return rule.matchAll 
-      ? results.every(Boolean) 
-      : results.some(Boolean);
+    return rule.matchAll ? results.every(Boolean) : results.some(Boolean);
   }
 
   /**
@@ -257,7 +251,7 @@ export class FeatureFlags {
    */
   private matchesCondition(condition: TargetingCondition, context: EvaluationContext): boolean {
     const value = this.getContextValue(condition.property, context);
-    
+
     if (value === undefined || value === null) {
       return condition.operator === 'is_not_set';
     }
@@ -265,34 +259,34 @@ export class FeatureFlags {
     switch (condition.operator) {
       case 'equals':
         return value === condition.value;
-      
+
       case 'not_equals':
         return value !== condition.value;
-      
+
       case 'contains':
         return String(value).includes(String(condition.value));
-      
+
       case 'not_contains':
         return !String(value).includes(String(condition.value));
-      
+
       case 'starts_with':
         return String(value).startsWith(String(condition.value));
-      
+
       case 'ends_with':
         return String(value).endsWith(String(condition.value));
-      
+
       case 'greater_than':
         return Number(value) > Number(condition.value);
-      
+
       case 'less_than':
         return Number(value) < Number(condition.value);
-      
+
       case 'greater_or_equal':
         return Number(value) >= Number(condition.value);
-      
+
       case 'less_or_equal':
         return Number(value) <= Number(condition.value);
-      
+
       case 'in':
         if (Array.isArray(condition.value)) {
           return (condition.value as (string | number)[]).includes(value as string | number);
@@ -304,20 +298,20 @@ export class FeatureFlags {
           return !(condition.value as (string | number)[]).includes(value as string | number);
         }
         return true;
-      
+
       case 'matches_regex':
         try {
           return new RegExp(String(condition.value)).test(String(value));
         } catch {
           return false;
         }
-      
+
       case 'is_set':
         return value !== undefined && value !== null;
-      
+
       case 'is_not_set':
         return value === undefined || value === null;
-      
+
       default:
         return false;
     }
@@ -345,13 +339,16 @@ export class FeatureFlags {
   /**
    * Evaluate percentage rollout
    */
-  private evaluatePercentage(flag: FeatureFlagConfig, context: EvaluationContext): FeatureFlagResult {
+  private evaluatePercentage(
+    flag: FeatureFlagConfig,
+    context: EvaluationContext
+  ): FeatureFlagResult {
     const percentage = flag.rolloutPercentage || 0;
-    
+
     if (percentage >= 100) {
       return { enabled: true, reason: 'rollout_100' };
     }
-    
+
     if (percentage <= 0) {
       return { enabled: false, reason: 'rollout_0' };
     }
@@ -370,7 +367,10 @@ export class FeatureFlags {
   /**
    * Select a variant based on context
    */
-  private selectVariant(flag: FeatureFlagConfig, context: EvaluationContext): FeatureVariant | undefined {
+  private selectVariant(
+    flag: FeatureFlagConfig,
+    context: EvaluationContext
+  ): FeatureVariant | undefined {
     if (!flag.variants || flag.variants.length === 0) {
       return undefined;
     }
@@ -399,7 +399,7 @@ export class FeatureFlags {
     let hash = 0;
     for (let i = 0; i < str.length; i++) {
       const char = str.charCodeAt(i);
-      hash = ((hash << 5) - hash) + char;
+      hash = (hash << 5) - hash + char;
       hash = hash & hash; // Convert to 32-bit integer
     }
     return Math.abs(hash);
@@ -463,22 +463,26 @@ export class FeatureFlags {
   private getCachedResult(flagKey: string, context: EvaluationContext): FeatureFlagResult | null {
     const cacheKey = this.getCacheKey(flagKey, context);
     const entry = this.cache.get(cacheKey);
-    
+
     if (entry && entry.expiresAt > Date.now()) {
       return entry.result;
     }
-    
+
     return null;
   }
 
   /**
    * Cache a result
    */
-  private cacheResult(flagKey: string, context: EvaluationContext, result: FeatureFlagResult): void {
+  private cacheResult(
+    flagKey: string,
+    context: EvaluationContext,
+    result: FeatureFlagResult
+  ): void {
     const cacheKey = this.getCacheKey(flagKey, context);
     this.cache.set(cacheKey, {
       result,
-      expiresAt: Date.now() + (this.config.cacheTtl * 1000),
+      expiresAt: Date.now() + this.config.cacheTtl * 1000,
     });
   }
 
@@ -513,14 +517,14 @@ export class FeatureFlags {
    * Get flags by status
    */
   getByStatus(status: FeatureFlagStatus): FeatureFlagConfig[] {
-    return this.getAll().filter(f => f.status === status);
+    return this.getAll().filter((f) => f.status === status);
   }
 
   /**
    * Get flags by tag
    */
   getByTag(tag: string): FeatureFlagConfig[] {
-    return this.getAll().filter(f => f.tags?.includes(tag));
+    return this.getAll().filter((f) => f.tags?.includes(tag));
   }
 
   /**

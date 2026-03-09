@@ -1,27 +1,27 @@
 /**
  * @vcomm/plugin-system
- * 
+ *
  * A comprehensive plugin system for V-COMM applications.
  * Provides plugin lifecycle management, hooks, sandboxing, and marketplace integration.
- * 
+ *
  * @example
  * ```typescript
  * import { PluginSystem } from '@vcomm/plugin-system';
- * 
+ *
  * const pluginSystem = new PluginSystem({
  *   pluginDirs: ['./plugins'],
  *   enforcePermissions: true,
  * });
- * 
+ *
  * // Initialize
  * await pluginSystem.initialize();
- * 
+ *
  * // Install a plugin
  * const plugin = await pluginSystem.install('./plugins/my-plugin');
- * 
+ *
  * // Enable it
  * await pluginSystem.enable('com.example.my-plugin');
- * 
+ *
  * // Register hooks
  * pluginSystem.registerHook('message.before-send', async (context) => {
  *   // Process message
@@ -43,41 +43,39 @@ export {
   PluginInstance,
   PluginError,
   PluginErrorCode,
-  
+
   // Plugin Lifecycle
   PluginLifecycle,
   PluginLifecycleEvent,
   PluginLifecycleCallback,
-  
+
   // Permissions
   PluginPermission,
   PermissionCheckContext,
   PermissionGrant,
-  
+
   // Hooks
   HookType,
   HookHandler,
   HookContext,
   HookResult,
   HookRegistrationOptions,
-  
+
   // Configuration
   PluginConfigSchema,
   PluginConfigField,
   PluginConfigValue,
   PluginUserSettings,
-  
+
   // Marketplace
   MarketplacePlugin,
   MarketplaceVersion,
-  MarketplaceReview,
   MarketplaceSearchQuery,
   MarketplaceSearchResult,
-  
+
   // System
   PluginSystemConfig,
   PluginLoadResult,
-  PluginValidationResult,
 } from './types';
 
 // Module exports
@@ -91,7 +89,6 @@ import { PluginRegistry } from './registry';
 import { PluginLoader } from './loader';
 import { PluginSandbox } from './sandbox';
 import {
-
   PluginInstance,
   PluginStatus,
   HookType,
@@ -99,7 +96,6 @@ import {
   HookContext,
   HookResult,
   PluginSystemConfig,
-  _PluginPermission,
   PermissionCheckContext,
   PluginError,
   PluginErrorCode,
@@ -164,7 +160,7 @@ export class PluginSystem {
 
     // Scan for plugins
     const discovered = await this.loader.scanForPlugins();
-    
+
     if (this.config.debug) {
       console.log(`[PluginSystem] Discovered ${discovered.length} plugins`);
     }
@@ -177,9 +173,9 @@ export class PluginSystem {
    */
   async install(source: string): Promise<PluginInstance> {
     this.ensureInitialized();
-    
+
     const instance = await this.loader.load(source);
-    
+
     // Initialize sandbox for the plugin
     this.sandbox.initialize(instance);
 
@@ -204,10 +200,7 @@ export class PluginSystem {
 
     const instance = this.registry.get(pluginId);
     if (!instance) {
-      throw new PluginError(
-        PluginErrorCode.NOT_FOUND,
-        `Plugin ${pluginId} not found`
-      );
+      throw new PluginError(PluginErrorCode.NOT_FOUND, `Plugin ${pluginId} not found`);
     }
 
     // Disable first if enabled
@@ -256,10 +249,7 @@ export class PluginSystem {
 
     const instance = this.registry.get(pluginId);
     if (!instance) {
-      throw new PluginError(
-        PluginErrorCode.NOT_FOUND,
-        `Plugin ${pluginId} not found`
-      );
+      throw new PluginError(PluginErrorCode.NOT_FOUND, `Plugin ${pluginId} not found`);
     }
 
     // Check dependencies
@@ -312,15 +302,12 @@ export class PluginSystem {
 
     const instance = this.registry.get(pluginId);
     if (!instance) {
-      throw new PluginError(
-        PluginErrorCode.NOT_FOUND,
-        `Plugin ${pluginId} not found`
-      );
+      throw new PluginError(PluginErrorCode.NOT_FOUND, `Plugin ${pluginId} not found`);
     }
 
     // Check dependents
     const dependents = this.registry.getDependents(pluginId);
-    const enabledDependents = dependents.filter(id => {
+    const enabledDependents = dependents.filter((id) => {
       const dep = this.registry.get(id);
       return dep?.status === 'enabled';
     });
@@ -365,7 +352,7 @@ export class PluginSystem {
     this.ensureInitialized();
 
     const wasEnabled = this.registry.get(pluginId)?.status === 'enabled';
-    
+
     if (wasEnabled) {
       await this.disable(pluginId);
     }
@@ -447,11 +434,7 @@ export class PluginSystem {
   /**
    * Check if a plugin has a permission
    */
-  checkPermission(
-    pluginId: string,
-    permission: string,
-    context?: PermissionCheckContext
-  ): boolean {
+  checkPermission(pluginId: string, permission: string, context?: PermissionCheckContext): boolean {
     const plugin = this.registry.get(pluginId);
     if (!plugin) {
       return false;
@@ -462,16 +445,10 @@ export class PluginSystem {
   /**
    * Execute code in plugin sandbox
    */
-  async executeInSandbox<T>(
-    pluginId: string,
-    fn: () => Promise<T> | T
-  ): Promise<T> {
+  async executeInSandbox<T>(pluginId: string, fn: () => Promise<T> | T): Promise<T> {
     const plugin = this.registry.get(pluginId);
     if (!plugin) {
-      throw new PluginError(
-        PluginErrorCode.NOT_FOUND,
-        `Plugin ${pluginId} not found`
-      );
+      throw new PluginError(PluginErrorCode.NOT_FOUND, `Plugin ${pluginId} not found`);
     }
     return this.sandbox.execute(plugin, fn);
   }
@@ -512,10 +489,7 @@ export class PluginSystem {
   /**
    * Update plugin settings
    */
-  updatePluginSettings(
-    pluginId: string,
-    settings: Record<string, unknown>
-  ): boolean {
+  updatePluginSettings(pluginId: string, settings: Record<string, unknown>): boolean {
     return this.registry.updateSettings(pluginId, settings);
   }
 

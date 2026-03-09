@@ -3,11 +3,7 @@
  * @module @vcomm/protocols/udp
  */
 
-import {
-  UDPPacket,
-  _UDPSocketOptions,
-  _ProtocolError,
-} from '../types';
+import { UDPPacket } from '../types';
 
 // ============================================================================
 // UDP PACKET HANDLER
@@ -58,10 +54,7 @@ export class UDPPacketHandler {
   /**
    * Fragment payload for MTU
    */
-  static fragment(
-    payload: Uint8Array,
-    mtu: number = this.RECOMMENDED_MTU
-  ): Uint8Array[] {
+  static fragment(payload: Uint8Array, mtu: number = this.RECOMMENDED_MTU): Uint8Array[] {
     const fragments: Uint8Array[] = [];
     let offset = 0;
 
@@ -366,7 +359,8 @@ export class UDPQoSManager {
   private bandwidth: Map<string, { sent: number; timestamp: number }> = new Map();
   private readonly maxBandwidth: number;
 
-  constructor(maxBandwidth: number = 10 * 1024 * 1024) { // 10 Mbps default
+  constructor(maxBandwidth: number = 10 * 1024 * 1024) {
+    // 10 Mbps default
     this.maxBandwidth = maxBandwidth;
   }
 
@@ -592,7 +586,10 @@ export class UDPSequenceManager {
   /**
    * Check if received sequence is expected
    */
-  checkReceive(streamId: string, sequence: number): {
+  checkReceive(
+    streamId: string,
+    sequence: number
+  ): {
     expected: boolean;
     duplicate: boolean;
     gap: number;
@@ -623,7 +620,7 @@ export class UDPSequenceManager {
       gap = sequence - nextExpected;
     } else {
       // Sequence wrapped
-      gap = (this.maxSequence + 1 - nextExpected) + sequence;
+      gap = this.maxSequence + 1 - nextExpected + sequence;
     }
 
     this.receiveSequence.set(streamId, sequence);
@@ -737,4 +734,3 @@ export class UDPAddressUtils {
     return a.ip === b.ip && a.port === b.port;
   }
 }
-

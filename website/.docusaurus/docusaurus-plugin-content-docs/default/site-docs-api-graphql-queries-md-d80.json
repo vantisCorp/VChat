@@ -1,0 +1,47 @@
+{
+  "id": "api/graphql/queries",
+  "title": "GraphQL Queries",
+  "description": "GraphQL query operations for reading data from V-COMM API",
+  "source": "@site/docs/api/graphql/queries.md",
+  "sourceDirName": "api/graphql",
+  "slug": "/api/graphql/queries",
+  "permalink": "/docs/es/docs/current/api/graphql/queries",
+  "draft": false,
+  "unlisted": false,
+  "editUrl": "https://github.com/vantisCorp/VChat/tree/main/website/docs/api/graphql/queries.md",
+  "tags": [
+    {
+      "inline": true,
+      "label": "api",
+      "permalink": "/docs/es/docs/current/tags/api"
+    },
+    {
+      "inline": true,
+      "label": "graphql",
+      "permalink": "/docs/es/docs/current/tags/graphql"
+    },
+    {
+      "inline": true,
+      "label": "queries",
+      "permalink": "/docs/es/docs/current/tags/queries"
+    }
+  ],
+  "version": "current",
+  "sidebarPosition": 1,
+  "frontMatter": {
+    "sidebar_position": 1,
+    "title": "GraphQL Queries",
+    "description": "GraphQL query operations for reading data from V-COMM API",
+    "keywords": ["graphql", "queries", "api", "data", "fetch"],
+    "tags": ["api", "graphql", "queries"]
+  },
+  "sidebar": "apiSidebar",
+  "previous": {
+    "title": "WebSocket Gateway",
+    "permalink": "/docs/es/docs/current/api/websocket/gateway"
+  },
+  "next": {
+    "title": "GraphQL Mutations",
+    "permalink": "/docs/es/docs/current/api/graphql/mutations"
+  }
+}

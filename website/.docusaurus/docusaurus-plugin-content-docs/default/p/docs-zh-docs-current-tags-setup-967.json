@@ -1,0 +1,17 @@
+{
+  "tag": {
+    "label": "setup",
+    "permalink": "/docs/zh/docs/current/tags/setup",
+    "allTagsPath": "/docs/zh/docs/current/tags",
+    "count": 1,
+    "items": [
+      {
+        "id": "development/setup",
+        "title": "Development Setup",
+        "description": "Complete guide to setting up V-COMM development environment",
+        "permalink": "/docs/zh/docs/current/development/setup"
+      }
+    ],
+    "unlisted": false
+  }
+}

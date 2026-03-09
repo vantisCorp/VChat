@@ -1,18 +1,11 @@
 /**
  * @vcomm/plugin-system - Hooks System
- * 
+ *
  * Provides a powerful hook system for plugin extensibility.
  * Plugins can register handlers for various lifecycle events and hooks.
  */
 
-import {
-  HookType,
-  HookHandler,
-  HookContext,
-  HookResult,
-  _PluginInstance,
-  _PluginError,
-} from '../types';
+import { HookType, HookHandler, HookContext, HookResult } from '../types';
 
 /**
  * Handler registration entry
@@ -60,11 +53,11 @@ const DEFAULT_HOOK_CONFIG: Required<HookConfig> = {
 
 /**
  * HookManager - Manages plugin hooks and their execution
- * 
+ *
  * @example
  * ```typescript
  * const hookManager = new HookManager();
- * 
+ *
  * // Register a handler
  * hookManager.registerHandler(
  *   'message.before-send',
@@ -76,7 +69,7 @@ const DEFAULT_HOOK_CONFIG: Required<HookConfig> = {
  *   },
  *   { priority: 10 }
  * );
- * 
+ *
  * // Execute hooks
  * const result = await hookManager.execute('message.before-send', context);
  * ```
@@ -85,7 +78,8 @@ export class HookManager {
   private handlers: Map<HookType, HandlerEntry[]> = new Map();
   private config: Required<HookConfig>;
   private handlerIdCounter = 0;
-  private executionStats: Map<HookType, { count: number; avgDuration: number; errors: number }> = new Map();
+  private executionStats: Map<HookType, { count: number; avgDuration: number; errors: number }> =
+    new Map();
 
   constructor(config: HookConfig = {}) {
     this.config = { ...DEFAULT_HOOK_CONFIG, ...config };
@@ -108,7 +102,7 @@ export class HookManager {
       'plugin.after-uninstall',
       'plugin.before-update',
       'plugin.after-update',
-      
+
       // Message hooks
       'message.before-send',
       'message.after-send',
@@ -118,7 +112,7 @@ export class HookManager {
       'message.after-delete',
       'message.received',
       'message.read',
-      
+
       // Channel hooks
       'channel.before-create',
       'channel.after-create',
@@ -126,7 +120,7 @@ export class HookManager {
       'channel.after-delete',
       'channel.before-update',
       'channel.after-update',
-      
+
       // User hooks
       'user.before-join',
       'user.after-join',
@@ -137,14 +131,14 @@ export class HookManager {
       'user.before-kick',
       'user.after-kick',
       'user.profile-update',
-      
+
       // Server hooks
       'server.before-create',
       'server.after-create',
       'server.before-delete',
       'server.after-delete',
       'server.settings-update',
-      
+
       // Voice hooks
       'voice.before-join',
       'voice.after-join',
@@ -153,12 +147,12 @@ export class HookManager {
       'voice.mute',
       'voice.deafen',
       'voice.move',
-      
+
       // Custom hooks
       'custom',
     ];
 
-    hookTypes.forEach(type => {
+    hookTypes.forEach((type) => {
       this.handlers.set(type, []);
       this.executionStats.set(type, { count: 0, avgDuration: 0, errors: 0 });
     });
@@ -184,11 +178,13 @@ export class HookManager {
     } = {}
   ): string {
     const { priority = 50, async = true } = options;
-    
+
     // Check max handlers limit
     const handlers = this.handlers.get(hookType) || [];
     if (handlers.length >= this.config.maxHandlersPerHook) {
-      throw new Error(`Maximum handlers (${this.config.maxHandlersPerHook}) reached for hook: ${hookType}`);
+      throw new Error(
+        `Maximum handlers (${this.config.maxHandlersPerHook}) reached for hook: ${hookType}`
+      );
     }
 
     const handlerId = this.generateHandlerId();
@@ -203,7 +199,7 @@ export class HookManager {
     };
 
     // Insert in priority order
-    const insertIndex = handlers.findIndex(h => h.priority > priority);
+    const insertIndex = handlers.findIndex((h) => h.priority > priority);
     if (insertIndex === -1) {
       handlers.push(entry);
     } else {
@@ -213,7 +209,9 @@ export class HookManager {
     this.handlers.set(hookType, handlers);
 
     if (this.config.debug) {
-      console.log(`[HookManager] Registered handler ${handlerId} for ${hookType} (plugin: ${pluginId}, priority: ${priority})`);
+      console.log(
+        `[HookManager] Registered handler ${handlerId} for ${hookType} (plugin: ${pluginId}, priority: ${priority})`
+      );
     }
 
     return handlerId;
@@ -224,14 +222,14 @@ export class HookManager {
    */
   unregisterHandler(handlerId: string): boolean {
     for (const [hookType, handlers] of this.handlers) {
-      const index = handlers.findIndex(h => h.id === handlerId);
+      const index = handlers.findIndex((h) => h.id === handlerId);
       if (index !== -1) {
         handlers.splice(index, 1);
-        
+
         if (this.config.debug) {
           console.log(`[HookManager] Unregistered handler ${handlerId} from ${hookType}`);
         }
-        
+
         return true;
       }
     }
@@ -243,10 +241,10 @@ export class HookManager {
    */
   unregisterPluginHandlers(pluginId: string): number {
     let count = 0;
-    
+
     for (const [hookType, handlers] of this.handlers) {
       const initialLength = handlers.length;
-      const remaining = handlers.filter(h => h.pluginId !== pluginId);
+      const remaining = handlers.filter((h) => h.pluginId !== pluginId);
       this.handlers.set(hookType, remaining);
       count += initialLength - remaining.length;
     }
@@ -263,7 +261,7 @@ export class HookManager {
    */
   setHandlerActive(handlerId: string, active: boolean): boolean {
     for (const handlers of this.handlers.values()) {
-      const handler = handlers.find(h => h.id === handlerId);
+      const handler = handlers.find((h) => h.id === handlerId);
       if (handler) {
         handler.active = active;
         return true;
@@ -281,7 +279,7 @@ export class HookManager {
   ): Promise<HookResult<R>> {
     const handlers = this.handlers.get(hookType) || [];
     const stats = this.executionStats.get(hookType)!;
-    
+
     const startTime = Date.now();
     let lastResult: HookResult<R> = { success: true, data: context.data as unknown as R };
     const errors: Error[] = [];
@@ -290,7 +288,7 @@ export class HookManager {
       if (!entry.active) continue;
 
       const handlerStart = Date.now();
-      
+
       try {
         // Create handler context with timeout
         const result = await this.executeWithTimeout(
@@ -308,7 +306,7 @@ export class HookManager {
         } else if (result.error) {
           errors.push(result.error);
           stats.errors++;
-          
+
           if (!this.config.continueOnError) {
             return {
               success: false,
@@ -398,7 +396,7 @@ export class HookManager {
 
       try {
         const result = entry.handler(context) as HookResult<R>;
-        
+
         if (result.success && result.data !== undefined) {
           context.data = result.data as T;
           lastResult = result;
@@ -428,7 +426,7 @@ export class HookManager {
    */
   getHandler(handlerId: string): HandlerEntry | undefined {
     for (const handlers of this.handlers.values()) {
-      const handler = handlers.find(h => h.id === handlerId);
+      const handler = handlers.find((h) => h.id === handlerId);
       if (handler) return handler;
     }
     return undefined;
@@ -437,7 +435,12 @@ export class HookManager {
   /**
    * Get execution statistics
    */
-  getStats(hookType?: HookType): Map<HookType, { count: number; avgDuration: number; errors: number }> | { count: number; avgDuration: number; errors: number } | undefined {
+  getStats(
+    hookType?: HookType
+  ):
+    | Map<HookType, { count: number; avgDuration: number; errors: number }>
+    | { count: number; avgDuration: number; errors: number }
+    | undefined {
     if (hookType) {
       return this.executionStats.get(hookType);
     }
@@ -480,9 +483,9 @@ export class HookManager {
    */
   exportRegistry(): Record<string, { pluginId: string; priority: number; active: boolean }[]> {
     const result: Record<string, { pluginId: string; priority: number; active: boolean }[]> = {};
-    
+
     this.handlers.forEach((handlers, hookType) => {
-      result[hookType] = handlers.map(h => ({
+      result[hookType] = handlers.map((h) => ({
         pluginId: h.pluginId,
         priority: h.priority,
         active: h.active,

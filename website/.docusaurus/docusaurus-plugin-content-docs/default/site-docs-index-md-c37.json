@@ -1,0 +1,23 @@
+{
+  "id": "index",
+  "title": "V-COMM Documentation",
+  "description": "V-COMM is a next-generation secure communication platform built on Zero Trust architecture and Post-Quantum Cryptography. This documentation will help you get started with V-COMM, understand its architecture, and develop on top of it.",
+  "source": "@site/docs/index.md",
+  "sourceDirName": ".",
+  "slug": "/",
+  "permalink": "/docs/es/docs/current/",
+  "draft": false,
+  "unlisted": false,
+  "editUrl": "https://github.com/vantisCorp/VChat/tree/main/website/docs/index.md",
+  "tags": [],
+  "version": "current",
+  "frontMatter": {
+    "slug": "/",
+    "title": "V-COMM Documentation"
+  },
+  "sidebar": "tutorialSidebar",
+  "next": {
+    "title": "Installation Guide",
+    "permalink": "/docs/es/docs/current/getting-started/installation"
+  }
+}

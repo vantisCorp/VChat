@@ -1,0 +1,42 @@
+{
+  "id": "features/spaces",
+  "title": "Spaces",
+  "description": "Comprehensive guide to V-COMM's Spaces feature for organizing teams and content",
+  "source": "@site/docs/features/spaces.md",
+  "sourceDirName": "features",
+  "slug": "/features/spaces",
+  "permalink": "/docs/es/docs/current/features/spaces",
+  "draft": false,
+  "unlisted": false,
+  "editUrl": "https://github.com/vantisCorp/VChat/tree/main/website/docs/features/spaces.md",
+  "tags": [
+    {
+      "inline": true,
+      "label": "features",
+      "permalink": "/docs/es/docs/current/tags/features"
+    },
+    {
+      "inline": true,
+      "label": "spaces",
+      "permalink": "/docs/es/docs/current/tags/spaces"
+    }
+  ],
+  "version": "current",
+  "sidebarPosition": 2,
+  "frontMatter": {
+    "sidebar_position": 2,
+    "title": "Spaces",
+    "description": "Comprehensive guide to V-COMM's Spaces feature for organizing teams and content",
+    "keywords": ["spaces", "teams", "organization", "workspaces", "hierarchy"],
+    "tags": ["features", "spaces"]
+  },
+  "sidebar": "tutorialSidebar",
+  "previous": {
+    "title": "Channels",
+    "permalink": "/docs/es/docs/current/features/channels"
+  },
+  "next": {
+    "title": "Mesh (Federation)",
+    "permalink": "/docs/es/docs/current/features/mesh"
+  }
+}

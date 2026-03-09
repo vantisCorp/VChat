@@ -1,17 +1,17 @@
 /**
  * @vcomm/beta-release
- * 
+ *
  * Comprehensive beta release strategy for V-COMM applications.
  * Provides feature flags, gradual rollout, feedback collection, and analytics.
- * 
+ *
  * @example
  * ```typescript
  * import { BetaRelease } from '@vcomm/beta-release';
- * 
+ *
  * const beta = new BetaRelease({
  *   debug: true,
  * });
- * 
+ *
  * // Create a feature flag
  * beta.createFlag({
  *   key: 'new-feature',
@@ -20,10 +20,10 @@
  *   status: 'partial',
  *   rolloutPercentage: 25,
  * });
- * 
+ *
  * // Check if feature is enabled
  * const result = beta.evaluate('new-feature', { userId: 'user123' });
- * 
+ *
  * // Start a rollout
  * beta.createRollout({
  *   featureKey: 'new-feature',
@@ -49,7 +49,7 @@ export {
   TargetingCondition,
   TargetingOperator,
   EvaluationContext,
-  
+
   // Rollout
   RolloutStrategyType,
   RolloutStatus,
@@ -59,7 +59,7 @@ export {
   RollbackPlan,
   RollbackTrigger,
   RolloutNotifications,
-  
+
   // Feedback
   FeedbackType,
   FeedbackStatus,
@@ -70,7 +70,7 @@ export {
   SurveyQuestion,
   SurveyResponse,
   SurveyTargetAudience,
-  
+
   // Analytics
   MetricType,
   MetricAggregation,
@@ -82,7 +82,7 @@ export {
   BetaProgramStats,
   BetaUser,
   BetaProgramConfig,
-  
+
   // Errors
   BetaReleaseError,
   BetaReleaseErrorCode,
@@ -113,8 +113,6 @@ import {
   BetaProgramStats,
   BetaUser,
   BetaProgramConfig,
-  _BetaReleaseError,
-  _BetaReleaseErrorCode,
 } from './types';
 
 /**
@@ -216,12 +214,12 @@ export class BetaRelease {
    */
   evaluate(key: string, context?: EvaluationContext): FeatureFlagResult {
     const result = this.featureFlags.evaluate(key, context);
-    
+
     // Track evaluation
     if (this.config.enableAnalytics && context?.userId) {
       this.analytics.trackFeatureEvaluation(key, result.enabled, context.userId);
     }
-    
+
     return result;
   }
 
@@ -244,7 +242,9 @@ export class BetaRelease {
   /**
    * Create a rollout
    */
-  createRollout(config: Omit<RolloutConfig, 'id' | 'currentStageIndex' | 'status' | 'createdAt' | 'updatedAt'>): RolloutConfig {
+  createRollout(
+    config: Omit<RolloutConfig, 'id' | 'currentStageIndex' | 'status' | 'createdAt' | 'updatedAt'>
+  ): RolloutConfig {
     return this.rolloutManager.create(config);
   }
 
@@ -315,7 +315,7 @@ export class BetaRelease {
     npsScore?: number;
   }): FeedbackEntry {
     const entry = this.feedbackManager.submit(data);
-    
+
     // Track feedback
     if (this.config.enableAnalytics) {
       this.analytics.trackFeedback(data.type, data.featureKey, data.userId);
@@ -323,7 +323,7 @@ export class BetaRelease {
         this.analytics.trackNpsScore(data.npsScore, data.userId);
       }
     }
-    
+
     return entry;
   }
 
@@ -337,7 +337,11 @@ export class BetaRelease {
   /**
    * Update feedback status
    */
-  updateFeedbackStatus(feedbackId: string, status: FeedbackEntry['status'], resolution?: string): FeedbackEntry {
+  updateFeedbackStatus(
+    feedbackId: string,
+    status: FeedbackEntry['status'],
+    resolution?: string
+  ): FeedbackEntry {
     return this.feedbackManager.updateStatus(feedbackId, status, resolution);
   }
 
@@ -358,7 +362,9 @@ export class BetaRelease {
   /**
    * Submit survey response
    */
-  submitSurveyResponse(data: Parameters<FeedbackManager['submitSurveyResponse']>[0]): SurveyResponse {
+  submitSurveyResponse(
+    data: Parameters<FeedbackManager['submitSurveyResponse']>[0]
+  ): SurveyResponse {
     return this.feedbackManager.submitSurveyResponse(data);
   }
 
@@ -452,7 +458,7 @@ export class BetaRelease {
     if (this.config.debug) {
       console.log(`[BetaRelease] Rollout notification: ${event.type}`, event);
     }
-    
+
     // Track rollout events
     if (this.config.enableAnalytics) {
       this.analytics.track('rollout_event', 1, {
@@ -487,9 +493,9 @@ export class BetaRelease {
    */
   clear(): void {
     this.featureFlags.clear();
-    this.rolloutManager.getAll().forEach(r => this.rolloutManager.delete(r.id));
-    this.feedbackManager.getAll().forEach(f => this.feedbackManager.delete(f.id));
-    this.feedbackManager.getAllSurveys().forEach(s => this.feedbackManager.deleteSurvey(s.id));
+    this.rolloutManager.getAll().forEach((r) => this.rolloutManager.delete(r.id));
+    this.feedbackManager.getAll().forEach((f) => this.feedbackManager.delete(f.id));
+    this.feedbackManager.getAllSurveys().forEach((s) => this.feedbackManager.deleteSurvey(s.id));
     this.analytics.clear();
   }
 }

@@ -1,0 +1,26 @@
+{
+  "id": "getting-started/requirements",
+  "title": "System Requirements",
+  "description": "This document outlines the hardware and software requirements for running V-COMM.",
+  "source": "@site/docs/getting-started/requirements.md",
+  "sourceDirName": "getting-started",
+  "slug": "/getting-started/requirements",
+  "permalink": "/docs/es/docs/current/getting-started/requirements",
+  "draft": false,
+  "unlisted": false,
+  "editUrl": "https://github.com/vantisCorp/VChat/tree/main/website/docs/getting-started/requirements.md",
+  "tags": [],
+  "version": "current",
+  "frontMatter": {
+    "title": "System Requirements"
+  },
+  "sidebar": "tutorialSidebar",
+  "previous": {
+    "title": "Quick Start Guide",
+    "permalink": "/docs/es/docs/current/getting-started/quick-start"
+  },
+  "next": {
+    "title": "Architecture Overview",
+    "permalink": "/docs/es/docs/current/architecture/overview"
+  }
+}

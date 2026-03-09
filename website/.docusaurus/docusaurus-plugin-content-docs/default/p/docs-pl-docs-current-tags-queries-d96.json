@@ -1,0 +1,17 @@
+{
+  "tag": {
+    "label": "queries",
+    "permalink": "/docs/pl/docs/current/tags/queries",
+    "allTagsPath": "/docs/pl/docs/current/tags",
+    "count": 1,
+    "items": [
+      {
+        "id": "api/graphql/queries",
+        "title": "GraphQL Queries",
+        "description": "GraphQL query operations for reading data from V-COMM API",
+        "permalink": "/docs/pl/docs/current/api/graphql/queries"
+      }
+    ],
+    "unlisted": false
+  }
+}

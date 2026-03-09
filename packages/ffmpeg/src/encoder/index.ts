@@ -12,7 +12,6 @@ import {
   InputConfig,
   TranscodeProgress,
   TranscodeEventHandler,
-  _VideoCodec,
   FFmpegError,
   FFmpegErrorCode,
   MediaInfo,
@@ -53,24 +52,33 @@ export class VideoEncoder {
     onProgress?: TranscodeEventHandler
   ): Promise<string> {
     const inputConfig = typeof input === 'string' ? { path: input } : input;
-    
+
     // Validate input exists
     await this.validateInput(inputConfig.path);
-    
+
     // Create FFmpeg command
     const command = ffmpeg(inputConfig.path);
-    
+
     // Apply input options
     this.applyInputOptions(command, inputConfig);
-    
+
     // Apply output options
     this.applyOutputOptions(command, output);
-    
+
     // Set up event handlers
     return new Promise((resolve, reject) => {
       command
         .on('start', (_commandLine) => {
-          onProgress?.('start', { frame: 0, fps: 0, quality: 0, size: 0, time: 0, bitrate: 0, speed: 0, progress: 0 });
+          onProgress?.('start', {
+            frame: 0,
+            fps: 0,
+            quality: 0,
+            size: 0,
+            time: 0,
+            bitrate: 0,
+            speed: 0,
+            progress: 0,
+          });
         })
         .on('progress', (progress) => {
           const transcodeProgress: TranscodeProgress = {
@@ -86,16 +94,25 @@ export class VideoEncoder {
           onProgress?.('progress', transcodeProgress);
         })
         .on('end', () => {
-          onProgress?.('end', { frame: 0, fps: 0, quality: 0, size: 0, time: 0, bitrate: 0, speed: 0, progress: 100 });
+          onProgress?.('end', {
+            frame: 0,
+            fps: 0,
+            quality: 0,
+            size: 0,
+            time: 0,
+            bitrate: 0,
+            speed: 0,
+            progress: 100,
+          });
           resolve(output.path);
         })
         .on('error', (err) => {
           onProgress?.('error', err);
-          reject(new FFmpegError(
-            `Transcoding failed: ${err.message}`,
-            FFmpegErrorCode.ENCODING_FAILED,
-            { originalError: err.message }
-          ));
+          reject(
+            new FFmpegError(`Transcoding failed: ${err.message}`, FFmpegErrorCode.ENCODING_FAILED, {
+              originalError: err.message,
+            })
+          );
         })
         .save(output.path);
     });
@@ -131,7 +148,7 @@ export class VideoEncoder {
   ): Promise<string> {
     // Get best available encoder
     const encoder = this.hwManager.getRecommendedEncoder('h264');
-    
+
     const config: OutputConfig = {
       path: output,
       format: 'mp4',
@@ -155,7 +172,7 @@ export class VideoEncoder {
     options: Partial<VideoConfig> = {}
   ): Promise<string> {
     const encoder = this.hwManager.getRecommendedEncoder('hevc');
-    
+
     const config: OutputConfig = {
       path: output,
       format: 'mp4',
@@ -326,7 +343,10 @@ export class VideoEncoder {
   /**
    * Apply HDR options
    */
-  private applyHDROptions(command: ffmpeg.FfmpegCommand, hdr: NonNullable<VideoConfig['hdr']>): void {
+  private applyHDROptions(
+    command: ffmpeg.FfmpegCommand,
+    hdr: NonNullable<VideoConfig['hdr']>
+  ): void {
     // Color properties
     if (hdr.colorPrimaries) {
       command.outputOptions(['-color_primaries', String(hdr.colorPrimaries)]);
@@ -345,9 +365,7 @@ export class VideoEncoder {
 
     // Content light level
     if (hdr.contentLight) {
-      command.outputOptions([
-        '-max_cll', `${hdr.contentLight.max},${hdr.contentLight.avg}`
-      ]);
+      command.outputOptions(['-max_cll', `${hdr.contentLight.max},${hdr.contentLight.avg}`]);
     }
   }
 
@@ -360,8 +378,8 @@ export class VideoEncoder {
     // NVIDIA NVENC options
     if (codec.includes('nvenc')) {
       if (video.rateControl) {
-        const rcMode = video.rateControl === 'vbr' ? 'vbr' : 
-                       video.rateControl === 'cbr' ? 'cbr' : 'constqp';
+        const rcMode =
+          video.rateControl === 'vbr' ? 'vbr' : video.rateControl === 'cbr' ? 'cbr' : 'constqp';
         command.outputOptions(['-rc', rcMode]);
       }
       if (video.quality !== undefined) {
@@ -418,15 +436,15 @@ export class VideoEncoder {
    */
   private mapToNVENCPreset(preset: string): string {
     const mapping: Record<string, string> = {
-      'ultrafast': 'p1',
-      'superfast': 'p1',
-      'veryfast': 'p2',
-      'faster': 'p3',
-      'fast': 'p4',
-      'medium': 'p5',
-      'slow': 'p6',
-      'slower': 'p7',
-      'veryslow': 'p7',
+      ultrafast: 'p1',
+      superfast: 'p1',
+      veryfast: 'p2',
+      faster: 'p3',
+      fast: 'p4',
+      medium: 'p5',
+      slow: 'p6',
+      slower: 'p7',
+      veryslow: 'p7',
     };
     return mapping[preset] || 'p4';
   }
@@ -436,15 +454,15 @@ export class VideoEncoder {
    */
   private mapToAMFPreset(preset: string): string {
     const mapping: Record<string, string> = {
-      'ultrafast': 'speed',
-      'superfast': 'speed',
-      'veryfast': 'balanced',
-      'faster': 'balanced',
-      'fast': 'balanced',
-      'medium': 'balanced',
-      'slow': 'quality',
-      'slower': 'quality',
-      'veryslow': 'quality',
+      ultrafast: 'speed',
+      superfast: 'speed',
+      veryfast: 'balanced',
+      faster: 'balanced',
+      fast: 'balanced',
+      medium: 'balanced',
+      slow: 'quality',
+      slower: 'quality',
+      veryslow: 'quality',
     };
     return mapping[preset] || 'balanced';
   }
@@ -454,15 +472,15 @@ export class VideoEncoder {
    */
   private mapToQSVPreset(preset: string): string {
     const mapping: Record<string, string> = {
-      'ultrafast': 'veryfast',
-      'superfast': 'veryfast',
-      'veryfast': 'veryfast',
-      'faster': 'faster',
-      'fast': 'fast',
-      'medium': 'medium',
-      'slow': 'slow',
-      'slower': 'slower',
-      'veryslow': 'veryslow',
+      ultrafast: 'veryfast',
+      superfast: 'veryfast',
+      veryfast: 'veryfast',
+      faster: 'faster',
+      fast: 'fast',
+      medium: 'medium',
+      slow: 'slow',
+      slower: 'slower',
+      veryslow: 'veryslow',
     };
     return mapping[preset] || 'medium';
   }
@@ -472,15 +490,15 @@ export class VideoEncoder {
    */
   private mapToSVTPreset(preset: string): number {
     const mapping: Record<string, number> = {
-      'ultrafast': 12,
-      'superfast': 10,
-      'veryfast': 8,
-      'faster': 6,
-      'fast': 5,
-      'medium': 4,
-      'slow': 3,
-      'slower': 2,
-      'veryslow': 1,
+      ultrafast: 12,
+      superfast: 10,
+      veryfast: 8,
+      faster: 6,
+      fast: 5,
+      medium: 4,
+      slow: 3,
+      slower: 2,
+      veryslow: 1,
     };
     return mapping[preset] || 4;
   }
@@ -488,7 +506,11 @@ export class VideoEncoder {
   /**
    * Apply audio options to FFmpeg command
    */
-  private applyAudioOptions(command: ffmpeg.FfmpegCommand, audio: AudioConfig, _index: number): void {
+  private applyAudioOptions(
+    command: ffmpeg.FfmpegCommand,
+    audio: AudioConfig,
+    _index: number
+  ): void {
     // Codec
     command.audioCodec(audio.codec);
 
@@ -514,15 +536,17 @@ export class VideoEncoder {
 
     // Audio filters
     if (audio.filters && audio.filters.length > 0) {
-      const filterStr = audio.filters.map(f => {
-        if (f.options) {
-          const opts = Object.entries(f.options)
-            .map(([k, v]) => `${k}=${v}`)
-            .join(':');
-          return `${f.name}=${opts}`;
-        }
-        return f.name;
-      }).join(',');
+      const filterStr = audio.filters
+        .map((f) => {
+          if (f.options) {
+            const opts = Object.entries(f.options)
+              .map(([k, v]) => `${k}=${v}`)
+              .join(':');
+            return `${f.name}=${opts}`;
+          }
+          return f.name;
+        })
+        .join(',');
       command.audioFilters(filterStr);
     }
   }
@@ -530,44 +554,37 @@ export class VideoEncoder {
   /**
    * Add watermark to video
    */
-  async addWatermark(
-    input: string,
-    watermark: WatermarkConfig,
-    output: string
-  ): Promise<string> {
+  async addWatermark(input: string, watermark: WatermarkConfig, output: string): Promise<string> {
     const command = ffmpeg(input);
-    
+
     // Build overlay filter
     const { position, offsetX = 0, offsetY = 0, opacity = 1, scale = 1 } = watermark;
-    
+
     const positions: Record<string, string> = {
       'top-left': `${offsetX}:${offsetY}`,
       'top-right': `main_w-overlay_w-${offsetX}:${offsetY}`,
       'bottom-left': `${offsetX}:main_h-overlay_h-${offsetY}`,
       'bottom-right': `main_w-overlay_w-${offsetX}:main_h-overlay_h-${offsetY}`,
-      'center': '(main_w-overlay_w)/2:(main_h-overlay_h)/2',
+      center: '(main_w-overlay_w)/2:(main_h-overlay_h)/2',
     };
 
     const overlayPos = positions[position];
     let filterComplex = `[1:v]scale=${scale}*iw:${scale}*ih`;
-    
+
     if (opacity < 1) {
       filterComplex += `,format=rgba,colorchannelmixer=aa=${opacity}`;
     }
-    
+
     filterComplex += `[overlay];[0:v][overlay]overlay=${overlayPos}`;
 
-    command
-      .input(watermark.image)
-      .complexFilter(filterComplex)
-      .output(output);
+    command.input(watermark.image).complexFilter(filterComplex).output(output);
 
     return new Promise((resolve, reject) => {
       command
         .on('end', () => resolve(output))
-        .on('error', (err) => reject(
-          new FFmpegError(`Watermark failed: ${err.message}`, FFmpegErrorCode.FILTER_ERROR)
-        ))
+        .on('error', (err) =>
+          reject(new FFmpegError(`Watermark failed: ${err.message}`, FFmpegErrorCode.FILTER_ERROR))
+        )
         .run();
     });
   }
@@ -575,10 +592,7 @@ export class VideoEncoder {
   /**
    * Extract thumbnails from video
    */
-  async extractThumbnails(
-    input: string,
-    options: ThumbnailOptions
-  ): Promise<string[]> {
+  async extractThumbnails(input: string, options: ThumbnailOptions): Promise<string[]> {
     const _command = ffmpeg(input);
     const thumbnails: string[] = [];
 
@@ -593,7 +607,7 @@ export class VideoEncoder {
       // Extract N evenly spaced thumbnails
       const info = await this.getMediaInfo(input);
       const interval = info.duration / (options.count + 1);
-      
+
       for (let i = 1; i <= options.count; i++) {
         const ts = interval * i;
         const output = options.output.replace('%d', String(i));
@@ -604,7 +618,7 @@ export class VideoEncoder {
       // Extract at regular intervals
       const info = await this.getMediaInfo(input);
       const count = Math.floor(info.duration / options.interval);
-      
+
       for (let i = 0; i < count; i++) {
         const ts = i * options.interval;
         const output = options.output.replace('%d', String(i + 1));
@@ -625,20 +639,15 @@ export class VideoEncoder {
     output: string,
     options: ThumbnailOptions
   ): Promise<void> {
-    const command = ffmpeg(input)
-      .screenshots({
-        timestamps: [timestamp],
-        filename: path.basename(output),
-        folder: path.dirname(output),
-        size: options.width && options.height 
-          ? `${options.width}x${options.height}` 
-          : undefined,
-      });
+    const command = ffmpeg(input).screenshots({
+      timestamps: [timestamp],
+      filename: path.basename(output),
+      folder: path.dirname(output),
+      size: options.width && options.height ? `${options.width}x${options.height}` : undefined,
+    });
 
     return new Promise((resolve, reject) => {
-      command
-        .on('end', () => resolve())
-        .on('error', (err) => reject(err));
+      command.on('end', () => resolve()).on('error', (err) => reject(err));
     });
   }
 
@@ -649,10 +658,9 @@ export class VideoEncoder {
     return new Promise((resolve, reject) => {
       ffmpeg.ffprobe(input, (err, data) => {
         if (err) {
-          reject(new FFmpegError(
-            `Failed to probe media: ${err.message}`,
-            FFmpegErrorCode.INVALID_INPUT
-          ));
+          reject(
+            new FFmpegError(`Failed to probe media: ${err.message}`, FFmpegErrorCode.INVALID_INPUT)
+          );
           return;
         }
 
@@ -666,8 +674,8 @@ export class VideoEncoder {
           size: format.size || 0,
           bitrate: format.bit_rate || 0,
           videoStreams: streams
-            .filter(s => s.codec_type === 'video')
-            .map(s => ({
+            .filter((s) => s.codec_type === 'video')
+            .map((s) => ({
               index: s.index,
               codec: s.codec_name || 'unknown',
               profile: s.profile,
@@ -681,8 +689,8 @@ export class VideoEncoder {
               bitrate: s.bit_rate ? parseInt(s.bit_rate) : undefined,
             })),
           audioStreams: streams
-            .filter(s => s.codec_type === 'audio')
-            .map(s => ({
+            .filter((s) => s.codec_type === 'audio')
+            .map((s) => ({
               index: s.index,
               codec: s.codec_name || 'unknown',
               profile: s.profile,
@@ -693,8 +701,8 @@ export class VideoEncoder {
               language: s.tags?.language,
             })),
           subtitleStreams: streams
-            .filter(s => s.codec_type === 'subtitle')
-            .map(s => ({
+            .filter((s) => s.codec_type === 'subtitle')
+            .map((s) => ({
               index: s.index,
               codec: s.codec_name || 'unknown',
               language: s.tags?.language,
@@ -712,15 +720,13 @@ export class VideoEncoder {
    */
   private async validateInput(input: string): Promise<void> {
     const fs = await import('fs/promises');
-    
+
     try {
       await fs.access(input);
     } catch {
-      throw new FFmpegError(
-        `Input file not found: ${input}`,
-        FFmpegErrorCode.INVALID_INPUT,
-        { path: input }
-      );
+      throw new FFmpegError(`Input file not found: ${input}`, FFmpegErrorCode.INVALID_INPUT, {
+        path: input,
+      });
     }
   }
 

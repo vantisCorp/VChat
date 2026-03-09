@@ -1,0 +1,35 @@
+{
+  "tag": {
+    "label": "development",
+    "permalink": "/docs/pl/docs/current/tags/development",
+    "allTagsPath": "/docs/pl/docs/current/tags",
+    "count": 4,
+    "items": [
+      {
+        "id": "development/coding-standards",
+        "title": "Coding Standards",
+        "description": "V-COMM coding standards and best practices for developers",
+        "permalink": "/docs/pl/docs/current/development/coding-standards"
+      },
+      {
+        "id": "development/contributing",
+        "title": "Contributing Guide",
+        "description": "Guide for contributing to V-COMM including pull request process and community guidelines",
+        "permalink": "/docs/pl/docs/current/development/contributing"
+      },
+      {
+        "id": "development/setup",
+        "title": "Development Setup",
+        "description": "Complete guide to setting up V-COMM development environment",
+        "permalink": "/docs/pl/docs/current/development/setup"
+      },
+      {
+        "id": "development/testing",
+        "title": "Testing Guide",
+        "description": "Comprehensive testing guide for V-COMM including unit, integration, and E2E tests",
+        "permalink": "/docs/pl/docs/current/development/testing"
+      }
+    ],
+    "unlisted": false
+  }
+}

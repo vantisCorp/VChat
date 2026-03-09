@@ -1,0 +1,41 @@
+{
+  "tag": {
+    "label": "rest",
+    "permalink": "/docs/zh/docs/current/tags/rest",
+    "allTagsPath": "/docs/zh/docs/current/tags",
+    "count": 5,
+    "items": [
+      {
+        "id": "api/rest/authentication",
+        "title": "Authentication API",
+        "description": "REST API endpoints for user authentication, token management, and session handling",
+        "permalink": "/docs/zh/docs/current/api/rest/authentication"
+      },
+      {
+        "id": "api/rest/channels",
+        "title": "Channels API",
+        "description": "REST API endpoints for channel creation, management, and configuration",
+        "permalink": "/docs/zh/docs/current/api/rest/channels"
+      },
+      {
+        "id": "api/rest/files",
+        "title": "Files API",
+        "description": "REST API endpoints for file upload, management, and sharing",
+        "permalink": "/docs/zh/docs/current/api/rest/files"
+      },
+      {
+        "id": "api/rest/messages",
+        "title": "Messages API",
+        "description": "REST API endpoints for sending, receiving, and managing messages",
+        "permalink": "/docs/zh/docs/current/api/rest/messages"
+      },
+      {
+        "id": "api/rest/users",
+        "title": "Users API",
+        "description": "REST API endpoints for user management, profiles, and preferences",
+        "permalink": "/docs/zh/docs/current/api/rest/users"
+      }
+    ],
+    "unlisted": false
+  }
+}

@@ -1,0 +1,17 @@
+{
+  "tag": {
+    "label": "files",
+    "permalink": "/docs/docs/current/tags/files",
+    "allTagsPath": "/docs/docs/current/tags",
+    "count": 1,
+    "items": [
+      {
+        "id": "api/rest/files",
+        "title": "Files API",
+        "description": "REST API endpoints for file upload, management, and sharing",
+        "permalink": "/docs/docs/current/api/rest/files"
+      }
+    ],
+    "unlisted": false
+  }
+}

@@ -1,0 +1,54 @@
+{
+  "id": "security/pqc",
+  "title": "Post-Quantum Cryptography",
+  "description": "Implementation guide for V-COMM's Post-Quantum Cryptography with Kyber and Dilithium",
+  "source": "@site/docs/security/pqc.md",
+  "sourceDirName": "security",
+  "slug": "/security/pqc",
+  "permalink": "/docs/es/docs/current/security/pqc",
+  "draft": false,
+  "unlisted": false,
+  "editUrl": "https://github.com/vantisCorp/VChat/tree/main/website/docs/security/pqc.md",
+  "tags": [
+    {
+      "inline": true,
+      "label": "security",
+      "permalink": "/docs/es/docs/current/tags/security"
+    },
+    {
+      "inline": true,
+      "label": "cryptography",
+      "permalink": "/docs/es/docs/current/tags/cryptography"
+    },
+    {
+      "inline": true,
+      "label": "pqc",
+      "permalink": "/docs/es/docs/current/tags/pqc"
+    }
+  ],
+  "version": "current",
+  "sidebarPosition": 2,
+  "frontMatter": {
+    "sidebar_position": 2,
+    "title": "Post-Quantum Cryptography",
+    "description": "Implementation guide for V-COMM's Post-Quantum Cryptography with Kyber and Dilithium",
+    "keywords": [
+      "post-quantum",
+      "cryptography",
+      "kyber",
+      "dilithium",
+      "nist",
+      "quantum-safe"
+    ],
+    "tags": ["security", "cryptography", "pqc"]
+  },
+  "sidebar": "tutorialSidebar",
+  "previous": {
+    "title": "Security Overview",
+    "permalink": "/docs/es/docs/current/security/overview"
+  },
+  "next": {
+    "title": "Authentication",
+    "permalink": "/docs/es/docs/current/security/authentication"
+  }
+}

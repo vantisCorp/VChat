@@ -1,0 +1,17 @@
+{
+  "tag": {
+    "label": "mesh",
+    "permalink": "/docs/pl/docs/current/tags/mesh",
+    "allTagsPath": "/docs/pl/docs/current/tags",
+    "count": 1,
+    "items": [
+      {
+        "id": "features/mesh",
+        "title": "Mesh (Federation)",
+        "description": "V-COMM's Mesh networking for federated, decentralized communication",
+        "permalink": "/docs/pl/docs/current/features/mesh"
+      }
+    ],
+    "unlisted": false
+  }
+}

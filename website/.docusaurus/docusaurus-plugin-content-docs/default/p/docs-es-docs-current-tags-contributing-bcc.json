@@ -1,0 +1,17 @@
+{
+  "tag": {
+    "label": "contributing",
+    "permalink": "/docs/es/docs/current/tags/contributing",
+    "allTagsPath": "/docs/es/docs/current/tags",
+    "count": 1,
+    "items": [
+      {
+        "id": "development/contributing",
+        "title": "Contributing Guide",
+        "description": "Guide for contributing to V-COMM including pull request process and community guidelines",
+        "permalink": "/docs/es/docs/current/development/contributing"
+      }
+    ],
+    "unlisted": false
+  }
+}

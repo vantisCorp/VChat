@@ -1,0 +1,17 @@
+{
+  "tag": {
+    "label": "gateway",
+    "permalink": "/docs/pl/docs/current/tags/gateway",
+    "allTagsPath": "/docs/pl/docs/current/tags",
+    "count": 1,
+    "items": [
+      {
+        "id": "api/websocket/gateway",
+        "title": "WebSocket Gateway",
+        "description": "Advanced WebSocket Gateway features including sharding, compression, and optimization",
+        "permalink": "/docs/pl/docs/current/api/websocket/gateway"
+      }
+    ],
+    "unlisted": false
+  }
+}

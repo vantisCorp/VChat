@@ -1,0 +1,17 @@
+{
+  "tag": {
+    "label": "production",
+    "permalink": "/docs/docs/current/tags/production",
+    "allTagsPath": "/docs/docs/current/tags",
+    "count": 1,
+    "items": [
+      {
+        "id": "deployment/production",
+        "title": "Production Deployment Guide",
+        "description": "Complete guide for deploying V-COMM in production with security, monitoring, and performance best practices",
+        "permalink": "/docs/docs/current/deployment/production"
+      }
+    ],
+    "unlisted": false
+  }
+}

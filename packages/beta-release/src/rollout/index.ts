@@ -1,6 +1,6 @@
 /**
  * @vcomm/beta-release - Gradual Rollout System
- * 
+ *
  * Provides staged rollout management with automatic progression,
  * monitoring, and rollback capabilities.
  */
@@ -9,11 +9,6 @@ import {
   RolloutConfig,
   RolloutStatus,
   RolloutStage,
-  _RolloutStrategyType,
-  _RolloutMetric,
-  _RollbackPlan,
-  _RollbackTrigger,
-  _RolloutNotifications,
   BetaReleaseError,
   BetaReleaseErrorCode,
 } from '../types';
@@ -50,7 +45,13 @@ const DEFAULT_ROLLOUT_MANAGER_CONFIG: Required<RolloutManagerConfig> = {
  * Rollout event
  */
 export interface RolloutEvent {
-  type: 'stage_started' | 'stage_completed' | 'stage_failed' | 'rollout_completed' | 'rollback_triggered' | 'rollout_failed';
+  type:
+    | 'stage_started'
+    | 'stage_completed'
+    | 'stage_failed'
+    | 'rollout_completed'
+    | 'rollback_triggered'
+    | 'rollout_failed';
   rolloutId: string;
   featureKey: string;
   stage?: RolloutStage;
@@ -61,11 +62,11 @@ export interface RolloutEvent {
 
 /**
  * RolloutManager - Manages gradual feature rollouts
- * 
+ *
  * @example
  * ```typescript
  * const rolloutManager = new RolloutManager(featureFlags);
- * 
+ *
  * // Create a staged rollout
  * const rollout = rolloutManager.create({
  *   featureKey: 'new-feature',
@@ -77,7 +78,7 @@ export interface RolloutEvent {
  *     { name: 'General', targetPercentage: 100, durationHours: 0 },
  *   ],
  * });
- * 
+ *
  * // Start the rollout
  * await rolloutManager.start(rollout.id);
  * ```
@@ -97,9 +98,11 @@ export class RolloutManager {
   /**
    * Create a new rollout
    */
-  create(config: Omit<RolloutConfig, 'id' | 'currentStageIndex' | 'status' | 'createdAt' | 'updatedAt'>): RolloutConfig {
+  create(
+    config: Omit<RolloutConfig, 'id' | 'currentStageIndex' | 'status' | 'createdAt' | 'updatedAt'>
+  ): RolloutConfig {
     const id = this.generateId();
-    
+
     // Validate feature flag exists
     if (!this.featureFlags.has(config.featureKey)) {
       throw new BetaReleaseError(
@@ -152,7 +155,7 @@ export class RolloutManager {
     }
 
     // Reset all stages to pending
-    rollout.stages = rollout.stages.map(stage => ({
+    rollout.stages = rollout.stages.map((stage) => ({
       ...stage,
       status: 'pending',
       currentPercentage: 0,
@@ -260,7 +263,7 @@ export class RolloutManager {
     rollout.updatedAt = new Date();
 
     // Reset stage statuses
-    rollout.stages = rollout.stages.map(stage => ({
+    rollout.stages = rollout.stages.map((stage) => ({
       ...stage,
       status: 'failed' as const,
     }));
@@ -483,7 +486,7 @@ export class RolloutManager {
    * Get rollouts by status
    */
   getByStatus(status: RolloutStatus): RolloutConfig[] {
-    return this.getAll().filter(r => r.status === status);
+    return this.getAll().filter((r) => r.status === status);
   }
 
   /**
@@ -497,7 +500,7 @@ export class RolloutManager {
    * Get rollouts for a feature
    */
   getByFeature(featureKey: string): RolloutConfig[] {
-    return this.getAll().filter(r => r.featureKey === featureKey);
+    return this.getAll().filter((r) => r.featureKey === featureKey);
   }
 
   /**
@@ -511,13 +514,15 @@ export class RolloutManager {
   /**
    * Get current progress of a rollout
    */
-  getProgress(rolloutId: string): {
-    currentStage: number;
-    totalStages: number;
-    currentPercentage: number;
-    targetPercentage: number;
-    status: RolloutStatus;
-  } | undefined {
+  getProgress(rolloutId: string):
+    | {
+        currentStage: number;
+        totalStages: number;
+        currentPercentage: number;
+        targetPercentage: number;
+        status: RolloutStatus;
+      }
+    | undefined {
     const rollout = this.rollouts.get(rolloutId);
     if (!rollout) return undefined;
 
@@ -554,7 +559,7 @@ export class RolloutManager {
 
     this.clearStageTimer(rolloutId);
     await this.completeStage(rollout, rollout.currentStageIndex);
-    
+
     return this.rollouts.get(rolloutId)!;
   }
 
@@ -569,12 +574,16 @@ export class RolloutManager {
       const metricValue = metrics.get(trigger.metricName || trigger.type);
       if (metricValue === undefined) continue;
 
-      const shouldRollback = trigger.operator === 'greater_than'
-        ? metricValue > trigger.threshold
-        : metricValue < trigger.threshold;
+      const shouldRollback =
+        trigger.operator === 'greater_than'
+          ? metricValue > trigger.threshold
+          : metricValue < trigger.threshold;
 
       if (shouldRollback && rollout.rollbackPlan.autoRollback) {
-        await this.rollback(rolloutId, `Trigger: ${trigger.type} ${trigger.operator} ${trigger.threshold}`);
+        await this.rollback(
+          rolloutId,
+          `Trigger: ${trigger.type} ${trigger.operator} ${trigger.threshold}`
+        );
         return true;
       }
     }

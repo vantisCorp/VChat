@@ -1,0 +1,49 @@
+{
+  "id": "security/authentication",
+  "title": "Authentication",
+  "description": "Comprehensive guide to V-COMM's authentication system including MFA, SSO, and session management",
+  "source": "@site/docs/security/authentication.md",
+  "sourceDirName": "security",
+  "slug": "/security/authentication",
+  "permalink": "/docs/es/docs/current/security/authentication",
+  "draft": false,
+  "unlisted": false,
+  "editUrl": "https://github.com/vantisCorp/VChat/tree/main/website/docs/security/authentication.md",
+  "tags": [
+    {
+      "inline": true,
+      "label": "security",
+      "permalink": "/docs/es/docs/current/tags/security"
+    },
+    {
+      "inline": true,
+      "label": "authentication",
+      "permalink": "/docs/es/docs/current/tags/authentication"
+    }
+  ],
+  "version": "current",
+  "sidebarPosition": 3,
+  "frontMatter": {
+    "sidebar_position": 3,
+    "title": "Authentication",
+    "description": "Comprehensive guide to V-COMM's authentication system including MFA, SSO, and session management",
+    "keywords": [
+      "authentication",
+      "mfa",
+      "sso",
+      "oauth",
+      "jwt",
+      "session management"
+    ],
+    "tags": ["security", "authentication"]
+  },
+  "sidebar": "tutorialSidebar",
+  "previous": {
+    "title": "Post-Quantum Cryptography",
+    "permalink": "/docs/es/docs/current/security/pqc"
+  },
+  "next": {
+    "title": "Compliance & Certifications",
+    "permalink": "/docs/es/docs/current/security/compliance"
+  }
+}

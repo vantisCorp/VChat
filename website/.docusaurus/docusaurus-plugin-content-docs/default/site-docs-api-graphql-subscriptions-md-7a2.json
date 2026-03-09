@@ -1,0 +1,54 @@
+{
+  "id": "api/graphql/subscriptions",
+  "title": "GraphQL Subscriptions",
+  "description": "GraphQL subscription operations for real-time data updates from V-COMM API",
+  "source": "@site/docs/api/graphql/subscriptions.md",
+  "sourceDirName": "api/graphql",
+  "slug": "/api/graphql/subscriptions",
+  "permalink": "/docs/es/docs/current/api/graphql/subscriptions",
+  "draft": false,
+  "unlisted": false,
+  "editUrl": "https://github.com/vantisCorp/VChat/tree/main/website/docs/api/graphql/subscriptions.md",
+  "tags": [
+    {
+      "inline": true,
+      "label": "api",
+      "permalink": "/docs/es/docs/current/tags/api"
+    },
+    {
+      "inline": true,
+      "label": "graphql",
+      "permalink": "/docs/es/docs/current/tags/graphql"
+    },
+    {
+      "inline": true,
+      "label": "subscriptions",
+      "permalink": "/docs/es/docs/current/tags/subscriptions"
+    },
+    {
+      "inline": true,
+      "label": "real-time",
+      "permalink": "/docs/es/docs/current/tags/real-time"
+    }
+  ],
+  "version": "current",
+  "sidebarPosition": 3,
+  "frontMatter": {
+    "sidebar_position": 3,
+    "title": "GraphQL Subscriptions",
+    "description": "GraphQL subscription operations for real-time data updates from V-COMM API",
+    "keywords": [
+      "graphql",
+      "subscriptions",
+      "real-time",
+      "websocket",
+      "events"
+    ],
+    "tags": ["api", "graphql", "subscriptions", "real-time"]
+  },
+  "sidebar": "apiSidebar",
+  "previous": {
+    "title": "GraphQL Mutations",
+    "permalink": "/docs/es/docs/current/api/graphql/mutations"
+  }
+}

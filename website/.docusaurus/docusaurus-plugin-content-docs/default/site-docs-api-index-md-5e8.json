@@ -1,0 +1,22 @@
+{
+  "id": "api/index",
+  "title": "API Overview",
+  "description": "V-COMM provides multiple API interfaces to suit different use cases:",
+  "source": "@site/docs/api/index.md",
+  "sourceDirName": "api",
+  "slug": "/api/",
+  "permalink": "/docs/es/docs/current/api/",
+  "draft": false,
+  "unlisted": false,
+  "editUrl": "https://github.com/vantisCorp/VChat/tree/main/website/docs/api/index.md",
+  "tags": [],
+  "version": "current",
+  "frontMatter": {
+    "title": "API Overview"
+  },
+  "sidebar": "apiSidebar",
+  "next": {
+    "title": "Authentication API",
+    "permalink": "/docs/es/docs/current/api/rest/authentication"
+  }
+}

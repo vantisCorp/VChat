@@ -22,7 +22,7 @@
   "author": "V-COMM Team",
   "license": "MIT",
   "dependencies": {
-    "@vcomm/types": "^1.0.0"
+    "@vcomm/types": "workspace:*"
   },
   "devDependencies": {
     "@types/node": "^25.3.5",

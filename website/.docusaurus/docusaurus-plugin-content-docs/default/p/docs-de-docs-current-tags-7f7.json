@@ -1,0 +1,189 @@
+{
+  "tags": [
+    {
+      "label": "api",
+      "permalink": "/docs/de/docs/current/tags/api",
+      "count": 11
+    },
+    {
+      "label": "graphql",
+      "permalink": "/docs/de/docs/current/tags/graphql",
+      "count": 3
+    },
+    {
+      "label": "mutations",
+      "permalink": "/docs/de/docs/current/tags/mutations",
+      "count": 1
+    },
+    {
+      "label": "queries",
+      "permalink": "/docs/de/docs/current/tags/queries",
+      "count": 1
+    },
+    {
+      "label": "subscriptions",
+      "permalink": "/docs/de/docs/current/tags/subscriptions",
+      "count": 1
+    },
+    {
+      "label": "real-time",
+      "permalink": "/docs/de/docs/current/tags/real-time",
+      "count": 3
+    },
+    {
+      "label": "authentication",
+      "permalink": "/docs/de/docs/current/tags/authentication",
+      "count": 2
+    },
+    {
+      "label": "rest",
+      "permalink": "/docs/de/docs/current/tags/rest",
+      "count": 5
+    },
+    {
+      "label": "channels",
+      "permalink": "/docs/de/docs/current/tags/channels",
+      "count": 2
+    },
+    {
+      "label": "files",
+      "permalink": "/docs/de/docs/current/tags/files",
+      "count": 1
+    },
+    {
+      "label": "messages",
+      "permalink": "/docs/de/docs/current/tags/messages",
+      "count": 1
+    },
+    {
+      "label": "users",
+      "permalink": "/docs/de/docs/current/tags/users",
+      "count": 1
+    },
+    {
+      "label": "websocket",
+      "permalink": "/docs/de/docs/current/tags/websocket",
+      "count": 3
+    },
+    {
+      "label": "gateway",
+      "permalink": "/docs/de/docs/current/tags/gateway",
+      "count": 1
+    },
+    {
+      "label": "deployment",
+      "permalink": "/docs/de/docs/current/tags/deployment",
+      "count": 3
+    },
+    {
+      "label": "kubernetes",
+      "permalink": "/docs/de/docs/current/tags/kubernetes",
+      "count": 1
+    },
+    {
+      "label": "production",
+      "permalink": "/docs/de/docs/current/tags/production",
+      "count": 1
+    },
+    {
+      "label": "terraform",
+      "permalink": "/docs/de/docs/current/tags/terraform",
+      "count": 1
+    },
+    {
+      "label": "infrastructure",
+      "permalink": "/docs/de/docs/current/tags/infrastructure",
+      "count": 1
+    },
+    {
+      "label": "development",
+      "permalink": "/docs/de/docs/current/tags/development",
+      "count": 4
+    },
+    {
+      "label": "standards",
+      "permalink": "/docs/de/docs/current/tags/standards",
+      "count": 1
+    },
+    {
+      "label": "contributing",
+      "permalink": "/docs/de/docs/current/tags/contributing",
+      "count": 1
+    },
+    {
+      "label": "setup",
+      "permalink": "/docs/de/docs/current/tags/setup",
+      "count": 1
+    },
+    {
+      "label": "testing",
+      "permalink": "/docs/de/docs/current/tags/testing",
+      "count": 1
+    },
+    {
+      "label": "features",
+      "permalink": "/docs/de/docs/current/tags/features",
+      "count": 5
+    },
+    {
+      "label": "bots",
+      "permalink": "/docs/de/docs/current/tags/bots",
+      "count": 1
+    },
+    {
+      "label": "automation",
+      "permalink": "/docs/de/docs/current/tags/automation",
+      "count": 1
+    },
+    {
+      "label": "drive",
+      "permalink": "/docs/de/docs/current/tags/drive",
+      "count": 1
+    },
+    {
+      "label": "storage",
+      "permalink": "/docs/de/docs/current/tags/storage",
+      "count": 1
+    },
+    {
+      "label": "mesh",
+      "permalink": "/docs/de/docs/current/tags/mesh",
+      "count": 1
+    },
+    {
+      "label": "networking",
+      "permalink": "/docs/de/docs/current/tags/networking",
+      "count": 1
+    },
+    {
+      "label": "spaces",
+      "permalink": "/docs/de/docs/current/tags/spaces",
+      "count": 1
+    },
+    {
+      "label": "security",
+      "permalink": "/docs/de/docs/current/tags/security",
+      "count": 4
+    },
+    {
+      "label": "best-practices",
+      "permalink": "/docs/de/docs/current/tags/best-practices",
+      "count": 1
+    },
+    {
+      "label": "compliance",
+      "permalink": "/docs/de/docs/current/tags/compliance",
+      "count": 1
+    },
+    {
+      "label": "cryptography",
+      "permalink": "/docs/de/docs/current/tags/cryptography",
+      "count": 1
+    },
+    {
+      "label": "pqc",
+      "permalink": "/docs/de/docs/current/tags/pqc",
+      "count": 1
+    }
+  ]
+}

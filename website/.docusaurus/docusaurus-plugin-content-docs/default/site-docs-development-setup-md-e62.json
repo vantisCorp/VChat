@@ -1,0 +1,42 @@
+{
+  "id": "development/setup",
+  "title": "Development Setup",
+  "description": "Complete guide to setting up V-COMM development environment",
+  "source": "@site/docs/development/setup.md",
+  "sourceDirName": "development",
+  "slug": "/development/setup",
+  "permalink": "/docs/es/docs/current/development/setup",
+  "draft": false,
+  "unlisted": false,
+  "editUrl": "https://github.com/vantisCorp/VChat/tree/main/website/docs/development/setup.md",
+  "tags": [
+    {
+      "inline": true,
+      "label": "development",
+      "permalink": "/docs/es/docs/current/tags/development"
+    },
+    {
+      "inline": true,
+      "label": "setup",
+      "permalink": "/docs/es/docs/current/tags/setup"
+    }
+  ],
+  "version": "current",
+  "sidebarPosition": 1,
+  "frontMatter": {
+    "sidebar_position": 1,
+    "title": "Development Setup",
+    "description": "Complete guide to setting up V-COMM development environment",
+    "keywords": ["development", "setup", "environment", "local", "tools"],
+    "tags": ["development", "setup"]
+  },
+  "sidebar": "tutorialSidebar",
+  "previous": {
+    "title": "Production Deployment Guide",
+    "permalink": "/docs/es/docs/current/deployment/production"
+  },
+  "next": {
+    "title": "Coding Standards",
+    "permalink": "/docs/es/docs/current/development/coding-standards"
+  }
+}

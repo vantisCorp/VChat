@@ -11,7 +11,6 @@ import {
   SDPMediaDescription,
   RTPMap,
   DTLSRole,
-  _ICEError,
   SDPError,
 } from '../types';
 
@@ -192,9 +191,7 @@ export class SDPParser {
 
     // DTLS fingerprint
     if (media.fingerprint) {
-      lines.push(
-        `a=fingerprint:${media.fingerprint.algorithm} ${media.fingerprint.value}`
-      );
+      lines.push(`a=fingerprint:${media.fingerprint.algorithm} ${media.fingerprint.value}`);
     }
 
     // Setup
@@ -287,9 +284,7 @@ export class SDPParser {
   /**
    * Parse connection line
    */
-  private static parseConnection(
-    content: string
-  ): { ip: string; version: 4 | 6 } {
+  private static parseConnection(content: string): { ip: string; version: 4 | 6 } {
     const parts = content.split(' ');
     const version = parts[1] === 'IP6' ? 6 : 4;
     return {
@@ -312,9 +307,7 @@ export class SDPParser {
   /**
    * Parse media line
    */
-  private static parseMedia(
-    content: string
-  ): Partial<SDPMediaDescription> {
+  private static parseMedia(content: string): Partial<SDPMediaDescription> {
     const parts = content.split(' ');
     return {
       type: parts[0] as 'audio' | 'video' | 'application',
@@ -353,10 +346,7 @@ export class SDPParser {
   /**
    * Parse media-level attribute
    */
-  private static parseAttribute(
-    content: string,
-    media: Partial<SDPMediaDescription>
-  ): void {
+  private static parseAttribute(content: string, media: Partial<SDPMediaDescription>): void {
     if (content.startsWith('rtpmap:')) {
       const rtp = this.parseRtpMap(content.slice(7));
       media.rtpmap!.set(rtp.payloadType, rtp);
@@ -498,9 +488,7 @@ export class SDPParser {
   /**
    * Parse SSRC
    */
-  private static parseSsrc(
-    content: string
-  ): { ssrc: number; attribute: string; value: string } {
+  private static parseSsrc(content: string): { ssrc: number; attribute: string; value: string } {
     const colonIndex = content.indexOf(':');
     const spaceIndex = content.indexOf(' ');
 
@@ -525,9 +513,7 @@ export class SDPParser {
   /**
    * Parse SSRC group
    */
-  private static parseSsrcGroup(
-    content: string
-  ): { semantics: string; ssrcs: number[] } {
+  private static parseSsrcGroup(content: string): { semantics: string; ssrcs: number[] } {
     const parts = content.split(' ');
     return {
       semantics: parts[0],
@@ -538,9 +524,11 @@ export class SDPParser {
   /**
    * Parse RID
    */
-  private static parseRid(
-    content: string
-  ): { id: string; direction: 'send' | 'recv'; params?: Map<string, string> } {
+  private static parseRid(content: string): {
+    id: string;
+    direction: 'send' | 'recv';
+    params?: Map<string, string>;
+  } {
     const parts = content.split(' ');
     const rid: { id: string; direction: 'send' | 'recv'; params?: Map<string, string> } = {
       id: parts[0],
@@ -561,9 +549,7 @@ export class SDPParser {
   /**
    * Parse simulcast
    */
-  private static parseSimulcast(
-    content: string
-  ): { send: string[]; recv: string[] } {
+  private static parseSimulcast(content: string): { send: string[]; recv: string[] } {
     const result: { send: string[]; recv: string[] } = { send: [], recv: [] };
     const parts = content.split(';');
 
@@ -582,9 +568,7 @@ export class SDPParser {
   /**
    * Parse RTCP
    */
-  private static parseRtcp(
-    content: string
-  ): SDPMediaDescription['rtcp'] {
+  private static parseRtcp(content: string): SDPMediaDescription['rtcp'] {
     const parts = content.split(' ');
     if (parts.length === 1) {
       return { port: parseInt(parts[0], 10) };
@@ -659,20 +643,14 @@ export class ICEHandler {
   /**
    * Filter candidates by type
    */
-  static filterByType(
-    candidates: ICECandidate[],
-    types: ICECandidateType[]
-  ): ICECandidate[] {
+  static filterByType(candidates: ICECandidate[], types: ICECandidateType[]): ICECandidate[] {
     return candidates.filter((c) => types.includes(c.type));
   }
 
   /**
    * Filter candidates by protocol
    */
-  static filterByProtocol(
-    candidates: ICECandidate[],
-    protocols: ICEProtocol[]
-  ): ICECandidate[] {
+  static filterByProtocol(candidates: ICECandidate[], protocols: ICEProtocol[]): ICECandidate[] {
     return candidates.filter((c) => protocols.includes(c.protocol));
   }
 
@@ -682,9 +660,7 @@ export class ICEHandler {
   static getBestCandidate(candidates: ICECandidate[]): ICECandidate | null {
     const sorted = this.sortByPriority(candidates);
     // Prefer UDP host candidates
-    const udpHost = sorted.find(
-      (c) => c.protocol === 'udp' && c.type === 'host'
-    );
+    const udpHost = sorted.find((c) => c.protocol === 'udp' && c.type === 'host');
     if (udpHost) return udpHost;
     // Fall back to highest priority
     return sorted[0] || null;
@@ -693,11 +669,7 @@ export class ICEHandler {
   /**
    * Generate candidate foundation
    */
-  static generateFoundation(
-    type: ICECandidateType,
-    protocol: ICEProtocol,
-    ip: string
-  ): string {
+  static generateFoundation(type: ICECandidateType, protocol: ICEProtocol, ip: string): string {
     // Foundation is a hash-like string for candidate grouping
     const hash = this.simpleHash(`${type}${protocol}${ip}`);
     return hash.toString(16).padStart(8, '0');
@@ -963,10 +935,7 @@ export class SDPUtils {
   /**
    * Get media by MID
    */
-  static getMediaByMid(
-    sdp: SDPSessionDescription,
-    mid: string
-  ): SDPMediaDescription | undefined {
+  static getMediaByMid(sdp: SDPSessionDescription, mid: string): SDPMediaDescription | undefined {
     return sdp.media.find((m) => m.mid === mid);
   }
 
@@ -974,17 +943,20 @@ export class SDPUtils {
    * Clone SDP
    */
   static clone(sdp: SDPSessionDescription): SDPSessionDescription {
-    return JSON.parse(JSON.stringify(sdp, (key, value) => {
-      if (value instanceof Map) {
-        return { __type: 'Map', data: Array.from(value.entries()) };
+    return JSON.parse(
+      JSON.stringify(sdp, (key, value) => {
+        if (value instanceof Map) {
+          return { __type: 'Map', data: Array.from(value.entries()) };
+        }
+        return value;
+      }),
+      (key, value) => {
+        if (value && value.__type === 'Map') {
+          return new Map(value.data);
+        }
+        return value;
       }
-      return value;
-    }), (key, value) => {
-      if (value && value.__type === 'Map') {
-        return new Map(value.data);
-      }
-      return value;
-    });
+    );
   }
 
   /**
@@ -999,9 +971,7 @@ export class SDPUtils {
    */
   static hasCodec(media: SDPMediaDescription, name: string): boolean {
     const codecs = this.getCodecs(media);
-    return codecs.some(
-      (c) => c.name.toLowerCase() === name.toLowerCase()
-    );
+    return codecs.some((c) => c.name.toLowerCase() === name.toLowerCase());
   }
 
   /**
@@ -1113,4 +1083,3 @@ export class WebRTCSession {
     this.candidates = [];
   }
 }
-

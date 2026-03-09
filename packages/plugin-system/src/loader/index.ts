@@ -1,19 +1,11 @@
 /**
  * @vcomm/plugin-system - Plugin Loader
- * 
+ *
  * Handles plugin loading, validation, and lifecycle management.
  * Supports both local and remote plugin sources.
  */
 
-import {
-  PluginManifest,
-  PluginInstance,
-  _PluginStatus,
-  PluginError,
-  PluginErrorCode,
-  _PluginLoadResult,
-  PluginValidationResult,
-} from '../types';
+import { PluginManifest, PluginInstance, PluginError, PluginErrorCode } from '../types';
 import { PluginRegistry } from '../registry';
 
 /**
@@ -60,14 +52,14 @@ export interface PluginSource {
 
 /**
  * PluginLoader - Manages plugin loading and initialization
- * 
+ *
  * @example
  * ```typescript
  * const loader = new PluginLoader(registry);
- * 
+ *
  * // Load from local directory
  * const instance = await loader.load('./plugins/my-plugin');
- * 
+ *
  * // Load from npm
  * const instance = await loader.loadFromNpm('@vcomm/plugin-example');
  * ```
@@ -86,9 +78,7 @@ export class PluginLoader {
    * Load a plugin from a source
    */
   async load(source: PluginSource | string): Promise<PluginInstance> {
-    const pluginSource = typeof source === 'string' 
-      ? this.detectSourceType(source) 
-      : source;
+    const pluginSource = typeof source === 'string' ? this.detectSourceType(source) : source;
 
     // Prevent circular loading
     const sourceKey = `${pluginSource.type}:${pluginSource.location}`;
@@ -111,7 +101,7 @@ export class PluginLoader {
         if (!validation.valid) {
           throw new PluginError(
             PluginErrorCode.INVALID_MANIFEST,
-            `Invalid plugin manifest: ${validation.errors.map(e => e.message).join(', ')}`
+            `Invalid plugin manifest: ${validation.errors.map((e: { field: string; message: string }) => e.message).join(', ')}`
           );
         }
       }
@@ -169,10 +159,7 @@ export class PluginLoader {
   async reload(pluginId: string): Promise<PluginInstance> {
     const instance = this.registry.get(pluginId);
     if (!instance) {
-      throw new PluginError(
-        PluginErrorCode.NOT_FOUND,
-        `Plugin ${pluginId} is not installed`
-      );
+      throw new PluginError(PluginErrorCode.NOT_FOUND, `Plugin ${pluginId} is not installed`);
     }
 
     // Get source information (stored during load)
@@ -239,10 +226,10 @@ export class PluginLoader {
     // In a real implementation, this would read from filesystem
     // For now, we simulate it with a mock
     const _manifestPath = `${path}/${this.config.manifestFileName}`;
-    
+
     // Simulated filesystem read
     // In production: const content = await fs.readFile(manifestPath, 'utf-8');
-    
+
     throw new PluginError(
       PluginErrorCode.NOT_IMPLEMENTED,
       `Local plugin loading not implemented in this environment`
@@ -284,10 +271,7 @@ export class PluginLoader {
    */
   private async fetchNpmManifest(_packageName: string, _version?: string): Promise<PluginManifest> {
     // In production, this would use npm registry API
-    throw new PluginError(
-      PluginErrorCode.NOT_IMPLEMENTED,
-      'NPM plugin loading not implemented'
-    );
+    throw new PluginError(PluginErrorCode.NOT_IMPLEMENTED, 'NPM plugin loading not implemented');
   }
 
   /**
@@ -295,22 +279,16 @@ export class PluginLoader {
    */
   private async fetchMarketplaceManifest(_pluginId: string): Promise<PluginManifest> {
     // In production, this would query the marketplace API
-    throw new PluginError(
-      PluginErrorCode.NOT_IMPLEMENTED,
-      'Marketplace loading not implemented'
-    );
+    throw new PluginError(PluginErrorCode.NOT_IMPLEMENTED, 'Marketplace loading not implemented');
   }
 
   /**
    * Load the plugin module
    */
-  private async loadPluginModule(
-    source: PluginSource,
-    manifest: PluginManifest
-  ): Promise<unknown> {
+  private async loadPluginModule(source: PluginSource, manifest: PluginManifest): Promise<unknown> {
     // In production, this would dynamically load the plugin code
     // with proper sandboxing and security measures
-    
+
     // For now, return a mock module
     return {
       id: manifest.id,
@@ -323,7 +301,11 @@ export class PluginLoader {
   /**
    * Validate a plugin manifest
    */
-  validateManifest(manifest: PluginManifest): PluginValidationResult {
+  validateManifest(manifest: PluginManifest): {
+    valid: boolean;
+    errors: { field: string; message: string }[];
+    warnings: { field: string; message: string }[];
+  } {
     const errors: { field: string; message: string }[] = [];
     const warnings: { field: string; message: string }[] = [];
 
@@ -366,15 +348,34 @@ export class PluginLoader {
     // Permission validation
     if (manifest.permissions) {
       const validPermissions = [
-        'message.read', 'message.write', 'message.delete.own', 'message.delete.any',
-        'channel.read', 'channel.write', 'channel.manage',
-        'user.read', 'user.write', 'user.ban', 'user.kick',
-        'server.read', 'server.write', 'server.manage',
-        'voice.read', 'voice.write', 'voice.manage',
-        'permissions.read', 'permissions.write', 'permissions.manage',
-        'webhook.read', 'webhook.write', 'webhook.manage',
-        'emoji.read', 'emoji.write', 'emoji.manage',
-        'settings.read', 'settings.write',
+        'message.read',
+        'message.write',
+        'message.delete.own',
+        'message.delete.any',
+        'channel.read',
+        'channel.write',
+        'channel.manage',
+        'user.read',
+        'user.write',
+        'user.ban',
+        'user.kick',
+        'server.read',
+        'server.write',
+        'server.manage',
+        'voice.read',
+        'voice.write',
+        'voice.manage',
+        'permissions.read',
+        'permissions.write',
+        'permissions.manage',
+        'webhook.read',
+        'webhook.write',
+        'webhook.manage',
+        'emoji.read',
+        'emoji.write',
+        'emoji.manage',
+        'settings.read',
+        'settings.write',
       ];
 
       for (const perm of manifest.permissions) {
@@ -456,9 +457,7 @@ export class PluginLoader {
     reason?: string;
   }> {
     try {
-      const pluginSource = typeof source === 'string' 
-        ? this.detectSourceType(source) 
-        : source;
+      const pluginSource = typeof source === 'string' ? this.detectSourceType(source) : source;
 
       const manifest = await this.fetchManifest(pluginSource);
       const validation = this.validateManifest(manifest);
@@ -466,7 +465,7 @@ export class PluginLoader {
       if (!validation.valid) {
         return {
           canLoad: false,
-          reason: `Invalid manifest: ${validation.errors.map(e => e.message).join(', ')}`,
+          reason: `Invalid manifest: ${validation.errors.map((e: { field: string; message: string }) => e.message).join(', ')}`,
         };
       }
 

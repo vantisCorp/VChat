@@ -1,0 +1,17 @@
+{
+  "tag": {
+    "label": "storage",
+    "permalink": "/docs/pl/docs/current/tags/storage",
+    "allTagsPath": "/docs/pl/docs/current/tags",
+    "count": 1,
+    "items": [
+      {
+        "id": "features/drive",
+        "title": "Drive (File Storage)",
+        "description": "V-COMM's secure file storage and sharing system with E2E encryption",
+        "permalink": "/docs/pl/docs/current/features/drive"
+      }
+    ],
+    "unlisted": false
+  }
+}

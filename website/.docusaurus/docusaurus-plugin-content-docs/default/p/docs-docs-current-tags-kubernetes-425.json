@@ -1,0 +1,17 @@
+{
+  "tag": {
+    "label": "kubernetes",
+    "permalink": "/docs/docs/current/tags/kubernetes",
+    "allTagsPath": "/docs/docs/current/tags",
+    "count": 1,
+    "items": [
+      {
+        "id": "deployment/kubernetes",
+        "title": "Kubernetes Deployment",
+        "description": "Comprehensive guide to deploying V-COMM on Kubernetes with Helm charts",
+        "permalink": "/docs/docs/current/deployment/kubernetes"
+      }
+    ],
+    "unlisted": false
+  }
+}

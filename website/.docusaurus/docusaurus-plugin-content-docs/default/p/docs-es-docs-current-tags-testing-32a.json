@@ -1,0 +1,17 @@
+{
+  "tag": {
+    "label": "testing",
+    "permalink": "/docs/es/docs/current/tags/testing",
+    "allTagsPath": "/docs/es/docs/current/tags",
+    "count": 1,
+    "items": [
+      {
+        "id": "development/testing",
+        "title": "Testing Guide",
+        "description": "Comprehensive testing guide for V-COMM including unit, integration, and E2E tests",
+        "permalink": "/docs/es/docs/current/development/testing"
+      }
+    ],
+    "unlisted": false
+  }
+}

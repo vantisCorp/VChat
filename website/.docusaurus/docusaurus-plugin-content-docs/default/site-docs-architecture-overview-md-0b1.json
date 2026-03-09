@@ -1,0 +1,26 @@
+{
+  "id": "architecture/overview",
+  "title": "Architecture Overview",
+  "description": "This document provides a comprehensive overview of V-COMM's architecture, design decisions, and technical implementation.",
+  "source": "@site/docs/architecture/overview.md",
+  "sourceDirName": "architecture",
+  "slug": "/architecture/overview",
+  "permalink": "/docs/es/docs/current/architecture/overview",
+  "draft": false,
+  "unlisted": false,
+  "editUrl": "https://github.com/vantisCorp/VChat/tree/main/website/docs/architecture/overview.md",
+  "tags": [],
+  "version": "current",
+  "frontMatter": {
+    "title": "Architecture Overview"
+  },
+  "sidebar": "tutorialSidebar",
+  "previous": {
+    "title": "System Requirements",
+    "permalink": "/docs/es/docs/current/getting-started/requirements"
+  },
+  "next": {
+    "title": "Zero Trust Architecture",
+    "permalink": "/docs/es/docs/current/architecture/zero-trust"
+  }
+}

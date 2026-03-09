@@ -1,0 +1,47 @@
+{
+  "id": "api/rest/channels",
+  "title": "Channels API",
+  "description": "REST API endpoints for channel creation, management, and configuration",
+  "source": "@site/docs/api/rest/channels.md",
+  "sourceDirName": "api/rest",
+  "slug": "/api/rest/channels",
+  "permalink": "/docs/es/docs/current/api/rest/channels",
+  "draft": false,
+  "unlisted": false,
+  "editUrl": "https://github.com/vantisCorp/VChat/tree/main/website/docs/api/rest/channels.md",
+  "tags": [
+    {
+      "inline": true,
+      "label": "api",
+      "permalink": "/docs/es/docs/current/tags/api"
+    },
+    {
+      "inline": true,
+      "label": "channels",
+      "permalink": "/docs/es/docs/current/tags/channels"
+    },
+    {
+      "inline": true,
+      "label": "rest",
+      "permalink": "/docs/es/docs/current/tags/rest"
+    }
+  ],
+  "version": "current",
+  "sidebarPosition": 3,
+  "frontMatter": {
+    "sidebar_position": 3,
+    "title": "Channels API",
+    "description": "REST API endpoints for channel creation, management, and configuration",
+    "keywords": ["channels", "REST API", "messaging", "chat", "communication"],
+    "tags": ["api", "channels", "rest"]
+  },
+  "sidebar": "apiSidebar",
+  "previous": {
+    "title": "Users API",
+    "permalink": "/docs/es/docs/current/api/rest/users"
+  },
+  "next": {
+    "title": "Messages API",
+    "permalink": "/docs/es/docs/current/api/rest/messages"
+  }
+}

@@ -1,0 +1,49 @@
+{
+  "id": "deployment/production",
+  "title": "Production Deployment Guide",
+  "description": "Complete guide for deploying V-COMM in production with security, monitoring, and performance best practices",
+  "source": "@site/docs/deployment/production.md",
+  "sourceDirName": "deployment",
+  "slug": "/deployment/production",
+  "permalink": "/docs/es/docs/current/deployment/production",
+  "draft": false,
+  "unlisted": false,
+  "editUrl": "https://github.com/vantisCorp/VChat/tree/main/website/docs/deployment/production.md",
+  "tags": [
+    {
+      "inline": true,
+      "label": "deployment",
+      "permalink": "/docs/es/docs/current/tags/deployment"
+    },
+    {
+      "inline": true,
+      "label": "production",
+      "permalink": "/docs/es/docs/current/tags/production"
+    }
+  ],
+  "version": "current",
+  "sidebarPosition": 4,
+  "frontMatter": {
+    "sidebar_position": 4,
+    "title": "Production Deployment Guide",
+    "description": "Complete guide for deploying V-COMM in production with security, monitoring, and performance best practices",
+    "keywords": [
+      "production",
+      "deployment",
+      "security",
+      "monitoring",
+      "scaling",
+      "performance"
+    ],
+    "tags": ["deployment", "production"]
+  },
+  "sidebar": "tutorialSidebar",
+  "previous": {
+    "title": "Terraform Infrastructure",
+    "permalink": "/docs/es/docs/current/deployment/terraform"
+  },
+  "next": {
+    "title": "Development Setup",
+    "permalink": "/docs/es/docs/current/development/setup"
+  }
+}

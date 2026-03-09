@@ -1,0 +1,17 @@
+{
+  "tag": {
+    "label": "bots",
+    "permalink": "/docs/docs/current/tags/bots",
+    "allTagsPath": "/docs/docs/current/tags",
+    "count": 1,
+    "items": [
+      {
+        "id": "features/bots",
+        "title": "Bots & Automation",
+        "description": "Comprehensive guide to creating and using bots in V-COMM for automation and integrations",
+        "permalink": "/docs/docs/current/features/bots"
+      }
+    ],
+    "unlisted": false
+  }
+}

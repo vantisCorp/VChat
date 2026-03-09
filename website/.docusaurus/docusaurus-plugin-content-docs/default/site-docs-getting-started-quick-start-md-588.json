@@ -1,0 +1,26 @@
+{
+  "id": "getting-started/quick-start",
+  "title": "Quick Start Guide",
+  "description": "Get V-COMM up and running in minutes with this quick start guide.",
+  "source": "@site/docs/getting-started/quick-start.md",
+  "sourceDirName": "getting-started",
+  "slug": "/getting-started/quick-start",
+  "permalink": "/docs/es/docs/current/getting-started/quick-start",
+  "draft": false,
+  "unlisted": false,
+  "editUrl": "https://github.com/vantisCorp/VChat/tree/main/website/docs/getting-started/quick-start.md",
+  "tags": [],
+  "version": "current",
+  "frontMatter": {
+    "title": "Quick Start Guide"
+  },
+  "sidebar": "tutorialSidebar",
+  "previous": {
+    "title": "Installation Guide",
+    "permalink": "/docs/es/docs/current/getting-started/installation"
+  },
+  "next": {
+    "title": "System Requirements",
+    "permalink": "/docs/es/docs/current/getting-started/requirements"
+  }
+}

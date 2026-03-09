@@ -1,0 +1,47 @@
+{
+  "id": "api/websocket/connection",
+  "title": "WebSocket Connection",
+  "description": "Guide to establishing and maintaining WebSocket connections to V-COMM",
+  "source": "@site/docs/api/websocket/connection.md",
+  "sourceDirName": "api/websocket",
+  "slug": "/api/websocket/connection",
+  "permalink": "/docs/es/docs/current/api/websocket/connection",
+  "draft": false,
+  "unlisted": false,
+  "editUrl": "https://github.com/vantisCorp/VChat/tree/main/website/docs/api/websocket/connection.md",
+  "tags": [
+    {
+      "inline": true,
+      "label": "api",
+      "permalink": "/docs/es/docs/current/tags/api"
+    },
+    {
+      "inline": true,
+      "label": "websocket",
+      "permalink": "/docs/es/docs/current/tags/websocket"
+    },
+    {
+      "inline": true,
+      "label": "real-time",
+      "permalink": "/docs/es/docs/current/tags/real-time"
+    }
+  ],
+  "version": "current",
+  "sidebarPosition": 1,
+  "frontMatter": {
+    "sidebar_position": 1,
+    "title": "WebSocket Connection",
+    "description": "Guide to establishing and maintaining WebSocket connections to V-COMM",
+    "keywords": ["websocket", "connection", "real-time", "events", "gateway"],
+    "tags": ["api", "websocket", "real-time"]
+  },
+  "sidebar": "apiSidebar",
+  "previous": {
+    "title": "Files API",
+    "permalink": "/docs/es/docs/current/api/rest/files"
+  },
+  "next": {
+    "title": "WebSocket Events",
+    "permalink": "/docs/es/docs/current/api/websocket/events"
+  }
+}

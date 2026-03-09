@@ -1,0 +1,26 @@
+{
+  "id": "getting-started/installation",
+  "title": "Installation Guide",
+  "description": "This guide will help you install and configure V-COMM on your system.",
+  "source": "@site/docs/getting-started/installation.md",
+  "sourceDirName": "getting-started",
+  "slug": "/getting-started/installation",
+  "permalink": "/docs/es/docs/current/getting-started/installation",
+  "draft": false,
+  "unlisted": false,
+  "editUrl": "https://github.com/vantisCorp/VChat/tree/main/website/docs/getting-started/installation.md",
+  "tags": [],
+  "version": "current",
+  "frontMatter": {
+    "title": "Installation Guide"
+  },
+  "sidebar": "tutorialSidebar",
+  "previous": {
+    "title": "Introduction",
+    "permalink": "/docs/es/docs/current/"
+  },
+  "next": {
+    "title": "Quick Start Guide",
+    "permalink": "/docs/es/docs/current/getting-started/quick-start"
+  }
+}

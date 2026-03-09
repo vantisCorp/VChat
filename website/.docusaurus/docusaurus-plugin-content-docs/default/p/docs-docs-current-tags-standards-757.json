@@ -1,0 +1,17 @@
+{
+  "tag": {
+    "label": "standards",
+    "permalink": "/docs/docs/current/tags/standards",
+    "allTagsPath": "/docs/docs/current/tags",
+    "count": 1,
+    "items": [
+      {
+        "id": "development/coding-standards",
+        "title": "Coding Standards",
+        "description": "V-COMM coding standards and best practices for developers",
+        "permalink": "/docs/docs/current/development/coding-standards"
+      }
+    ],
+    "unlisted": false
+  }
+}

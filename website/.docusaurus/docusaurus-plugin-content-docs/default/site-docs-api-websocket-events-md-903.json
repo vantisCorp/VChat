@@ -1,0 +1,47 @@
+{
+  "id": "api/websocket/events",
+  "title": "WebSocket Events",
+  "description": "Reference for all WebSocket events sent and received through V-COMM Gateway",
+  "source": "@site/docs/api/websocket/events.md",
+  "sourceDirName": "api/websocket",
+  "slug": "/api/websocket/events",
+  "permalink": "/docs/es/docs/current/api/websocket/events",
+  "draft": false,
+  "unlisted": false,
+  "editUrl": "https://github.com/vantisCorp/VChat/tree/main/website/docs/api/websocket/events.md",
+  "tags": [
+    {
+      "inline": true,
+      "label": "api",
+      "permalink": "/docs/es/docs/current/tags/api"
+    },
+    {
+      "inline": true,
+      "label": "websocket",
+      "permalink": "/docs/es/docs/current/tags/websocket"
+    },
+    {
+      "inline": true,
+      "label": "real-time",
+      "permalink": "/docs/es/docs/current/tags/real-time"
+    }
+  ],
+  "version": "current",
+  "sidebarPosition": 2,
+  "frontMatter": {
+    "sidebar_position": 2,
+    "title": "WebSocket Events",
+    "description": "Reference for all WebSocket events sent and received through V-COMM Gateway",
+    "keywords": ["websocket", "events", "real-time", "gateway", "payloads"],
+    "tags": ["api", "websocket", "real-time"]
+  },
+  "sidebar": "apiSidebar",
+  "previous": {
+    "title": "WebSocket Connection",
+    "permalink": "/docs/es/docs/current/api/websocket/connection"
+  },
+  "next": {
+    "title": "WebSocket Gateway",
+    "permalink": "/docs/es/docs/current/api/websocket/gateway"
+  }
+}

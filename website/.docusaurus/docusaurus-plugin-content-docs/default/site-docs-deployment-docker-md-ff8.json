@@ -1,0 +1,26 @@
+{
+  "id": "deployment/docker",
+  "title": "Docker Deployment",
+  "description": "Deploy V-COMM using Docker and Docker Compose.",
+  "source": "@site/docs/deployment/docker.md",
+  "sourceDirName": "deployment",
+  "slug": "/deployment/docker",
+  "permalink": "/docs/es/docs/current/deployment/docker",
+  "draft": false,
+  "unlisted": false,
+  "editUrl": "https://github.com/vantisCorp/VChat/tree/main/website/docs/deployment/docker.md",
+  "tags": [],
+  "version": "current",
+  "frontMatter": {
+    "title": "Docker Deployment"
+  },
+  "sidebar": "tutorialSidebar",
+  "previous": {
+    "title": "Bots & Automation",
+    "permalink": "/docs/es/docs/current/features/bots"
+  },
+  "next": {
+    "title": "Kubernetes Deployment",
+    "permalink": "/docs/es/docs/current/deployment/kubernetes"
+  }
+}

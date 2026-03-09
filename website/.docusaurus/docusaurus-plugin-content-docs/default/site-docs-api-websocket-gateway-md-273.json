@@ -1,0 +1,53 @@
+{
+  "id": "api/websocket/gateway",
+  "title": "WebSocket Gateway",
+  "description": "Advanced WebSocket Gateway features including sharding, compression, and optimization",
+  "source": "@site/docs/api/websocket/gateway.md",
+  "sourceDirName": "api/websocket",
+  "slug": "/api/websocket/gateway",
+  "permalink": "/docs/es/docs/current/api/websocket/gateway",
+  "draft": false,
+  "unlisted": false,
+  "editUrl": "https://github.com/vantisCorp/VChat/tree/main/website/docs/api/websocket/gateway.md",
+  "tags": [
+    {
+      "inline": true,
+      "label": "api",
+      "permalink": "/docs/es/docs/current/tags/api"
+    },
+    {
+      "inline": true,
+      "label": "websocket",
+      "permalink": "/docs/es/docs/current/tags/websocket"
+    },
+    {
+      "inline": true,
+      "label": "gateway",
+      "permalink": "/docs/es/docs/current/tags/gateway"
+    }
+  ],
+  "version": "current",
+  "sidebarPosition": 3,
+  "frontMatter": {
+    "sidebar_position": 3,
+    "title": "WebSocket Gateway",
+    "description": "Advanced WebSocket Gateway features including sharding, compression, and optimization",
+    "keywords": [
+      "websocket",
+      "gateway",
+      "sharding",
+      "optimization",
+      "performance"
+    ],
+    "tags": ["api", "websocket", "gateway"]
+  },
+  "sidebar": "apiSidebar",
+  "previous": {
+    "title": "WebSocket Events",
+    "permalink": "/docs/es/docs/current/api/websocket/events"
+  },
+  "next": {
+    "title": "GraphQL Queries",
+    "permalink": "/docs/es/docs/current/api/graphql/queries"
+  }
+}

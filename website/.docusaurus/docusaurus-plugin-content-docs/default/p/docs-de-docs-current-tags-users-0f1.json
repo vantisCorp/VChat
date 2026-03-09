@@ -1,0 +1,17 @@
+{
+  "tag": {
+    "label": "users",
+    "permalink": "/docs/de/docs/current/tags/users",
+    "allTagsPath": "/docs/de/docs/current/tags",
+    "count": 1,
+    "items": [
+      {
+        "id": "api/rest/users",
+        "title": "Users API",
+        "description": "REST API endpoints for user management, profiles, and preferences",
+        "permalink": "/docs/de/docs/current/api/rest/users"
+      }
+    ],
+    "unlisted": false
+  }
+}

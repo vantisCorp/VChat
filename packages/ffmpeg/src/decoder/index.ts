@@ -7,11 +7,9 @@ import ffmpeg from 'fluent-ffmpeg';
 import * as fs from 'fs/promises';
 import * as path from 'path';
 import {
-
   HardwareAccelConfig,
   FFmpegError,
   FFmpegErrorCode,
-  _MediaInfo,
   VideoStreamInfo,
   AudioStreamInfo,
 } from '../types';
@@ -32,18 +30,10 @@ export class VideoDecoder {
   ): Promise<string[]> {
     await this.ensureDirectory(outputDir);
 
-    const {
-      format = 'png',
-      fps,
-      startTime,
-      duration,
-      hwAccel,
-      width,
-      height,
-    } = options;
+    const { format = 'png', fps, startTime, duration, hwAccel, width, height } = options;
 
     const command = ffmpeg(input);
-    
+
     // Apply hardware acceleration for decoding
     if (hwAccel && hwAccel.type !== 'none') {
       this.applyHardwareDecoding(command, hwAccel);
@@ -58,10 +48,7 @@ export class VideoDecoder {
     }
 
     // Output options
-    command.outputOptions([
-      '-vsync', '0',
-      '-q:v', '2',
-    ]);
+    command.outputOptions(['-vsync', '0', '-q:v', '2']);
 
     if (fps) {
       command.fps(fps);
@@ -80,17 +67,16 @@ export class VideoDecoder {
           // eslint-disable-next-line security/detect-non-literal-fs-filename
           const files = await fs.readdir(outputDir);
           const frames = files
-            .filter(f => f.startsWith('frame_') && f.endsWith(format))
-            .map(f => path.join(outputDir, f))
+            .filter((f) => f.startsWith('frame_') && f.endsWith(format))
+            .map((f) => path.join(outputDir, f))
             .sort();
           resolve(frames);
         })
-        .on('error', (err) => reject(
-          new FFmpegError(
-            `Decoding failed: ${err.message}`,
-            FFmpegErrorCode.DECODING_FAILED
+        .on('error', (err) =>
+          reject(
+            new FFmpegError(`Decoding failed: ${err.message}`, FFmpegErrorCode.DECODING_FAILED)
           )
-        ))
+        )
         .run();
     });
   }
@@ -103,13 +89,7 @@ export class VideoDecoder {
     output: string,
     options: AudioDecodeOptions = {}
   ): Promise<string> {
-    const {
-      sampleRate = 48000,
-      channels = 2,
-      bitDepth = 16,
-      startTime,
-      duration,
-    } = options;
+    const { sampleRate = 48000, channels = 2, bitDepth = 16, startTime, duration } = options;
 
     const command = ffmpeg(input);
 
@@ -121,7 +101,7 @@ export class VideoDecoder {
     }
 
     const pcmFormat = bitDepth === 24 ? 's24le' : 's16le';
-    
+
     command
       .audioCodec(`pcm_${pcmFormat}`)
       .audioFrequency(sampleRate)
@@ -132,12 +112,14 @@ export class VideoDecoder {
     return new Promise((resolve, reject) => {
       command
         .on('end', () => resolve(output))
-        .on('error', (err) => reject(
-          new FFmpegError(
-            `Audio decoding failed: ${err.message}`,
-            FFmpegErrorCode.DECODING_FAILED
+        .on('error', (err) =>
+          reject(
+            new FFmpegError(
+              `Audio decoding failed: ${err.message}`,
+              FFmpegErrorCode.DECODING_FAILED
+            )
           )
-        ))
+        )
         .run();
     });
   }
@@ -145,11 +127,7 @@ export class VideoDecoder {
   /**
    * Decode video to Y4M format (uncompressed YUV)
    */
-  async decodeToY4M(
-    input: string,
-    output: string,
-    options: DecodeOptions = {}
-  ): Promise<string> {
+  async decodeToY4M(input: string, output: string, options: DecodeOptions = {}): Promise<string> {
     const command = ffmpeg(input);
 
     if (options.hwAccel && options.hwAccel.type !== 'none') {
@@ -163,19 +141,16 @@ export class VideoDecoder {
       command.setDuration(options.duration);
     }
 
-    command
-      .outputOptions(['-f', 'yuv4mpegpipe'])
-      .output(output);
+    command.outputOptions(['-f', 'yuv4mpegpipe']).output(output);
 
     return new Promise((resolve, reject) => {
       command
         .on('end', () => resolve(output))
-        .on('error', (err) => reject(
-          new FFmpegError(
-            `Y4M decoding failed: ${err.message}`,
-            FFmpegErrorCode.DECODING_FAILED
+        .on('error', (err) =>
+          reject(
+            new FFmpegError(`Y4M decoding failed: ${err.message}`, FFmpegErrorCode.DECODING_FAILED)
           )
-        ))
+        )
         .run();
     });
   }
@@ -212,11 +187,7 @@ export class VideoDecoder {
       command.outputOptions([`-map 0:a:${trackIndex}`]);
     }
 
-    command
-      .noVideo()
-      .audioCodec(codec)
-      .audioFrequency(sampleRate)
-      .audioChannels(channels);
+    command.noVideo().audioCodec(codec).audioFrequency(sampleRate).audioChannels(channels);
 
     if (bitrate) {
       command.audioBitrate(bitrate / 1000);
@@ -227,12 +198,14 @@ export class VideoDecoder {
     return new Promise((resolve, reject) => {
       command
         .on('end', () => resolve(output))
-        .on('error', (err) => reject(
-          new FFmpegError(
-            `Audio extraction failed: ${err.message}`,
-            FFmpegErrorCode.DECODING_FAILED
+        .on('error', (err) =>
+          reject(
+            new FFmpegError(
+              `Audio extraction failed: ${err.message}`,
+              FFmpegErrorCode.DECODING_FAILED
+            )
           )
-        ))
+        )
         .run();
     });
   }
@@ -245,12 +218,7 @@ export class VideoDecoder {
     output: string,
     options: VideoExtractOptions = {}
   ): Promise<string> {
-    const {
-      codec = 'rawvideo',
-      startTime,
-      duration,
-      hwAccel,
-    } = options;
+    const { codec = 'rawvideo', startTime, duration, hwAccel } = options;
 
     const command = ffmpeg(input);
 
@@ -265,9 +233,7 @@ export class VideoDecoder {
       command.setDuration(duration);
     }
 
-    command
-      .noAudio()
-      .outputOptions(['-map', '0:v:0']);
+    command.noAudio().outputOptions(['-map', '0:v:0']);
 
     if (codec !== 'copy') {
       command.videoCodec(codec);
@@ -278,12 +244,14 @@ export class VideoDecoder {
     return new Promise((resolve, reject) => {
       command
         .on('end', () => resolve(output))
-        .on('error', (err) => reject(
-          new FFmpegError(
-            `Video extraction failed: ${err.message}`,
-            FFmpegErrorCode.DECODING_FAILED
+        .on('error', (err) =>
+          reject(
+            new FFmpegError(
+              `Video extraction failed: ${err.message}`,
+              FFmpegErrorCode.DECODING_FAILED
+            )
           )
-        ))
+        )
         .run();
     });
   }
@@ -330,12 +298,14 @@ export class VideoDecoder {
     return new Promise((resolve, reject) => {
       command
         .on('end', () => resolve(output))
-        .on('error', (err) => reject(
-          new FFmpegError(
-            `Frame extraction failed: ${err.message}`,
-            FFmpegErrorCode.DECODING_FAILED
+        .on('error', (err) =>
+          reject(
+            new FFmpegError(
+              `Frame extraction failed: ${err.message}`,
+              FFmpegErrorCode.DECODING_FAILED
+            )
           )
-        ))
+        )
         .run();
     });
   }
@@ -343,12 +313,9 @@ export class VideoDecoder {
   /**
    * Apply hardware decoding options
    */
-  private applyHardwareDecoding(
-    command: ffmpeg.FfmpegCommand,
-    hwAccel: HardwareAccelConfig
-  ): void {
+  private applyHardwareDecoding(command: ffmpeg.FfmpegCommand, hwAccel: HardwareAccelConfig): void {
     const hwOptions = hardwareManager.getHardwareOptions(hwAccel);
-    
+
     hwOptions.forEach((opt, i) => {
       if (i % 2 === 0 && hwOptions[i + 1]) {
         command.inputOptions([opt, hwOptions[i + 1]]);
@@ -375,19 +342,18 @@ export class VideoDecoder {
     return new Promise((resolve, reject) => {
       ffmpeg.ffprobe(input, ['-select_streams', `v:${index}`], (err, data) => {
         if (err) {
-          reject(new FFmpegError(
-            `Failed to probe video stream: ${err.message}`,
-            FFmpegErrorCode.INVALID_INPUT
-          ));
+          reject(
+            new FFmpegError(
+              `Failed to probe video stream: ${err.message}`,
+              FFmpegErrorCode.INVALID_INPUT
+            )
+          );
           return;
         }
 
         const stream = data.streams[0];
         if (!stream) {
-          reject(new FFmpegError(
-            `Video stream ${index} not found`,
-            FFmpegErrorCode.INVALID_INPUT
-          ));
+          reject(new FFmpegError(`Video stream ${index} not found`, FFmpegErrorCode.INVALID_INPUT));
           return;
         }
 
@@ -414,19 +380,18 @@ export class VideoDecoder {
     return new Promise((resolve, reject) => {
       ffmpeg.ffprobe(input, ['-select_streams', `a:${index}`], (err, data) => {
         if (err) {
-          reject(new FFmpegError(
-            `Failed to probe audio stream: ${err.message}`,
-            FFmpegErrorCode.INVALID_INPUT
-          ));
+          reject(
+            new FFmpegError(
+              `Failed to probe audio stream: ${err.message}`,
+              FFmpegErrorCode.INVALID_INPUT
+            )
+          );
           return;
         }
 
         const stream = data.streams[0];
         if (!stream) {
-          reject(new FFmpegError(
-            `Audio stream ${index} not found`,
-            FFmpegErrorCode.INVALID_INPUT
-          ));
+          reject(new FFmpegError(`Audio stream ${index} not found`, FFmpegErrorCode.INVALID_INPUT));
           return;
         }
 
@@ -467,22 +432,22 @@ export class VideoDecoder {
 export interface DecodeOptions {
   /** Output format for frames */
   format?: 'png' | 'jpg' | 'bmp' | 'tiff';
-  
+
   /** Target FPS */
   fps?: number;
-  
+
   /** Start time in seconds */
   startTime?: number;
-  
+
   /** Duration in seconds */
   duration?: number;
-  
+
   /** Hardware acceleration configuration */
   hwAccel?: HardwareAccelConfig;
-  
+
   /** Output width */
   width?: number;
-  
+
   /** Output height */
   height?: number;
 }
@@ -493,16 +458,16 @@ export interface DecodeOptions {
 export interface AudioDecodeOptions {
   /** Sample rate in Hz */
   sampleRate?: number;
-  
+
   /** Number of channels */
   channels?: number;
-  
+
   /** Bit depth */
   bitDepth?: 16 | 24 | 32;
-  
+
   /** Start time in seconds */
   startTime?: number;
-  
+
   /** Duration in seconds */
   duration?: number;
 }
@@ -513,22 +478,22 @@ export interface AudioDecodeOptions {
 export interface AudioExtractOptions {
   /** Audio codec */
   codec?: string;
-  
+
   /** Sample rate */
   sampleRate?: number;
-  
+
   /** Number of channels */
   channels?: number;
-  
+
   /** Bitrate */
   bitrate?: number;
-  
+
   /** Start time */
   startTime?: number;
-  
+
   /** Duration */
   duration?: number;
-  
+
   /** Audio track index */
   trackIndex?: number;
 }
@@ -539,13 +504,13 @@ export interface AudioExtractOptions {
 export interface VideoExtractOptions {
   /** Video codec */
   codec?: string;
-  
+
   /** Start time */
   startTime?: number;
-  
+
   /** Duration */
   duration?: number;
-  
+
   /** Hardware acceleration */
   hwAccel?: HardwareAccelConfig;
 }
@@ -556,7 +521,7 @@ export interface VideoExtractOptions {
 export interface FrameOptions {
   /** Width */
   width?: number;
-  
+
   /** Height */
   height?: number;
 }
