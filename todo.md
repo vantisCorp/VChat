@@ -1,21 +1,27 @@
-# VChat Repository — Phase 2: Build & Infrastructure
+# PR #40 - CI/CD Fix Progress
 
-## Phase 5: TypeScript Build
-- [ ] Run pnpm build and analyze errors
-- [ ] Fix build errors across packages
-- [ ] Verify full build passes
+## Phase 1: Diagnose CI Failures ✅
+- [x] Check CI status after push
+- [x] Analyze failed job logs
+- [x] Identify root causes
 
-## Phase 6: Tests
-- [ ] Run pnpm test and analyze results
-- [ ] Fix test configuration issues
-- [ ] Verify tests pass
+## Phase 2: Fix CI Issues
+- [x] Fix deploy-docs.yml pnpm version conflict
+- [x] Fix @eslint/js missing dependency
+- [x] Fix packages/types tsconfig (add DOM lib)
+- [ ] Fix packages/utils tsconfig (add DOM lib) - setTimeout/clearTimeout/URL errors
+- [ ] Fix packages/beta-release tsconfig (add DOM lib)
+- [ ] Fix packages/concurrency tsconfig (add DOM lib)
+- [ ] Fix packages/plugin-system tsconfig (add DOM lib)
+- [ ] Fix packages/protocols tsconfig (add DOM lib)
+- [ ] Fix packages/crypto tsconfig (add DOM lib if needed)
+- [ ] Fix packages/ffmpeg tsconfig (add DOM lib if needed)
+- [ ] Fix format:check script - turbo doesn't understand --check flag
+- [ ] Remove/disable Rust Build & Test job (no Cargo.toml exists)
+- [ ] Verify all fixes locally
+- [ ] Commit and push fixes
+- [ ] Monitor CI results
 
-## Phase 7: Dependabot Action Updates
-- [ ] Update actions/cache to v5
-- [ ] Update actions/upload-artifact to v7
-- [ ] Update codecov/codecov-action to v5
-
-## Phase 8: GitHub Pages & Features
-- [ ] Configure GitHub Pages for Docusaurus
-- [ ] Enable Discussions
-- [ ] Commit, push, create PR
+## Phase 3: Merge & Cleanup
+- [ ] Verify CI passes (except CLA/Trivy which need repo config)
+- [ ] Merge PR #40
