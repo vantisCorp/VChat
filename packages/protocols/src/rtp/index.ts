@@ -4,10 +4,10 @@
  */
 
 import {
-  RTPHeader,
+  // RTPHeader,
   RTPPacket,
   RTPExtension,
-  RTPPayloadType,
+  // RTPPayloadType,
   RTPStats,
   RTPError,
 } from '../types';
@@ -361,7 +361,7 @@ export function createSequenceGenerator(initialValue: number = 0): () => number 
 /**
  * Create a timestamp generator for a given clock rate
  */
-export function createTimestampGenerator(clockRate: number): (samples: number) => number {
+export function createTimestampGenerator(_clockRate: number): (samples: number) => number {
   let timestamp = Math.floor(Math.random() * 0xffffffff);
   return (samples: number) => {
     const current = timestamp;

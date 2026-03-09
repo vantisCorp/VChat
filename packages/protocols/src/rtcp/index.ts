@@ -15,7 +15,7 @@ import {
   SDESItem,
   SDESType,
   RTCPFeedbackType,
-  RTCPError,
+  // RTCPError,
 } from '../types';
 
 /**

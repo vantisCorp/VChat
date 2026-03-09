@@ -5,8 +5,8 @@
 
 import {
   UDPPacket,
-  UDPSocketOptions,
-  ProtocolError,
+  // UDPSocketOptions,
+  // ProtocolError,
 } from '../types';
 
 // ============================================================================
@@ -618,7 +618,7 @@ export class UDPSequenceManager {
     }
 
     // Out of order or gap
-    let gap = 0;
+    let gap: number;
     if (sequence > nextExpected) {
       gap = sequence - nextExpected;
     } else {

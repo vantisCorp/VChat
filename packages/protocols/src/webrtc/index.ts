@@ -11,7 +11,7 @@ import {
   SDPMediaDescription,
   RTPMap,
   DTLSRole,
-  ICEError,
+  // ICEError,
   SDPError,
 } from '../types';
 
@@ -29,13 +29,13 @@ export class SDPParser {
    */
   static parse(sdp: string): SDPSessionDescription {
     const lines = sdp.split('\r\n').filter((line) => line.length > 0);
-    let session: Partial<SDPSessionDescription> = {
+    const session: Partial<SDPSessionDescription> = {
       version: 0,
       media: [],
       attributes: [],
     };
     let currentMedia: Partial<SDPMediaDescription> | null = null;
-    let mediaIndex = -1;
+    let _mediaIndex = -1;
 
     for (const line of lines) {
       const type = line[0];
@@ -78,7 +78,7 @@ export class SDPParser {
           attributes: [],
         };
         session.media!.push(currentMedia as SDPMediaDescription);
-        mediaIndex++;
+        _mediaIndex++;
       } else if (type === 'a') {
         // Attribute
         if (currentMedia) {
@@ -629,7 +629,7 @@ export class ICEHandler {
     localPreference: number = 65535
   ): number {
     const typePref = this.TYPE_PREFERENCE[type];
-    const protoPref = this.PROTOCOL_PREFERENCE[protocol];
+    const _protoPref = this.PROTOCOL_PREFERENCE[protocol];
 
     // Priority = (2^24)*(type preference) + (2^8)*(local preference) + (2^0)*(component ID)
     return (typePref << 24) + (localPreference << 8) + (256 - component);
