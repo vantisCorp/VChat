@@ -32,7 +32,7 @@ export default [
 
   // TypeScript files config
   {
-    files: ['packages/*/src/**/*.ts', 'packages/shared/*/src/**/*.ts'],
+    files: ['packages/*/src/**/*.ts', 'packages/*/src/**/*.tsx', 'packages/shared/*/src/**/*.ts', 'packages/shared/*/src/**/*.tsx'],
     languageOptions: {
       parser: tsParser,
       parserOptions: {
