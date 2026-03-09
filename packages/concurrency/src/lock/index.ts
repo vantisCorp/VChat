@@ -110,7 +110,7 @@ export class DistributedLock {
       this.token = this.generateToken();
     }
     
-    const now = Date.now();
+    const _now = Date.now();
     
     try {
       // Use SET NX PX for atomic lock acquisition
@@ -137,7 +137,7 @@ export class DistributedLock {
         ttl: 0,
         acquiredAt: new Date(),
       };
-    } catch (error) {
+    } catch (_error) {
       return {
         success: false,
         token: this.token,
@@ -177,7 +177,7 @@ export class DistributedLock {
       this.acquiredAt = null;
       
       return result === 1;
-    } catch (error) {
+    } catch (_error) {
       this.token = null;
       this.acquiredAt = null;
       return false;
@@ -213,7 +213,7 @@ export class DistributedLock {
       }
       
       return false;
-    } catch (error) {
+    } catch (_error) {
       return false;
     }
   }
@@ -428,7 +428,7 @@ export class Redlock {
         await self.releaseFromServers(key, token);
         return true;
       },
-      extend: async (ttl?: number) => {
+      extend: async (_ttl?: number) => {
         // Extension logic for Redlock
         return false;
       },
