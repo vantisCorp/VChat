@@ -1,6 +1,6 @@
 /**
  * @vcomm/plugin-system - Plugin Registry
- * 
+ *
  * Manages plugin registration, discovery, and state.
  * Provides a central repository for all installed plugins.
  */
@@ -9,9 +9,7 @@ import {
   PluginManifest,
   PluginInstance,
   PluginStatus,
-  _PluginPermission,
   PluginDependency,
-  _PluginVersion,
   PluginError,
   PluginErrorCode,
 } from '../types';
@@ -66,17 +64,17 @@ interface DependencyNode {
 
 /**
  * PluginRegistry - Central repository for plugin management
- * 
+ *
  * @example
  * ```typescript
  * const registry = new PluginRegistry();
- * 
+ *
  * // Register a plugin
  * await registry.register(manifest);
- * 
+ *
  * // Get plugin instance
  * const plugin = registry.get('com.example.my-plugin');
- * 
+ *
  * // Update status
  * registry.setStatus('com.example.my-plugin', 'enabled');
  * ```
@@ -120,7 +118,7 @@ export class PluginRegistry {
       if (missingDeps.length > 0 && !this.config.autoResolveDependencies) {
         throw new PluginError(
           PluginErrorCode.DEPENDENCY_MISSING,
-          `Missing dependencies: ${missingDeps.map(d => d.pluginId).join(', ')}`
+          `Missing dependencies: ${missingDeps.map((d) => d.pluginId).join(', ')}`
         );
       }
     }
@@ -234,7 +232,7 @@ export class PluginRegistry {
    * Get plugins by status
    */
   getByStatus(status: PluginStatus): PluginInstance[] {
-    return this.getAll().filter(p => p.status === status);
+    return this.getAll().filter((p) => p.status === status);
   }
 
   /**
@@ -263,17 +261,11 @@ export class PluginRegistry {
    */
   private validateManifest(manifest: PluginManifest): void {
     if (!manifest.id) {
-      throw new PluginError(
-        PluginErrorCode.INVALID_MANIFEST,
-        'Plugin manifest must have an id'
-      );
+      throw new PluginError(PluginErrorCode.INVALID_MANIFEST, 'Plugin manifest must have an id');
     }
 
     if (!manifest.name) {
-      throw new PluginError(
-        PluginErrorCode.INVALID_MANIFEST,
-        'Plugin manifest must have a name'
-      );
+      throw new PluginError(PluginErrorCode.INVALID_MANIFEST, 'Plugin manifest must have a name');
     }
 
     if (!manifest.version) {
@@ -287,7 +279,9 @@ export class PluginRegistry {
     // eslint-disable-next-line security/detect-unsafe-regex
     const idPattern = /^[a-z0-9]+(?:\.[a-z0-9]+)*\/[a-z0-9-]+$/;
     if (!idPattern.test(manifest.id) && !manifest.id.startsWith('local/')) {
-      console.warn(`Plugin ID "${manifest.id}" does not follow recommended format (e.g., com.example/my-plugin)`);
+      console.warn(
+        `Plugin ID "${manifest.id}" does not follow recommended format (e.g., com.example/my-plugin)`
+      );
     }
 
     // Validate version format
@@ -319,7 +313,10 @@ export class PluginRegistry {
       }
 
       // Check version constraints
-      if (dep.minVersion && !this.isVersionGreaterOrEqual(installed.manifest.version, dep.minVersion)) {
+      if (
+        dep.minVersion &&
+        !this.isVersionGreaterOrEqual(installed.manifest.version, dep.minVersion)
+      ) {
         missing.push(dep);
       }
     }
@@ -352,7 +349,7 @@ export class PluginRegistry {
     const dependents: string[] = [];
 
     for (const [id, manifest] of this.manifests) {
-      if (manifest.dependencies?.some(d => d.pluginId === pluginId)) {
+      if (manifest.dependencies?.some((d) => d.pluginId === pluginId)) {
         dependents.push(id);
       }
     }
@@ -442,7 +439,7 @@ export class PluginRegistry {
     // Check for permission conflicts (plugins requesting same sensitive permissions)
     const permissionMap = new Map<string, string[]>();
     for (const plugin of plugins) {
-      for (const perm of (plugin.permissions || [])) {
+      for (const perm of plugin.permissions || []) {
         const permType = typeof perm === 'string' ? perm : perm.type;
         const existing = permissionMap.get(permType) || [];
         existing.push(plugin.id);
@@ -481,14 +478,17 @@ export class PluginRegistry {
     tag?: string;
     status?: PluginStatus;
   }): PluginInstance[] {
-    return this.getAll().filter(plugin => {
+    return this.getAll().filter((plugin) => {
       const manifest = plugin.manifest;
 
       if (query.name && !manifest.name.toLowerCase().includes(query.name.toLowerCase())) {
         return false;
       }
 
-      if (query.author && !manifest.author?.name.toLowerCase().includes(query.author.toLowerCase())) {
+      if (
+        query.author &&
+        !manifest.author?.name.toLowerCase().includes(query.author.toLowerCase())
+      ) {
         return false;
       }
 
@@ -510,7 +510,7 @@ export class PluginRegistry {
   export(): { plugins: PluginInstance[]; manifests: PluginManifest[] } {
     return {
       plugins: this.getAll(),
-      manifests: this.getAll().map(p => p.manifest),
+      manifests: this.getAll().map((p) => p.manifest),
     };
   }
 

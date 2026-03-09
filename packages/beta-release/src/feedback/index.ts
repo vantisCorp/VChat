@@ -1,6 +1,6 @@
 /**
  * @vcomm/beta-release - Feedback Collection System
- * 
+ *
  * Provides comprehensive feedback collection including bug reports,
  * feature requests, surveys, and NPS tracking.
  */
@@ -79,11 +79,11 @@ export interface FeedbackQuery {
 
 /**
  * FeedbackManager - Manages feedback collection and surveys
- * 
+ *
  * @example
  * ```typescript
  * const feedback = new FeedbackManager();
- * 
+ *
  * // Submit feedback
  * const entry = feedback.submit({
  *   type: 'bug_report',
@@ -91,7 +91,7 @@ export interface FeedbackQuery {
  *   description: 'The save button does not respond',
  *   userId: 'user123',
  * });
- * 
+ *
  * // Create a survey
  * const survey = feedback.createSurvey({
  *   name: 'Beta Feedback Survey',
@@ -236,8 +236,8 @@ export class FeedbackManager {
    * Update feedback status
    */
   updateStatus(feedbackId: string, status: FeedbackStatus, resolution?: string): FeedbackEntry {
-    return this.update(feedbackId, { 
-      status, 
+    return this.update(feedbackId, {
+      status,
       resolution,
       updatedAt: new Date(),
     });
@@ -310,7 +310,7 @@ export class FeedbackManager {
     const updated: FeedbackEntry = {
       ...existing,
       votes: existing.votes - 1,
-      voters: existing.voters.filter(v => v !== userId),
+      voters: existing.voters.filter((v) => v !== userId),
       updatedAt: new Date(),
     };
 
@@ -326,46 +326,45 @@ export class FeedbackManager {
 
     // Apply filters
     if (options.type) {
-      results = results.filter(f => f.type === options.type);
+      results = results.filter((f) => f.type === options.type);
     }
 
     if (options.status) {
-      results = results.filter(f => f.status === options.status);
+      results = results.filter((f) => f.status === options.status);
     }
 
     if (options.priority) {
-      results = results.filter(f => f.priority === options.priority);
+      results = results.filter((f) => f.priority === options.priority);
     }
 
     if (options.featureKey) {
-      results = results.filter(f => f.featureKey === options.featureKey);
+      results = results.filter((f) => f.featureKey === options.featureKey);
     }
 
     if (options.userId) {
-      results = results.filter(f => f.userId === options.userId);
+      results = results.filter((f) => f.userId === options.userId);
     }
 
     if (options.tags && options.tags.length > 0) {
-      results = results.filter(f => 
-        options.tags!.some(tag => f.tags.includes(tag))
-      );
+      results = results.filter((f) => options.tags!.some((tag) => f.tags.includes(tag)));
     }
 
     if (options.search) {
       const searchLower = options.search.toLowerCase();
-      results = results.filter(f =>
-        f.title.toLowerCase().includes(searchLower) ||
-        f.description.toLowerCase().includes(searchLower)
+      results = results.filter(
+        (f) =>
+          f.title.toLowerCase().includes(searchLower) ||
+          f.description.toLowerCase().includes(searchLower)
       );
     }
 
     // Apply sorting
     const sortBy = options.sortBy || 'createdAt';
     const sortOrder = options.sortOrder || 'desc';
-    
+
     results.sort((a, b) => {
       let comparison = 0;
-      
+
       switch (sortBy) {
         case 'createdAt':
           comparison = a.createdAt.getTime() - b.createdAt.getTime();
@@ -377,7 +376,7 @@ export class FeedbackManager {
           const priorityOrder = { critical: 0, high: 1, medium: 2, low: 3 };
           comparison = priorityOrder[a.priority] - priorityOrder[b.priority];
           break;
-          }
+        }
         case 'votes':
           comparison = a.votes - b.votes;
           break;
@@ -420,10 +419,7 @@ export class FeedbackManager {
     endsAt?: Date;
   }): FeedbackSurvey {
     if (!data.name?.trim()) {
-      throw new BetaReleaseError(
-        'Survey name is required',
-        BetaReleaseErrorCode.VALIDATION_ERROR
-      );
+      throw new BetaReleaseError('Survey name is required', BetaReleaseErrorCode.VALIDATION_ERROR);
     }
 
     if (!data.questions || data.questions.length === 0) {
@@ -510,17 +506,11 @@ export class FeedbackManager {
     }
 
     if (!survey.active) {
-      throw new BetaReleaseError(
-        'Survey is not active',
-        BetaReleaseErrorCode.SURVEY_CLOSED
-      );
+      throw new BetaReleaseError('Survey is not active', BetaReleaseErrorCode.SURVEY_CLOSED);
     }
 
     if (survey.endsAt && new Date() > survey.endsAt) {
-      throw new BetaReleaseError(
-        'Survey has ended',
-        BetaReleaseErrorCode.SURVEY_CLOSED
-      );
+      throw new BetaReleaseError('Survey has ended', BetaReleaseErrorCode.SURVEY_CLOSED);
     }
 
     // Validate required questions answered
@@ -574,7 +564,7 @@ export class FeedbackManager {
    * Get active surveys
    */
   getActiveSurveys(): FeedbackSurvey[] {
-    return this.getAllSurveys().filter(s => s.active);
+    return this.getAllSurveys().filter((s) => s.active);
   }
 
   /**
@@ -600,7 +590,7 @@ export class FeedbackManager {
     totalVotes: number;
   } {
     const all = Array.from(this.feedback.values());
-    
+
     const byType: Record<FeedbackType, number> = {
       bug_report: 0,
       feature_request: 0,

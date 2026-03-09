@@ -4,7 +4,21 @@
 
 // Permission Types
 export type PermissionAction = 'create' | 'read' | 'update' | 'delete' | 'manage' | 'admin';
-export type ResourceType = 'server' | 'channel' | 'message' | 'user' | 'role' | 'file' | 'space' | 'ticket' | 'forum' | 'bot' | 'webhook' | 'audit_log' | 'settings' | 'api_key';
+export type ResourceType =
+  | 'server'
+  | 'channel'
+  | 'message'
+  | 'user'
+  | 'role'
+  | 'file'
+  | 'space'
+  | 'ticket'
+  | 'forum'
+  | 'bot'
+  | 'webhook'
+  | 'audit_log'
+  | 'settings'
+  | 'api_key';
 
 export interface Permission {
   id: string;
@@ -96,12 +110,26 @@ export interface OAuthCallbackResult {
 
 // Audit Types
 export type AuditEventType =
-  | 'auth.login' | 'auth.logout' | 'auth.login_failed'
-  | 'user.created' | 'user.updated' | 'user.deleted' | 'user.suspended' | 'user.banned'
-  | 'role.created' | 'role.updated' | 'role.deleted' | 'role.assigned' | 'role.revoked'
-  | 'permission.granted' | 'permission.revoked'
-  | 'server.created' | 'server.deleted'
-  | 'security.suspicious_activity' | 'security.ip_blocked' | 'security.rate_limited';
+  | 'auth.login'
+  | 'auth.logout'
+  | 'auth.login_failed'
+  | 'user.created'
+  | 'user.updated'
+  | 'user.deleted'
+  | 'user.suspended'
+  | 'user.banned'
+  | 'role.created'
+  | 'role.updated'
+  | 'role.deleted'
+  | 'role.assigned'
+  | 'role.revoked'
+  | 'permission.granted'
+  | 'permission.revoked'
+  | 'server.created'
+  | 'server.deleted'
+  | 'security.suspicious_activity'
+  | 'security.ip_blocked'
+  | 'security.rate_limited';
 
 export type AuditSeverity = 'low' | 'medium' | 'high' | 'critical';
 
@@ -141,7 +169,12 @@ export interface Session {
   id: string;
   userId: string;
   tokenHash: string;
-  device?: { name?: string; type?: 'desktop' | 'mobile' | 'tablet' | 'unknown'; os?: string; browser?: string };
+  device?: {
+    name?: string;
+    type?: 'desktop' | 'mobile' | 'tablet' | 'unknown';
+    os?: string;
+    browser?: string;
+  };
   ipAddress?: string;
   userAgent?: string;
   isCurrent: boolean;

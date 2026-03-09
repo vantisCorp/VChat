@@ -1,14 +1,12 @@
 /**
  * @vcomm/beta-release - Beta Analytics System
- * 
+ *
  * Provides analytics and metrics tracking for beta programs,
  * feature usage, and user engagement.
  */
 
 import {
-
   MetricType,
-  _MetricAggregation,
   MetricDataPoint,
   MetricQuery,
   MetricQueryResult,
@@ -60,14 +58,14 @@ interface StoredMetric {
 
 /**
  * Analytics - Tracks and queries beta program metrics
- * 
+ *
  * @example
  * ```typescript
  * const analytics = new Analytics();
- * 
+ *
  * // Track a metric
  * analytics.track('feature_usage', 1, { feature: 'new-ui', userId: 'user123' });
- * 
+ *
  * // Query metrics
  * const result = analytics.query({
  *   metrics: ['feature_usage'],
@@ -99,7 +97,7 @@ export class Analytics {
 
   constructor(config: AnalyticsConfig = {}) {
     this.config = { ...DEFAULT_ANALYTICS_CONFIG, ...config };
-    
+
     if (this.config.enableCollection) {
       this.startFlushTimer();
     }
@@ -154,7 +152,7 @@ export class Analytics {
    */
   trackUserActivity(userId: string, action: string): void {
     this.track('user_active', 1, { userId, action });
-    
+
     // Update beta user record
     const user = this.betaUsers.get(userId);
     if (user) {
@@ -180,7 +178,7 @@ export class Analytics {
    */
   trackNpsScore(score: number, userId?: string): void {
     this.track('nps_score', score, { ...(userId && { userId }) });
-    
+
     // Update beta user record
     if (userId) {
       const user = this.betaUsers.get(userId);
@@ -196,20 +194,20 @@ export class Analytics {
    */
   query(query: MetricQuery): MetricQueryResult {
     const startTime = Date.now();
-    
+
     // Filter metrics by time range
-    let filtered = this.metrics.filter(m => {
+    let filtered = this.metrics.filter((m) => {
       if (m.name !== query.metrics[0]) return false; // Single metric query for now
       if (m.timestamp < query.startTime) return false;
       if (m.timestamp > query.endTime) return false;
-      
+
       // Apply tag filters
       if (query.filters) {
         for (const [key, value] of Object.entries(query.filters)) {
           if (m.tags[key] !== value) return false;
         }
       }
-      
+
       return true;
     });
 
@@ -232,10 +230,7 @@ export class Analytics {
   /**
    * Aggregate metric data
    */
-  private aggregateData(
-    metrics: StoredMetric[],
-    query: MetricQuery
-  ): MetricDataPoint[] {
+  private aggregateData(metrics: StoredMetric[], query: MetricQuery): MetricDataPoint[] {
     if (metrics.length === 0) return [];
 
     // Group by resolution
@@ -253,7 +248,7 @@ export class Analytics {
     const result: MetricDataPoint[] = [];
 
     for (const [bucket, groupMetrics] of grouped) {
-      const values = groupMetrics.map(m => m.value);
+      const values = groupMetrics.map((m) => m.value);
       let aggregatedValue: number;
 
       switch (query.aggregation) {
@@ -288,10 +283,13 @@ export class Analytics {
       result.push({
         timestamp: new Date(bucket),
         value: aggregatedValue,
-        tags: query.groupBy?.reduce((acc, key) => {
-          acc[key] = groupMetrics[0].tags[key] || '';
-          return acc;
-        }, {} as Record<string, string>),
+        tags: query.groupBy?.reduce(
+          (acc, key) => {
+            acc[key] = groupMetrics[0].tags[key] || '';
+            return acc;
+          },
+          {} as Record<string, string>
+        ),
       });
     }
 
@@ -303,7 +301,7 @@ export class Analytics {
    */
   private getTimeBucket(timestamp: Date, resolution: string): number {
     const ms = timestamp.getTime();
-    
+
     switch (resolution) {
       case '1m':
         return Math.floor(ms / 60000) * 60000;
@@ -334,31 +332,30 @@ export class Analytics {
    * Get feature usage statistics
    */
   getFeatureUsageStats(featureKey: string, period: { start: Date; end: Date }): FeatureUsageStats {
-    const evaluations = this.metrics.filter(m => 
-      m.name === 'feature_evaluation' &&
-      m.tags.feature === featureKey &&
-      m.timestamp >= period.start &&
-      m.timestamp <= period.end
+    const evaluations = this.metrics.filter(
+      (m) =>
+        m.name === 'feature_evaluation' &&
+        m.tags.feature === featureKey &&
+        m.timestamp >= period.start &&
+        m.timestamp <= period.end
     );
 
-    const enabledCount = evaluations.filter(m => m.tags.result === 'enabled').length;
-    const disabledCount = evaluations.filter(m => m.tags.result === 'disabled').length;
+    const enabledCount = evaluations.filter((m) => m.tags.result === 'enabled').length;
+    const disabledCount = evaluations.filter((m) => m.tags.result === 'disabled').length;
     const totalEvaluations = evaluations.length;
 
     // Get unique users
-    const uniqueUsers = new Set(
-      evaluations
-        .filter(m => m.tags.userId)
-        .map(m => m.tags.userId)
-    ).size;
+    const uniqueUsers = new Set(evaluations.filter((m) => m.tags.userId).map((m) => m.tags.userId))
+      .size;
 
     // Calculate variant distribution
     const variantDistribution: Record<string, number> = {};
-    const variantMetrics = this.metrics.filter(m =>
-      m.name === 'feature_enabled' &&
-      m.tags.feature === featureKey &&
-      m.timestamp >= period.start &&
-      m.timestamp <= period.end
+    const variantMetrics = this.metrics.filter(
+      (m) =>
+        m.name === 'feature_enabled' &&
+        m.tags.feature === featureKey &&
+        m.timestamp >= period.start &&
+        m.timestamp <= period.end
     );
 
     for (const metric of variantMetrics) {
@@ -373,7 +370,8 @@ export class Analytics {
       disabledCount,
       enableRate: totalEvaluations > 0 ? enabledCount / totalEvaluations : 0,
       uniqueUsers,
-      variantDistribution: Object.keys(variantDistribution).length > 0 ? variantDistribution : undefined,
+      variantDistribution:
+        Object.keys(variantDistribution).length > 0 ? variantDistribution : undefined,
       period,
     };
   }
@@ -383,50 +381,47 @@ export class Analytics {
    */
   getBetaProgramStats(period: { start: Date; end: Date }): BetaProgramStats {
     // Calculate active users
-    const activeUserMetrics = this.metrics.filter(m =>
-      m.name === 'user_active' &&
-      m.timestamp >= period.start &&
-      m.timestamp <= period.end
+    const activeUserMetrics = this.metrics.filter(
+      (m) => m.name === 'user_active' && m.timestamp >= period.start && m.timestamp <= period.end
     );
-    const activeUsers = new Set(activeUserMetrics.map(m => m.tags.userId)).size;
+    const activeUsers = new Set(activeUserMetrics.map((m) => m.tags.userId)).size;
 
     // Calculate feedback counts
-    const feedbackMetrics = this.metrics.filter(m =>
-      m.name === 'feedback_submitted' &&
-      m.timestamp >= period.start &&
-      m.timestamp <= period.end
+    const feedbackMetrics = this.metrics.filter(
+      (m) =>
+        m.name === 'feedback_submitted' && m.timestamp >= period.start && m.timestamp <= period.end
     );
     const totalFeedback = feedbackMetrics.length;
-    const bugReports = feedbackMetrics.filter(m => m.tags.type === 'bug_report').length;
-    const featureRequests = feedbackMetrics.filter(m => m.tags.type === 'feature_request').length;
+    const bugReports = feedbackMetrics.filter((m) => m.tags.type === 'bug_report').length;
+    const featureRequests = feedbackMetrics.filter((m) => m.tags.type === 'feature_request').length;
 
     // Calculate NPS
-    const npsMetrics = this.metrics.filter(m =>
-      m.name === 'nps_score' &&
-      m.timestamp >= period.start &&
-      m.timestamp <= period.end
+    const npsMetrics = this.metrics.filter(
+      (m) => m.name === 'nps_score' && m.timestamp >= period.start && m.timestamp <= period.end
     );
-    const averageNps = npsMetrics.length > 0
-      ? npsMetrics.reduce((sum, m) => sum + m.value, 0) / npsMetrics.length
-      : undefined;
+    const averageNps =
+      npsMetrics.length > 0
+        ? npsMetrics.reduce((sum, m) => sum + m.value, 0) / npsMetrics.length
+        : undefined;
 
     // Calculate ratings
-    const ratingMetrics = this.metrics.filter(m =>
-      m.name === 'feedback_submitted' &&
-      m.tags.type === 'rating' &&
-      m.timestamp >= period.start &&
-      m.timestamp <= period.end
+    const ratingMetrics = this.metrics.filter(
+      (m) =>
+        m.name === 'feedback_submitted' &&
+        m.tags.type === 'rating' &&
+        m.timestamp >= period.start &&
+        m.timestamp <= period.end
     );
-    const averageRating = ratingMetrics.length > 0
-      ? ratingMetrics.reduce((sum, m) => sum + m.value, 0) / ratingMetrics.length
-      : undefined;
+    const averageRating =
+      ratingMetrics.length > 0
+        ? ratingMetrics.reduce((sum, m) => sum + m.value, 0) / ratingMetrics.length
+        : undefined;
 
     // Calculate feature adoption
     const featureAdoption: Record<string, number> = {};
-    const featureMetrics = this.metrics.filter(m =>
-      m.name === 'feature_enabled' &&
-      m.timestamp >= period.start &&
-      m.timestamp <= period.end
+    const featureMetrics = this.metrics.filter(
+      (m) =>
+        m.name === 'feature_enabled' && m.timestamp >= period.start && m.timestamp <= period.end
     );
 
     for (const metric of featureMetrics) {
@@ -437,14 +432,13 @@ export class Analytics {
     }
 
     // Calculate error rate
-    const errorMetrics = this.metrics.filter(m =>
-      m.name === 'error_count' &&
-      m.timestamp >= period.start &&
-      m.timestamp <= period.end
+    const errorMetrics = this.metrics.filter(
+      (m) => m.name === 'error_count' && m.timestamp >= period.start && m.timestamp <= period.end
     );
-    const errorRate = errorMetrics.length > 0
-      ? errorMetrics.reduce((sum, m) => sum + m.value, 0) / activeUsers || 0
-      : 0;
+    const errorRate =
+      errorMetrics.length > 0
+        ? errorMetrics.reduce((sum, m) => sum + m.value, 0) / activeUsers || 0
+        : 0;
 
     return {
       totalBetaUsers: this.betaUsers.size,
@@ -556,9 +550,7 @@ export class Analytics {
    */
   getActiveBetaUsers(daysSinceActive = 7): BetaUser[] {
     const cutoff = new Date(Date.now() - daysSinceActive * 86400000);
-    return this.getAllBetaUsers().filter(u => 
-      u.lastActiveAt && u.lastActiveAt >= cutoff
-    );
+    return this.getAllBetaUsers().filter((u) => u.lastActiveAt && u.lastActiveAt >= cutoff);
   }
 
   // Program Configuration
@@ -585,10 +577,10 @@ export class Analytics {
   private flush(): void {
     // In a real implementation, this would persist metrics to a database
     this.logDebug(`Flushing ${this.metrics.length} metrics`);
-    
+
     // Remove old metrics beyond retention period
     const cutoff = new Date(Date.now() - this.config.retentionDays * 86400000);
-    this.metrics = this.metrics.filter(m => m.timestamp >= cutoff);
+    this.metrics = this.metrics.filter((m) => m.timestamp >= cutoff);
   }
 
   /**

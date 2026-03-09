@@ -1,18 +1,22 @@
 ---
 sidebar_position: 3
 title: WebSocket Gateway
-description: Advanced WebSocket Gateway features including sharding, compression, and optimization
+description:
+  Advanced WebSocket Gateway features including sharding, compression, and
+  optimization
 keywords: [websocket, gateway, sharding, optimization, performance]
 tags: [api, websocket, gateway]
 ---
 
 # WebSocket Gateway
 
-Advanced features for optimizing WebSocket Gateway connections including sharding, compression, and performance tuning.
+Advanced features for optimizing WebSocket Gateway connections including
+sharding, compression, and performance tuning.
 
 ## Sharding
 
-Sharding splits gateway connections across multiple WebSocket connections for high-scale applications.
+Sharding splits gateway connections across multiple WebSocket connections for
+high-scale applications.
 
 ### When to Shard
 
@@ -23,6 +27,7 @@ Shard your connection when:
 - **Multiple spaces**: Connected to 50+ spaces
 
 **Formula**:
+
 ```
 num_shards = ceil(total_space_members / 1000)
 ```
@@ -48,7 +53,7 @@ class ShardManager {
     const shard = new Shard(this.token, shardId, this.numShards);
     this.shards.set(shardId, shard);
     shard.connect();
-    
+
     // Stagger connections
     setTimeout(() => {
       this.nextShard();
@@ -118,11 +123,11 @@ class ShardHealthMonitor {
         connected: shard.isConnected(),
         ping: shard.getPing(),
         lastHeartbeat: shard.getLastHeartbeat(),
-        eventsReceived: shard.getEventCount()
+        eventsReceived: shard.getEventCount(),
       };
-      
+
       this.healthStatus.set(id, health);
-      
+
       // Auto-reconnect unhealthy shards
       if (!health.connected || health.ping > 5000) {
         console.log(`Reconnecting shard ${id}`);
@@ -164,9 +169,10 @@ const ws = new WebSocket('wss://gateway.vcomm.io?compress=true');
 **Compression Algorithm**: zlib
 
 **Performance Impact**:
+
 - Bandwidth: 60-80% reduction
 - CPU: 10-15% increase
-- Latency: <5ms overhead
+- Latency: `<5ms` overhead
 
 ---
 
@@ -209,7 +215,7 @@ class EventQueue {
   }
 
   sleep(ms) {
-    return new Promise(resolve => setTimeout(resolve, ms));
+    return new Promise((resolve) => setTimeout(resolve, ms));
   }
 }
 ```
@@ -266,7 +272,7 @@ class ConnectionPool {
     this.pools = {
       primary: null,
       events: null,
-      voice: null
+      voice: null,
     };
     this.token = token;
     this.options = options;
@@ -276,7 +282,7 @@ class ConnectionPool {
     // Primary connection for core features
     this.pools.primary = new GatewayConnection(this.token, {
       intents: 513,
-      compress: true
+      compress: true,
     });
     this.pools.primary.connect();
 
@@ -284,7 +290,7 @@ class ConnectionPool {
     if (this.options.enableEventsConnection) {
       this.pools.events = new GatewayConnection(this.token, {
         intents: 1, // Events only
-        compress: false
+        compress: false,
       });
       this.pools.events.connect();
     }
@@ -323,9 +329,9 @@ class ReconnectionStrategy {
     while (this.attempt < this.maxAttempts) {
       const delay = this.calculateDelay();
       console.log(`Reconnecting in ${delay}ms (attempt ${this.attempt + 1})`);
-      
+
       await this.sleep(delay);
-      
+
       try {
         await connection.connect();
         this.attempt = 0;
@@ -335,7 +341,7 @@ class ReconnectionStrategy {
         console.error(`Reconnection failed: ${error}`);
       }
     }
-    
+
     return false;
   }
 
@@ -346,7 +352,7 @@ class ReconnectionStrategy {
   }
 
   sleep(ms) {
-    return new Promise(resolve => setTimeout(resolve, ms));
+    return new Promise((resolve) => setTimeout(resolve, ms));
   }
 }
 ```
@@ -365,20 +371,23 @@ class SessionManager {
   saveSession(sessionId, lastSeq) {
     this.sessionId = sessionId;
     this.lastSeq = lastSeq;
-    
+
     // Persist to storage
-    localStorage.setItem('vcomm_session', JSON.stringify({
-      sessionId,
-      lastSeq,
-      timestamp: Date.now()
-    }));
+    localStorage.setItem(
+      'vcomm_session',
+      JSON.stringify({
+        sessionId,
+        lastSeq,
+        timestamp: Date.now(),
+      })
+    );
   }
 
   loadSession() {
     const stored = localStorage.getItem('vcomm_session');
     if (stored) {
       const data = JSON.parse(stored);
-      
+
       // Session valid for 1 hour
       if (Date.now() - data.timestamp < 3600000) {
         this.sessionId = data.sessionId;
@@ -386,7 +395,7 @@ class SessionManager {
         return true;
       }
     }
-    
+
     return false;
   }
 
@@ -400,8 +409,8 @@ class SessionManager {
       d: {
         token: token,
         session_id: this.sessionId,
-        seq: this.lastSeq
-      }
+        seq: this.lastSeq,
+      },
     };
   }
 }
@@ -467,13 +476,13 @@ class EventHistoryManager {
 
   add(event) {
     const { id } = event;
-    
+
     // Remove oldest if at capacity
     if (this.events.size >= this.maxSize) {
       const oldestId = this.accessOrder.shift();
       this.events.delete(oldestId);
     }
-    
+
     this.events.set(id, event);
     this.accessOrder.push(id);
   }
@@ -498,7 +507,7 @@ class EventHistoryManager {
     return {
       size: this.events.size,
       maxSize: this.maxSize,
-      utilization: (this.events.size / this.maxSize) * 100
+      utilization: (this.events.size / this.maxSize) * 100,
     };
   }
 }
@@ -528,7 +537,7 @@ class GatewayInspector {
       const payload = JSON.parse(data);
       this.outboundEvents.push({
         timestamp: Date.now(),
-        payload: payload
+        payload: payload,
       });
       originalSend(data);
     };
@@ -538,7 +547,7 @@ class GatewayInspector {
       const payload = JSON.parse(data);
       this.inboundEvents.push({
         timestamp: Date.now(),
-        payload: payload
+        payload: payload,
       });
     });
   }
@@ -547,18 +556,18 @@ class GatewayInspector {
     return {
       outbound: {
         total: this.outboundEvents.length,
-        byType: this.groupByType(this.outboundEvents)
+        byType: this.groupByType(this.outboundEvents),
       },
       inbound: {
         total: this.inboundEvents.length,
-        byType: this.groupByType(this.inboundEvents)
-      }
+        byType: this.groupByType(this.inboundEvents),
+      },
     };
   }
 
   groupByType(events) {
     const grouped = {};
-    events.forEach(event => {
+    events.forEach((event) => {
       const type = event.payload.t || 'OP_' + event.payload.op;
       grouped[type] = (grouped[type] || 0) + 1;
     });
@@ -569,7 +578,7 @@ class GatewayInspector {
     return {
       outbound: this.outboundEvents,
       inbound: this.inboundEvents,
-      stats: this.getStats()
+      stats: this.getStats(),
     };
   }
 }
@@ -588,7 +597,7 @@ class GatewayMetrics {
       heartbeatRtt: [],
       eventLatency: [],
       errorCount: 0,
-      reconnectCount: 0
+      reconnectCount: 0,
     };
   }
 
@@ -634,15 +643,15 @@ class GatewayMetrics {
       heartbeatRtt: {
         average: avgRtt,
         min: Math.min(...this.metrics.heartbeatRtt),
-        max: Math.max(...this.metrics.heartbeatRtt)
+        max: Math.max(...this.metrics.heartbeatRtt),
       },
       eventLatency: {
         average: avgLatency,
         min: Math.min(...this.metrics.eventLatency),
-        max: Math.max(...this.metrics.eventLatency)
+        max: Math.max(...this.metrics.eventLatency),
       },
       errorCount: this.metrics.errorCount,
-      reconnectCount: this.metrics.reconnectCount
+      reconnectCount: this.metrics.reconnectCount,
     };
   }
 

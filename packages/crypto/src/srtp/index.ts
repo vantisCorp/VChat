@@ -4,13 +4,7 @@
  */
 
 import { createCipheriv, createDecipheriv } from 'crypto';
-import {
-  SRTPCryptoSuite,
-  SRTPKey,
-  SRTPParams,
-  SRTPHeader,
-  SRTPError,
-} from '../types';
+import { SRTPCryptoSuite, SRTPKey, SRTPParams, SRTPHeader, SRTPError } from '../types';
 import { hmac } from '../hash';
 import { randomBytes } from '../random';
 
@@ -22,12 +16,12 @@ export class SRTPSession {
   private cryptoSuite: SRTPCryptoSuite;
   private rolloverCounter: number = 0;
   private sequenceNumber: number = 0;
-  
+
   // Replay protection
   private replayList: Set<number> = new Set();
   private replayWindowSize: number = 64;
   private maxSequenceSeen: number = 0;
-  
+
   constructor(
     private masterKey: Uint8Array,
     private masterSalt: Uint8Array,
@@ -36,93 +30,100 @@ export class SRTPSession {
     this.cryptoSuite = cryptoSuite;
     this.params = this.deriveKeys(masterKey, masterSalt);
   }
-  
+
   /**
    * Protect an RTP packet (encrypt and authenticate)
    */
   protect(rtpPacket: Uint8Array): Uint8Array {
     const { header, payload } = this.parseRTPPacket(rtpPacket);
-    
+
     // Update sequence number
     if (header.sequenceNumber === 0 && this.sequenceNumber === 65535) {
       this.rolloverCounter++;
     }
     this.sequenceNumber = header.sequenceNumber;
-    
+
     // Encrypt payload
     const encryptedPayload = this.encryptPayload(payload, header);
-    
+
     // Build SRTP packet
-    const srtpPacket = new Uint8Array(header.raw.length + encryptedPayload.length + this.getAuthTagLength());
+    const srtpPacket = new Uint8Array(
+      header.raw.length + encryptedPayload.length + this.getAuthTagLength()
+    );
     srtpPacket.set(header.raw, 0);
     srtpPacket.set(encryptedPayload, header.raw.length);
-    
+
     // Compute authentication tag
-    const tag = this.computeAuthTag(srtpPacket.slice(0, header.raw.length + encryptedPayload.length), header);
+    const tag = this.computeAuthTag(
+      srtpPacket.slice(0, header.raw.length + encryptedPayload.length),
+      header
+    );
     srtpPacket.set(tag, header.raw.length + encryptedPayload.length);
-    
+
     return srtpPacket;
   }
-  
+
   /**
    * Unprotect an SRTP packet (verify and decrypt)
    */
   unprotect(srtpPacket: Uint8Array): Uint8Array {
     const authTagLength = this.getAuthTagLength();
-    
+
     if (srtpPacket.length < 12 + authTagLength) {
       throw new SRTPError('SRTP packet too short');
     }
-    
-    const { header, payload } = this.parseRTPPacket(srtpPacket.slice(0, srtpPacket.length - authTagLength));
+
+    const { header, payload } = this.parseRTPPacket(
+      srtpPacket.slice(0, srtpPacket.length - authTagLength)
+    );
     const receivedTag = srtpPacket.slice(srtpPacket.length - authTagLength);
-    
+
     // Replay protection
     const index = (this.rolloverCounter << 16) | header.sequenceNumber;
     if (this.isReplay(index)) {
       throw new SRTPError('Replay attack detected');
     }
-    
+
     // Verify authentication tag
     const expectedTag = this.computeAuthTag(
       srtpPacket.slice(0, srtpPacket.length - authTagLength),
       header
     );
-    
+
     if (!this.constantTimeCompare(receivedTag, expectedTag)) {
       throw new SRTPError('Authentication failed');
     }
-    
+
     // Update replay protection
     this.updateReplayList(index);
-    
+
     // Decrypt payload
     const decryptedPayload = this.decryptPayload(payload, header);
-    
+
     // Reconstruct RTP packet
     const rtpPacket = new Uint8Array(header.raw.length + decryptedPayload.length);
     rtpPacket.set(header.raw, 0);
     rtpPacket.set(decryptedPayload, header.raw.length);
-    
+
     return rtpPacket;
   }
-  
+
   /**
    * Derive SRTP keys from master key and salt
    */
   private deriveKeys(masterKey: Uint8Array, masterSalt: Uint8Array): SRTPParams {
     const keyLength = this.getKeyLength();
     const saltLength = this.getSaltLength();
-    
+
     // Derive encryption key (label 0)
     const encryptionKey = this.kdf(masterKey, masterSalt, 0x00, keyLength);
-    
+
     // Derive authentication key (label 1)
     const authKey = this.kdf(masterKey, masterSalt, 0x01, 20); // HMAC-SHA1 key
-    
+
     // Derive salt (label 2)
     const salt = this.kdf(masterKey, masterSalt, 0x02, saltLength);
-    
+
     return {
       encryptionKey,
       authKey,
@@ -132,35 +133,44 @@ export class SRTPSession {
       seq: 0,
     };
   }
-  
+
   /**
    * Key derivation function
    */
-  private kdf(masterKey: Uint8Array, masterSalt: Uint8Array, label: number, length: number): Uint8Array {
+  private kdf(
+    masterKey: Uint8Array,
+    masterSalt: Uint8Array,
+    label: number,
+    length: number
+  ): Uint8Array {
     const keyId = new Uint8Array(7);
     keyId[0] = label;
     // Fill with ROC and seq for key derivation rate
-    
+
     const input = new Uint8Array(masterSalt.length + keyId.length);
     input.set(masterSalt, 0);
     input.set(keyId, masterSalt.length);
-    
+
     // XOR with label
     input[0] ^= label << 3;
-    
+
     return this.aesCtr(masterKey, input, length);
   }
-  
+
   /**
    * AES-CTR for key derivation
    */
   private aesCtr(key: Uint8Array, counter: Uint8Array, length: number): Uint8Array {
-    const cipher = createCipheriv(`aes-${key.length * 8}-ctr`, Buffer.from(key), Buffer.from(counter).slice(0, 16));
+    const cipher = createCipheriv(
+      `aes-${key.length * 8}-ctr`,
+      Buffer.from(key),
+      Buffer.from(counter).slice(0, 16)
+    );
     const zeroInput = Buffer.alloc(length);
     const output = Buffer.concat([cipher.update(zeroInput), cipher.final()]);
     return new Uint8Array(output);
   }
-  
+
   /**
    * Encrypt payload using SRTP encryption
    */
@@ -171,15 +181,12 @@ export class SRTPSession {
       Buffer.from(this.params.encryptionKey),
       Buffer.from(iv)
     );
-    
-    const encrypted = Buffer.concat([
-      cipher.update(Buffer.from(payload)),
-      cipher.final(),
-    ]);
-    
+
+    const encrypted = Buffer.concat([cipher.update(Buffer.from(payload)), cipher.final()]);
+
     return new Uint8Array(encrypted);
   }
-  
+
   /**
    * Decrypt payload
    */
@@ -190,39 +197,36 @@ export class SRTPSession {
       Buffer.from(this.params.encryptionKey),
       Buffer.from(iv)
     );
-    
-    const decrypted = Buffer.concat([
-      decipher.update(Buffer.from(payload)),
-      decipher.final(),
-    ]);
-    
+
+    const decrypted = Buffer.concat([decipher.update(Buffer.from(payload)), decipher.final()]);
+
     return new Uint8Array(decrypted);
   }
-  
+
   /**
    * Compute IV for encryption
    */
   private computeIV(header: SRTPHeader): Uint8Array {
     const iv = new Uint8Array(16);
-    
+
     // SSRC
     const view = new DataView(iv.buffer);
     view.setUint32(0, header.ssrc, false);
-    
+
     // ROC
     view.setUint32(4, this.rolloverCounter, false);
-    
+
     // Sequence number
     view.setUint16(8, header.sequenceNumber, false);
-    
+
     // XOR with salt
     for (let i = 0; i < this.params.salt.length && i < 14; i++) {
       iv[i] ^= this.params.salt[i];
     }
-    
+
     return iv;
   }
-  
+
   /**
    * Compute authentication tag
    */
@@ -230,39 +234,43 @@ export class SRTPSession {
     // Append ROC to the data
     const dataWithRoc = new Uint8Array(data.length + 4);
     dataWithRoc.set(data, 0);
-    
+
     const view = new DataView(dataWithRoc.buffer);
     view.setUint32(data.length, this.rolloverCounter, false);
-    
+
     const tagLength = this.getAuthTagLength();
     const fullHmac = hmac(dataWithRoc, this.params.authKey, 'sha256');
-    
+
     return fullHmac.slice(0, tagLength);
   }
-  
+
   /**
    * Parse RTP packet into header and payload
    */
-  private parseRTPPacket(packet: Uint8Array): { header: SRTPHeader; payload: Uint8Array; raw: Uint8Array } {
+  private parseRTPPacket(packet: Uint8Array): {
+    header: SRTPHeader;
+    payload: Uint8Array;
+    raw: Uint8Array;
+  } {
     if (packet.length < 12) {
       throw new SRTPError('RTP packet too short');
     }
-    
+
     const firstByte = packet[0];
     const _hasPadding = (firstByte & 0x20) !== 0;
     const hasExtension = (firstByte & 0x10) !== 0;
     const csrcCount = firstByte & 0x0f;
-    
-    let headerLength = 12 + (csrcCount * 4);
-    
+
+    let headerLength = 12 + csrcCount * 4;
+
     // Handle extension header
     if (hasExtension && packet.length >= headerLength + 4) {
       const extLength = (packet[headerLength + 2] << 8) | packet[headerLength + 3];
-      headerLength += 4 + (extLength * 4);
+      headerLength += 4 + extLength * 4;
     }
-    
+
     const rawHeader = packet.slice(0, headerLength);
-    
+
     const header: SRTPHeader = {
       packetType: packet[1] & 0x7f,
       sequenceNumber: (packet[2] << 8) | packet[3],
@@ -271,23 +279,25 @@ export class SRTPSession {
       csrc: [],
       raw: rawHeader,
     };
-    
+
     // Parse CSRCs
     for (let i = 0; i < csrcCount; i++) {
-      const offset = 12 + (i * 4);
+      const offset = 12 + i * 4;
       header.csrc!.push(
-        (packet[offset] << 24) | (packet[offset + 1] << 16) | 
-        (packet[offset + 2] << 8) | packet[offset + 3]
+        (packet[offset] << 24) |
+          (packet[offset + 1] << 16) |
+          (packet[offset + 2] << 8) |
+          packet[offset + 3]
       );
     }
-    
+
     return {
       header,
       payload: packet.slice(headerLength),
       raw: rawHeader,
     };
   }
-  
+
   /**
    * Get key length for crypto suite
    */
@@ -305,14 +315,14 @@ export class SRTPSession {
         return 16;
     }
   }
-  
+
   /**
    * Get salt length for crypto suite
    */
   private getSaltLength(): number {
     return 14; // Standard SRTP salt length
   }
-  
+
   /**
    * Get authentication tag length
    */
@@ -331,7 +341,7 @@ export class SRTPSession {
         return 10;
     }
   }
-  
+
   /**
    * Check for replay attack
    */
@@ -339,14 +349,14 @@ export class SRTPSession {
     if (index > this.maxSequenceSeen) {
       return false;
     }
-    
+
     if (this.maxSequenceSeen - index > this.replayWindowSize) {
       return true;
     }
-    
+
     return this.replayList.has(index);
   }
-  
+
   /**
    * Update replay protection list
    */
@@ -360,16 +370,16 @@ export class SRTPSession {
       }
       this.maxSequenceSeen = index;
     }
-    
+
     this.replayList.add(index);
   }
-  
+
   /**
    * Constant-time comparison
    */
   private constantTimeCompare(a: Uint8Array, b: Uint8Array): boolean {
     if (a.length !== b.length) return false;
-    
+
     let result = 0;
     for (let i = 0; i < a.length; i++) {
       result |= a[i] ^ b[i];
@@ -394,7 +404,7 @@ export function createSRTPSession(
  */
 export function generateSRTPKey(cryptoSuite: SRTPCryptoSuite = 'AES_CM_128_HMAC_SHA1_80'): SRTPKey {
   let keyLength: number;
-  
+
   switch (cryptoSuite) {
     case 'AES_CM_128_HMAC_SHA1_80':
     case 'AES_CM_128_HMAC_SHA1_32':
@@ -409,7 +419,7 @@ export function generateSRTPKey(cryptoSuite: SRTPCryptoSuite = 'AES_CM_128_HMAC_
     default:
       keyLength = 16;
   }
-  
+
   return {
     masterKey: randomBytes(keyLength),
     masterSalt: randomBytes(14),

@@ -1,12 +1,11 @@
 /**
  * @vcomm/sentry-config
- * 
+ *
  * Centralized Sentry configuration for V-COMM applications.
  * Provides unified error tracking, performance monitoring, and release management.
  */
 
 import * as Sentry from '@sentry/node';
-import { ProfilingIntegration } from '@sentry/profiling-node';
 
 // ============================================================================
 // Types & Interfaces
@@ -49,9 +48,7 @@ const getEnvironment = (): 'development' | 'staging' | 'production' => {
 };
 
 const getRelease = (): string => {
-  return process.env.SENTRY_RELEASE || 
-         process.env.npm_package_version || 
-         '0.0.1-dev';
+  return process.env.SENTRY_RELEASE || process.env.npm_package_version || '0.0.1-dev';
 };
 
 // ============================================================================
@@ -80,7 +77,7 @@ let isInitialized = false;
  */
 export function initSentry(config: Partial<SentryConfig> = {}): void {
   const finalConfig = { ...defaultConfig, ...config };
-  
+
   if (!finalConfig.dsn) {
     console.warn('⚠️ Sentry DSN not provided. Telemetry disabled.');
     return;
@@ -91,40 +88,21 @@ export function initSentry(config: Partial<SentryConfig> = {}): void {
     return;
   }
 
-  const integrations: Sentry.Integration[] = [
-    // Performance monitoring
-    new Sentry.Integrations.Http({ tracing: true }),
-    new Sentry.Integrations.Express(),
-    new Sentry.Integrations.GraphQL(),
-    
-    // Error breadcrumbs
-    new Sentry.Integrations.Console(),
-    new Sentry.Integrations.LinkedErrors(),
-    
-    // Native node profiling
-    new ProfilingIntegration(),
-  ];
-
   Sentry.init({
     dsn: finalConfig.dsn,
     environment: finalConfig.environment,
     release: finalConfig.release,
-    
+
     // Performance
     tracesSampleRate: finalConfig.tracesSampleRate,
-    profilesSampleRate: finalConfig.profilesSampleRate,
-    
+
     // Debug
     debug: finalConfig.debug,
-    
-    // Integrations
-    integrations,
-    
+
     // Error handling
     attachStacktrace: true,
-    captureExceptions: true,
-    captureUnhandledRejections: true,
-    
+    autoSessionTracking: true,
+
     // Before send hook for filtering
     beforeSend(event, _hint) {
       // Filter out sensitive information
@@ -135,20 +113,19 @@ export function initSentry(config: Partial<SentryConfig> = {}): void {
           delete event.request.headers.cookie;
         }
       }
-      
+
       // Don't send events in development unless explicitly enabled
       if (finalConfig.environment === 'development' && !finalConfig.debug) {
         return null;
       }
-      
+
       return event;
     },
-    
+
     // Before send transaction for performance filtering
     beforeSendTransaction(event) {
       // Filter health checks
-      if (event.transaction?.includes('/health') || 
-          event.transaction?.includes('/metrics')) {
+      if (event.transaction?.includes('/health') || event.transaction?.includes('/metrics')) {
         return null;
       }
       return event;
@@ -166,10 +143,7 @@ export function initSentry(config: Partial<SentryConfig> = {}): void {
 /**
  * Capture an exception with optional context
  */
-export function captureException(
-  error: Error | unknown,
-  context?: ErrorContext
-): string {
+export function captureException(error: Error | unknown, context?: ErrorContext): string {
   if (context?.user) {
     Sentry.setUser({
       id: context.user.id,
@@ -223,7 +197,7 @@ export function startTransaction(
   name: string,
   op: string,
   data?: Record<string, unknown>
-): Sentry.Transaction {
+): ReturnType<typeof Sentry.startTransaction> {
   return Sentry.startTransaction({
     name,
     op,
@@ -235,10 +209,10 @@ export function startTransaction(
  * Create a child span for nested operations
  */
 export function startSpan(
-  transaction: Sentry.Transaction,
+  transaction: ReturnType<typeof Sentry.startTransaction>,
   op: string,
   description: string
-): Sentry.Span {
+): ReturnType<ReturnType<typeof Sentry.startTransaction>['startChild']> {
   return transaction.startChild({
     op,
     description,
@@ -259,7 +233,7 @@ export function setUser(user: UserContext | null): void {
       username: user.username,
       email: user.email,
     });
-    
+
     if (user.roles) {
       Sentry.setExtra('user.roles', user.roles);
     }
@@ -311,7 +285,8 @@ export function addBreadcrumb(
 /**
  * Express middleware for Sentry request handling
  */
-export function sentryRequestHandler() {
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export function sentryRequestHandler(): any {
   return Sentry.Handlers.requestHandler({
     ip: true,
     user: true,
@@ -322,11 +297,12 @@ export function sentryRequestHandler() {
 /**
  * Express middleware for Sentry error handling
  */
-export function sentryErrorHandler() {
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export function sentryErrorHandler(): any {
   return Sentry.Handlers.errorHandler({
     shouldHandleError(error) {
       // Only capture 4xx and 5xx errors
-      const status = (error as any).status || 500;
+      const status = ((error as unknown as Record<string, unknown>).status as number) || 500;
       return status >= 400;
     },
   });

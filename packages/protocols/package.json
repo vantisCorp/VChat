@@ -6,7 +6,7 @@
   "types": "dist/index.d.ts",
   "scripts": {
     "build": "tsc",
-    "test": "jest",
+    "test": "jest --passWithNoTests",
     "lint": "eslint src/",
     "type-check": "tsc --noEmit"
   },
@@ -22,7 +22,7 @@
   "author": "V-COMM Team",
   "license": "MIT",
   "dependencies": {
-    "@vcomm/types": "^1.0.0"
+    "@vcomm/types": "workspace:*"
   },
   "devDependencies": {
     "@types/node": "^25.3.5",

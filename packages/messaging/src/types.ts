@@ -3,7 +3,7 @@
  */
 
 export interface MessageBatch {
-  recipients: string[];  // User IDs or PIDs
+  recipients: string[]; // User IDs or PIDs
   message: any;
   options?: BatchOptions;
 }

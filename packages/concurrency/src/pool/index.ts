@@ -3,12 +3,7 @@
  * @module @vcomm/concurrency/pool
  */
 
-import {
-  ResourcePoolOptions,
-  PooledResource,
-  PoolState,
-  AcquireTimeoutError,
-} from '../types';
+import { ResourcePoolOptions, PooledResource, PoolState, AcquireTimeoutError } from '../types';
 
 /**
  * Factory for creating resources
@@ -43,7 +38,7 @@ interface WaitQueueEntry<T> {
 
 /**
  * Generic resource pool for managing reusable resources
- * 
+ *
  * @example
  * ```typescript
  * const pool = new ResourcePool({
@@ -54,7 +49,7 @@ interface WaitQueueEntry<T> {
  *   min: 2,
  *   max: 10,
  * });
- * 
+ *
  * const resource = await pool.acquire();
  * try {
  *   await resource.data.query('SELECT * FROM users');
@@ -67,19 +62,19 @@ export class ResourcePool<T> {
   private factory: ResourceFactory<T>;
   private resources: Map<string, InternalPooledResource<T>> = new Map();
   private waitQueue: WaitQueueEntry<T>[] = [];
-  
+
   private readonly minResources: number;
   private readonly maxResources: number;
   private readonly acquireTimeout: number;
   private readonly idleTimeout: number;
   private readonly validationInterval: number;
   private readonly maxUses: number;
-  
+
   private resourceIdCounter = 0;
   private isInitialized = false;
   private validationTimer: NodeJS.Timeout | null = null;
   private cleanupTimer: NodeJS.Timeout | null = null;
-  
+
   constructor(options: ResourcePoolOptions<T>) {
     // Normalize factory to ResourceFactory interface
     if (typeof options.factory === 'function') {
@@ -109,7 +104,7 @@ export class ResourcePool<T> {
     this.validationInterval = options.validationInterval ?? 60000;
     this.maxUses = options.maxUses ?? 0; // 0 = unlimited
   }
-  
+
   /**
    * Initialize the pool with minimum resources
    */
@@ -117,19 +112,19 @@ export class ResourcePool<T> {
     if (this.isInitialized) {
       return;
     }
-    
+
     // Create minimum resources
     for (let i = 0; i < this.minResources; i++) {
       await this.createResource();
     }
-    
+
     // Start validation and cleanup timers
     this.startValidation();
     this.startCleanup();
-    
+
     this.isInitialized = true;
   }
-  
+
   /**
    * Acquire a resource from the pool
    */
@@ -138,14 +133,14 @@ export class ResourcePool<T> {
     if (!this.isInitialized) {
       await this.initialize();
     }
-    
+
     // Try to get an available resource
     const available = this.findAvailableResource();
-    
+
     if (available) {
       return this.wrapResource(available);
     }
-    
+
     // Create new resource if under max
     if (this.getTotalCount() < this.maxResources) {
       const newResource = await this.createResource();
@@ -153,11 +148,11 @@ export class ResourcePool<T> {
         return this.wrapResource(newResource);
       }
     }
-    
+
     // Wait for a resource to become available
     return this.waitForResource();
   }
-  
+
   /**
    * Try to acquire without waiting
    */
@@ -165,106 +160,106 @@ export class ResourcePool<T> {
     if (!this.isInitialized) {
       return null;
     }
-    
+
     const available = this.findAvailableResource();
-    
+
     if (available) {
       return this.wrapResource(available);
     }
-    
+
     return null;
   }
-  
+
   /**
    * Release a resource back to the pool
    */
   async release(id: string): Promise<void> {
     const pooled = this.resources.get(id);
-    
+
     if (!pooled) {
       return;
     }
-    
+
     pooled.inUse = false;
     pooled.lastUsedAt = new Date();
     pooled.useCount++;
-    
+
     // Check if resource has exceeded max uses
     if (this.maxUses > 0 && pooled.useCount >= this.maxUses) {
       await this.destroyResource(id);
       return;
     }
-    
+
     // Notify waiters
     if (this.waitQueue.length > 0) {
       const waiter = this.waitQueue.shift()!;
       waiter.resolve(this.wrapResource(pooled));
     }
   }
-  
+
   /**
    * Destroy a specific resource
    */
   async destroy(id: string): Promise<void> {
     await this.destroyResource(id);
-    
+
     // Maintain minimum resources
     if (this.isInitialized && this.getTotalCount() < this.minResources) {
       await this.createResource();
     }
   }
-  
+
   /**
    * Get pool state
    */
   getState(): PoolState {
     const resources = Array.from(this.resources.values());
-    
+
     return {
       total: resources.length,
-      available: resources.filter(r => !r.inUse).length,
-      inUse: resources.filter(r => r.inUse).length,
+      available: resources.filter((r) => !r.inUse).length,
+      inUse: resources.filter((r) => r.inUse).length,
       waiting: this.waitQueue.length,
       min: this.minResources,
       max: this.maxResources,
     };
   }
-  
+
   /**
    * Get total resource count
    */
   getTotalCount(): number {
     return this.resources.size;
   }
-  
+
   /**
    * Get available resource count
    */
   getAvailableCount(): number {
-    return Array.from(this.resources.values()).filter(r => !r.inUse).length;
+    return Array.from(this.resources.values()).filter((r) => !r.inUse).length;
   }
-  
+
   /**
    * Get in-use resource count
    */
   getInUseCount(): number {
-    return Array.from(this.resources.values()).filter(r => r.inUse).length;
+    return Array.from(this.resources.values()).filter((r) => r.inUse).length;
   }
-  
+
   /**
    * Check if pool is empty
    */
   isEmpty(): boolean {
     return this.resources.size === 0;
   }
-  
- /**
+
+  /**
    * Check if pool is full
    */
   isFull(): boolean {
     return this.resources.size >= this.maxResources;
   }
-  
+
   /**
    * Drain the pool - destroy all resources
    */
@@ -274,55 +269,51 @@ export class ResourcePool<T> {
       clearInterval(this.validationTimer);
       this.validationTimer = null;
     }
-    
+
     if (this.cleanupTimer) {
       clearInterval(this.cleanupTimer);
       this.cleanupTimer = null;
     }
-    
+
     // Reject all waiters
-    this.waitQueue.forEach(entry => {
+    this.waitQueue.forEach((entry) => {
       entry.reject(new Error('Pool is being drained'));
     });
     this.waitQueue = [];
-    
+
     // Destroy all resources
-    const destroyPromises = Array.from(this.resources.keys()).map(id => 
-      this.destroyResource(id)
-    );
-    
+    const destroyPromises = Array.from(this.resources.keys()).map((id) => this.destroyResource(id));
+
     await Promise.all(destroyPromises);
     this.isInitialized = false;
   }
-  
+
   /**
    * Execute a function with a resource
    */
   async withResource<R>(fn: (resource: T) => Promise<R>): Promise<R> {
     const pooled = await this.acquire();
-    
+
     try {
       return await fn(pooled.data);
     } finally {
       pooled.release();
     }
   }
-  
+
   /**
    * Execute with multiple resources
    */
   async withResources<R>(count: number, fn: (resources: T[]) => Promise<R>): Promise<R> {
-    const pooled = await Promise.all(
-      Array.from({ length: count }, () => this.acquire())
-    );
-    
+    const pooled = await Promise.all(Array.from({ length: count }, () => this.acquire()));
+
     try {
-      return await fn(pooled.map(p => p.data));
+      return await fn(pooled.map((p) => p.data));
     } finally {
-      pooled.forEach(p => p.release());
+      pooled.forEach((p) => p.release());
     }
   }
-  
+
   /**
    * Find an available resource
    */
@@ -334,7 +325,7 @@ export class ResourcePool<T> {
     }
     return null;
   }
-  
+
   /**
    * Create a new resource
    */
@@ -342,7 +333,7 @@ export class ResourcePool<T> {
     try {
       const resource = await this.factory.create();
       const id = `resource-${++this.resourceIdCounter}`;
-      
+
       const pooled: InternalPooledResource<T> = {
         resource,
         id,
@@ -352,7 +343,7 @@ export class ResourcePool<T> {
         inUse: false,
         useCount: 0,
       };
-      
+
       this.resources.set(id, pooled);
       return pooled;
     } catch (error) {
@@ -360,35 +351,35 @@ export class ResourcePool<T> {
       return null;
     }
   }
-  
+
   /**
    * Destroy a resource
    */
   private async destroyResource(id: string): Promise<void> {
     const pooled = this.resources.get(id);
-    
+
     if (!pooled) {
       return;
     }
-    
+
     try {
       await this.factory.destroy(pooled.resource);
     } catch (error) {
       console.error('Failed to destroy resource:', error);
     }
-    
+
     this.resources.delete(id);
   }
-  
+
   /**
    * Wrap resource for external use
    */
   private wrapResource(pooled: InternalPooledResource<T>): PooledResource<T> {
     pooled.inUse = true;
     pooled.lastUsedAt = new Date();
-    
+
     const self = this;
-    
+
     return {
       id: pooled.id,
       data: pooled.resource,
@@ -399,7 +390,7 @@ export class ResourcePool<T> {
       destroy: () => self.destroy(pooled.id),
     };
   }
-  
+
   /**
    * Wait for a resource to become available
    */
@@ -410,21 +401,18 @@ export class ResourcePool<T> {
         reject,
         timestamp: new Date(),
       };
-      
+
       this.waitQueue.push(entry);
-      
+
       // Set timeout
       const timeoutId = setTimeout(() => {
         const index = this.waitQueue.indexOf(entry);
         if (index !== -1) {
           this.waitQueue.splice(index, 1);
-          reject(new AcquireTimeoutError(
-            this.acquireTimeout,
-            'resource-pool'
-          ));
+          reject(new AcquireTimeoutError(this.acquireTimeout, 'resource-pool'));
         }
       }, this.acquireTimeout);
-      
+
       // Clear timeout when resolved
       const originalResolve = resolve;
       entry.resolve = (resource: PooledResource<T>) => {
@@ -433,7 +421,7 @@ export class ResourcePool<T> {
       };
     });
   }
-  
+
   /**
    * Start validation timer
    */
@@ -441,12 +429,12 @@ export class ResourcePool<T> {
     if (!this.factory.validate) {
       return;
     }
-    
+
     this.validationTimer = setInterval(() => {
       this.validateResources();
     }, this.validationInterval);
   }
-  
+
   /**
    * Validate all resources
    */
@@ -454,14 +442,14 @@ export class ResourcePool<T> {
     if (!this.factory.validate) {
       return;
     }
-    
+
     const validationPromises = Array.from(this.resources.entries())
       .filter(([, pooled]) => !pooled.inUse)
       .map(async ([id, pooled]) => {
         try {
           const isValid = await this.factory.validate!(pooled.resource);
           pooled.isValid = isValid;
-          
+
           if (!isValid) {
             await this.destroyResource(id);
           }
@@ -470,15 +458,15 @@ export class ResourcePool<T> {
           await this.destroyResource(id);
         }
       });
-    
+
     await Promise.all(validationPromises);
-    
+
     // Maintain minimum resources
     while (this.getTotalCount() < this.minResources) {
       await this.createResource();
     }
   }
-  
+
   /**
    * Start cleanup timer
    */
@@ -487,14 +475,14 @@ export class ResourcePool<T> {
       this.cleanupIdleResources();
     }, this.idleTimeout / 2);
   }
-  
+
   /**
    * Clean up idle resources
    */
   private async cleanupIdleResources(): Promise<void> {
     const now = Date.now();
     const toDestroy: string[] = [];
-    
+
     for (const [id, pooled] of this.resources.entries()) {
       if (
         !pooled.inUse &&
@@ -504,7 +492,7 @@ export class ResourcePool<T> {
         toDestroy.push(id);
       }
     }
-    
+
     for (const id of toDestroy) {
       await this.destroyResource(id);
     }
@@ -515,10 +503,7 @@ export class ResourcePool<T> {
  * Connection pool specialized for database connections
  */
 export class ConnectionPool<T> extends ResourcePool<T> {
-  constructor(
-    factory: ResourceFactory<T>,
-    options: Partial<ResourcePoolOptions<T>> = {}
-  ) {
+  constructor(factory: ResourceFactory<T>, options: Partial<ResourcePoolOptions<T>> = {}) {
     super({
       factory,
       min: options.min ?? 2,

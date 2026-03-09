@@ -33,7 +33,7 @@ export class HardwareManager {
     }
 
     const platform = os.platform();
-    
+
     // Detect available hardware
     if (platform === 'linux') {
       await this.detectVAAPI();
@@ -66,8 +66,8 @@ export class HardwareManager {
       const lines = nvidiaSmi.split('\n').filter(Boolean);
 
       for (const line of lines) {
-        const [index, name, total, used, free] = line.split(',').map(s => s.trim());
-        
+        const [index, name, total, used, free] = line.split(',').map((s) => s.trim());
+
         const nvencCodecs = await this.getNVIDIAEncoders();
         const nvdecCodecs = await this.getNVIDIADecoders();
 
@@ -97,7 +97,7 @@ export class HardwareManager {
    */
   private async getNVIDIAEncoders(): Promise<VideoCodec[]> {
     const encoders: VideoCodec[] = ['h264_nvenc', 'hevc_nvenc'];
-    
+
     // Check for AV1 support (RTX 40 series)
     try {
       const ffmpegEncoders = await this.runCommand('ffmpeg', ['-encoders']);
@@ -124,14 +124,12 @@ export class HardwareManager {
   private getNVIDIACapabilities(gpuName: string): HardwareCapabilities {
     const isRTX40 = gpuName.toLowerCase().includes('rtx 40');
     const _isRTX30 = gpuName.toLowerCase().includes('rtx 30');
-    
+
     return {
       maxResolution: { width: 7680, height: 4320 },
       maxFramerate: 240,
       pixelFormats: ['yuv420p', 'yuv420p10le', 'yuv444p', 'yuv444p10le'],
-      codecs: isRTX40 
-        ? ['h264_nvenc', 'hevc_nvenc', 'av1_nvenc']
-        : ['h264_nvenc', 'hevc_nvenc'],
+      codecs: isRTX40 ? ['h264_nvenc', 'hevc_nvenc', 'av1_nvenc'] : ['h264_nvenc', 'hevc_nvenc'],
       hdrSupport: true,
       bFrameSupport: true,
       maxBFrames: 5,
@@ -146,7 +144,7 @@ export class HardwareManager {
   private async detectAMD(): Promise<void> {
     try {
       const amfEncoders = await this.checkAMEncoders();
-      
+
       if (amfEncoders.length > 0) {
         const device: HardwareDevice = {
           type: 'amf',
@@ -179,7 +177,7 @@ export class HardwareManager {
    */
   private async checkAMEncoders(): Promise<VideoCodec[]> {
     const encoders: VideoCodec[] = [];
-    
+
     try {
       const ffmpegEncoders = await this.runCommand('ffmpeg', ['-encoders']);
       if (ffmpegEncoders?.includes('h264_amf')) encoders.push('h264_amf');
@@ -197,7 +195,7 @@ export class HardwareManager {
   private async detectIntelQSV(): Promise<void> {
     try {
       const qsvEncoders = await this.checkQSVEncoders();
-      
+
       if (qsvEncoders.length > 0) {
         const device: HardwareDevice = {
           type: 'qsv',
@@ -230,7 +228,7 @@ export class HardwareManager {
    */
   private async checkQSVEncoders(): Promise<VideoCodec[]> {
     const encoders: VideoCodec[] = [];
-    
+
     try {
       const ffmpegEncoders = await this.runCommand('ffmpeg', ['-encoders']);
       if (ffmpegEncoders?.includes('h264_qsv')) encoders.push('h264_qsv');
@@ -249,10 +247,10 @@ export class HardwareManager {
   private async detectVAAPI(): Promise<void> {
     try {
       const vaapiDevices = await this.runCommand('ls', ['-la', '/dev/dri/']);
-      
+
       if (vaapiDevices?.includes('renderD')) {
         const vaapiEncoders = await this.checkVAAPIEncoders();
-        
+
         if (vaapiEncoders.length > 0) {
           const device: HardwareDevice = {
             type: 'vaapi',
@@ -286,7 +284,7 @@ export class HardwareManager {
    */
   private async checkVAAPIEncoders(): Promise<VideoCodec[]> {
     const encoders: VideoCodec[] = [];
-    
+
     try {
       const ffmpegEncoders = await this.runCommand('ffmpeg', ['-encoders']);
       if (ffmpegEncoders?.includes('h264_vaapi')) encoders.push('h264_vaapi');
@@ -306,7 +304,7 @@ export class HardwareManager {
   private async detectVideoToolbox(): Promise<void> {
     try {
       const vtEncoders = await this.checkVideoToolboxEncoders();
-      
+
       if (vtEncoders.length > 0) {
         const device: HardwareDevice = {
           type: 'videotoolbox',
@@ -339,7 +337,7 @@ export class HardwareManager {
    */
   private async checkVideoToolboxEncoders(): Promise<VideoCodec[]> {
     const encoders: VideoCodec[] = [];
-    
+
     try {
       const ffmpegEncoders = await this.runCommand('ffmpeg', ['-encoders']);
       if (ffmpegEncoders?.includes('h264_videotoolbox')) encoders.push('h264_videotoolbox');
@@ -401,9 +399,7 @@ export class HardwareManager {
    */
   getBestDevice(): HardwareDevice | undefined {
     // Priority: NVIDIA > AMD > Intel > VAAPI > VideoToolbox
-    const priority: HardwareAcceleration[] = [
-      'nvenc', 'amf', 'qsv', 'vaapi', 'videotoolbox'
-    ];
+    const priority: HardwareAcceleration[] = ['nvenc', 'amf', 'qsv', 'vaapi', 'videotoolbox'];
 
     for (const type of priority) {
       const device = this.devices.get(`${type}_0`);
@@ -442,14 +438,14 @@ export class HardwareManager {
   getRecommendedEncoder(codec: string): VideoCodec {
     // Check if we have hardware acceleration for this codec
     const hwMapping: Record<string, VideoCodec[]> = {
-      'h264': ['h264_nvenc', 'h264_amf', 'h264_qsv', 'h264_vaapi', 'h264_videotoolbox', 'libx264'],
-      'hevc': ['hevc_nvenc', 'hevc_amf', 'hevc_qsv', 'hevc_vaapi', 'hevc_videotoolbox', 'libx265'],
-      'av1': ['av1_nvenc', 'av1_qsv', 'av1_vaapi', 'libsvtav1', 'libaom-av1'],
-      'vp9': ['vp9_vaapi', 'libvpx-vp9'],
+      h264: ['h264_nvenc', 'h264_amf', 'h264_qsv', 'h264_vaapi', 'h264_videotoolbox', 'libx264'],
+      hevc: ['hevc_nvenc', 'hevc_amf', 'hevc_qsv', 'hevc_vaapi', 'hevc_videotoolbox', 'libx265'],
+      av1: ['av1_nvenc', 'av1_qsv', 'av1_vaapi', 'libsvtav1', 'libaom-av1'],
+      vp9: ['vp9_vaapi', 'libvpx-vp9'],
     };
 
     const codecs = hwMapping[codec] || [];
-    
+
     for (const c of codecs) {
       // Check hardware devices first
       for (const device of this.devices.values()) {
@@ -520,7 +516,7 @@ export class HardwareManager {
     }
 
     const device = this.getDevice(config.type, config.deviceIndex ?? 0);
-    
+
     if (!device) {
       throw new FFmpegError(
         `Hardware acceleration ${config.type} is not available`,

@@ -24,33 +24,33 @@ export class VCommMetrics {
       messagesSent: new Counter({
         name: 'vcomm_messages_sent_total',
         help: 'Total number of messages sent',
-        labelNames: ['channel', 'status', 'type']
+        labelNames: ['channel', 'status', 'type'],
       }),
 
       messagesReceived: new Counter({
         name: 'vcomm_messages_received_total',
         help: 'Total number of messages received',
-        labelNames: ['channel', 'type']
+        labelNames: ['channel', 'type'],
       }),
 
       queueSize: new Gauge({
         name: 'vcomm_queue_size',
         help: 'Current queue size',
-        labelNames: ['queue_type', 'node']
+        labelNames: ['queue_type', 'node'],
       }),
 
       processingTime: new Histogram({
         name: 'vcomm_processing_time_seconds',
         help: 'Message processing time in seconds',
         labelNames: ['operation', 'channel'],
-        buckets: [0.001, 0.005, 0.01, 0.05, 0.1, 0.5, 1, 5]
+        buckets: [0.001, 0.005, 0.01, 0.05, 0.1, 0.5, 1, 5],
       }),
 
       errors: new Counter({
         name: 'vcomm_errors_total',
         help: 'Total number of errors',
-        labelNames: ['type', 'severity', 'component']
-      })
+        labelNames: ['type', 'severity', 'component'],
+      }),
     };
   }
 
@@ -62,32 +62,32 @@ export class VCommMetrics {
       activeConnections: new Gauge({
         name: 'vcomm_active_connections',
         help: 'Current number of active connections',
-        labelNames: ['type']
+        labelNames: ['type'],
       }),
 
       memoryUsage: new Gauge({
         name: 'vcomm_memory_usage_bytes',
         help: 'Memory usage in bytes',
-        labelNames: ['type']
+        labelNames: ['type'],
       }),
 
       cpuUsage: new Gauge({
         name: 'vcomm_cpu_usage_percent',
         help: 'CPU usage in percent',
-        labelNames: ['core']
+        labelNames: ['core'],
       }),
 
       diskUsage: new Gauge({
         name: 'vcomm_disk_usage_bytes',
         help: 'Disk usage in bytes',
-        labelNames: ['mount_point']
+        labelNames: ['mount_point'],
       }),
 
       networkIO: new Gauge({
         name: 'vcomm_network_io_bytes',
         help: 'Network I/O in bytes',
-        labelNames: ['direction', 'interface']
-      })
+        labelNames: ['direction', 'interface'],
+      }),
     };
   }
 
@@ -100,27 +100,27 @@ export class VCommMetrics {
         name: 'vcomm_request_duration_seconds',
         help: 'Request duration in seconds',
         labelNames: ['method', 'route', 'status'],
-        buckets: [0.001, 0.005, 0.01, 0.05, 0.1, 0.5, 1, 5, 10]
+        buckets: [0.001, 0.005, 0.01, 0.05, 0.1, 0.5, 1, 5, 10],
       }),
 
       responseSize: new Histogram({
         name: 'vcomm_response_size_bytes',
         help: 'Response size in bytes',
         labelNames: ['route', 'status'],
-        buckets: [100, 500, 1000, 5000, 10000, 50000, 100000]
+        buckets: [100, 500, 1000, 5000, 10000, 50000, 100000],
       }),
 
       errorRate: new Counter({
         name: 'vcomm_error_rate_total',
         help: 'Total number of errors',
-        labelNames: ['type', 'route', 'status']
+        labelNames: ['type', 'route', 'status'],
       }),
 
       throughput: new Counter({
         name: 'vcomm_throughput_total',
         help: 'Total number of requests processed',
-        labelNames: ['method', 'route']
-      })
+        labelNames: ['method', 'route'],
+      }),
     };
   }
 
@@ -180,7 +180,7 @@ export class VCommMetrics {
     return new Counter({
       name: config.name,
       help: config.help,
-      ...(config.labelNames ? { labelNames: config.labelNames } : {})
+      ...(config.labelNames ? { labelNames: config.labelNames } : {}),
     });
   }
 
@@ -189,7 +189,7 @@ export class VCommMetrics {
       name: config.name,
       help: config.help,
       ...(config.labelNames ? { labelNames: config.labelNames } : {}),
-      ...(config.buckets ? { buckets: config.buckets } : {})
+      ...(config.buckets ? { buckets: config.buckets } : {}),
     });
   }
 
@@ -197,7 +197,7 @@ export class VCommMetrics {
     return new Gauge({
       name: config.name,
       help: config.help,
-      ...(config.labelNames ? { labelNames: config.labelNames } : {})
+      ...(config.labelNames ? { labelNames: config.labelNames } : {}),
     });
   }
 }

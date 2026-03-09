@@ -12,7 +12,11 @@ export class SessionManager {
   private maxSessionsPerUser: number;
   private tokenSecret: string;
 
-  constructor(options?: { defaultDuration?: number; maxSessionsPerUser?: number; tokenSecret?: string }) {
+  constructor(options?: {
+    defaultDuration?: number;
+    maxSessionsPerUser?: number;
+    tokenSecret?: string;
+  }) {
     this.defaultDuration = options?.defaultDuration ?? 7 * 24 * 60 * 60;
     this.maxSessionsPerUser = options?.maxSessionsPerUser ?? 10;
     this.tokenSecret = options?.tokenSecret ?? crypto.randomBytes(32).toString('hex');
@@ -44,7 +48,10 @@ export class SessionManager {
     const tokenHash = this.hashToken(token);
     for (const session of this.sessions.values()) {
       if (session.tokenHash === tokenHash) {
-        if (session.expiresAt < new Date()) { this.destroySession(session.id); return null; }
+        if (session.expiresAt < new Date()) {
+          this.destroySession(session.id);
+          return null;
+        }
         session.lastActivityAt = new Date();
         return session;
       }
@@ -54,7 +61,10 @@ export class SessionManager {
 
   getSession(sessionId: string): Session | undefined {
     const session = this.sessions.get(sessionId);
-    if (session && session.expiresAt < new Date()) { this.destroySession(sessionId); return undefined; }
+    if (session && session.expiresAt < new Date()) {
+      this.destroySession(sessionId);
+      return undefined;
+    }
     return session;
   }
 
@@ -82,7 +92,10 @@ export class SessionManager {
     const sessionIds = this.userSessions.get(userId);
     if (!sessionIds) return 0;
     let destroyed = 0;
-    for (const sessionId of sessionIds) { this.sessions.delete(sessionId); destroyed++; }
+    for (const sessionId of sessionIds) {
+      this.sessions.delete(sessionId);
+      destroyed++;
+    }
     this.userSessions.delete(userId);
     return destroyed;
   }
@@ -91,18 +104,29 @@ export class SessionManager {
     const now = new Date();
     let cleaned = 0;
     for (const [sessionId, session] of this.sessions) {
-      if (session.expiresAt < now) { this.destroySession(sessionId); cleaned++; }
+      if (session.expiresAt < now) {
+        this.destroySession(sessionId);
+        cleaned++;
+      }
     }
     return cleaned;
   }
 
-  getStatistics(): { totalSessions: number; activeUsers: number; sessionsByDeviceType: Record<string, number> } {
+  getStatistics(): {
+    totalSessions: number;
+    activeUsers: number;
+    sessionsByDeviceType: Record<string, number>;
+  } {
     const deviceCounts: Record<string, number> = {};
     for (const session of this.sessions.values()) {
       const deviceType = session.device?.type || 'unknown';
       deviceCounts[deviceType] = (deviceCounts[deviceType] || 0) + 1;
     }
-    return { totalSessions: this.sessions.size, activeUsers: this.userSessions.size, sessionsByDeviceType: deviceCounts };
+    return {
+      totalSessions: this.sessions.size,
+      activeUsers: this.userSessions.size,
+      sessionsByDeviceType: deviceCounts,
+    };
   }
 
   parseUserAgent(userAgent: string): Session['device'] {
@@ -126,24 +150,43 @@ export class SessionManager {
     return { type, os, browser };
   }
 
-  private generateSessionId(): string { return crypto.randomBytes(32).toString('base64url'); }
+  private generateSessionId(): string {
+    return crypto.randomBytes(32).toString('base64url');
+  }
   private generateToken(userId: string, sessionId: string): string {
     const timestamp = Date.now().toString(36);
     const random = crypto.randomBytes(16).toString('base64url');
-    const signature = crypto.createHmac('sha256', this.tokenSecret).update(`${userId}:${sessionId}:${timestamp}`).digest('base64url');
+    const signature = crypto
+      .createHmac('sha256', this.tokenSecret)
+      .update(`${userId}:${sessionId}:${timestamp}`)
+      .digest('base64url');
     return `${sessionId}.${userId}.${timestamp}.${random}.${signature}`;
   }
-  private hashToken(token: string): string { return crypto.createHash('sha256').update(token).digest('hex'); }
+  private hashToken(token: string): string {
+    return crypto.createHash('sha256').update(token).digest('hex');
+  }
 
   private enforceSessionLimit(userId: string): void {
     const sessionIds = this.userSessions.get(userId);
     if (!sessionIds || sessionIds.size <= this.maxSessionsPerUser) return;
-    const sessions = Array.from(sessionIds).map(id => this.sessions.get(id)).filter((s): s is Session => s !== undefined).sort((a, b) => a.lastActivityAt.getTime() - b.lastActivityAt.getTime());
+    const sessions = Array.from(sessionIds)
+      .map((id) => this.sessions.get(id))
+      .filter((s): s is Session => s !== undefined)
+      .sort((a, b) => a.lastActivityAt.getTime() - b.lastActivityAt.getTime());
     const toRemove = sessions.slice(0, sessions.length - this.maxSessionsPerUser);
-    for (const session of toRemove) { this.sessions.delete(session.id); sessionIds.delete(session.id); }
+    for (const session of toRemove) {
+      this.sessions.delete(session.id);
+      sessionIds.delete(session.id);
+    }
   }
 }
 
-export function generateSecureToken(length: number = 32): string { return crypto.randomBytes(length).toString('base64url'); }
-export function generateApiKey(prefix: string = 'vcomm'): string { return `${prefix}_${crypto.randomBytes(32).toString('base64url')}`; }
-export function isValidTokenFormat(token: string): boolean { return token.split('.').length >= 4; }
+export function generateSecureToken(length: number = 32): string {
+  return crypto.randomBytes(length).toString('base64url');
+}
+export function generateApiKey(prefix: string = 'vcomm'): string {
+  return `${prefix}_${crypto.randomBytes(32).toString('base64url')}`;
+}
+export function isValidTokenFormat(token: string): boolean {
+  return token.split('.').length >= 4;
+}

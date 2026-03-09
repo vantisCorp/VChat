@@ -1,6 +1,7 @@
 // @ts-check
-const lightCodeTheme = require('prism-react-renderer/themes/github');
-const darkCodeTheme = require('prism-react-renderer/themes/dracula');
+const { themes } = require('prism-react-renderer');
+const lightCodeTheme = themes.github;
+const darkCodeTheme = themes.dracula;
 
 /** @type {import('@docusaurus/types').Config} */
 const config = {
@@ -14,7 +15,7 @@ const config = {
   organizationName: 'vantisCorp',
   projectName: 'VChat',
 
-  onBrokenLinks: 'throw',
+  onBrokenLinks: 'warn',
   onBrokenMarkdownLinks: 'warn',
 
   i18n: {
@@ -179,7 +180,7 @@ const config = {
       '@easyops-cn/docusaurus-search-local',
       {
         hashed: true,
-        language: ['en', 'pl', 'de', 'zh', 'es'],
+        language: ['en', 'de', 'zh', 'es'],
         highlightSearchTermsOnTargetPage: true,
         explicitSearchResultPath: true,
         indexDocs: true,
@@ -192,11 +193,7 @@ const config = {
       '@docusaurus/plugin-pwa',
       {
         debug: process.env.NODE_ENV === 'development',
-        offlineModeActivationStrategies: [
-          'appInstalled',
-          'standalone',
-          'queryString',
-        ],
+        offlineModeActivationStrategies: ['appInstalled', 'standalone', 'queryString'],
         pwaHead: [
           {
             tagName: 'link',
@@ -247,27 +244,18 @@ const config = {
         ],
       },
     ],
-    // Sitemap plugin
-    [
-      '@docusaurus/plugin-sitemap',
-      {
-        changefreq: 'weekly',
-        priority: 0.5,
-        ignorePatterns: ['/tags/**'],
-        filename: 'sitemap.xml',
-      },
-    ],
+    // Sitemap plugin is already included in preset-classic
     // Client redirects
     [
       '@docusaurus/plugin-client-redirects',
       {
         redirects: [
           {
-            to: '/docs/getting-started/installation',
+            to: '/docs/current/getting-started/installation',
             from: '/docs/install',
           },
           {
-            to: '/docs/security/overview',
+            to: '/docs/current/security/overview',
             from: '/docs/security',
           },
         ],

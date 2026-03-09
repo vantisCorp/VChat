@@ -23,13 +23,13 @@ export type KeyUsage = 'sign' | 'verify' | 'encrypt' | 'decrypt' | 'deriveKey' |
 export interface Key {
   /** Key algorithm */
   algorithm: KeyAlgorithm;
-  
+
   /** Key usage purposes */
   usages: KeyUsage[];
-  
+
   /** Whether key is extractable */
   extractable: boolean;
-  
+
   /** Key ID for identification */
   id?: string;
 }
@@ -40,7 +40,7 @@ export interface Key {
 export interface PublicKey extends Key {
   /** Raw public key bytes */
   raw: Uint8Array;
-  
+
   /** PEM encoded public key */
   pem?: string;
 }
@@ -51,7 +51,7 @@ export interface PublicKey extends Key {
 export interface PrivateKey extends Key {
   /** Raw private key bytes (only if extractable) */
   raw?: Uint8Array;
-  
+
   /** PEM encoded private key */
   pem?: string;
 }
@@ -70,16 +70,16 @@ export interface KeyPair {
 export interface KeyGenOptions {
   /** Key algorithm */
   algorithm: KeyAlgorithm;
-  
+
   /** Key usage purposes */
   usages?: KeyUsage[];
-  
+
   /** Whether key is extractable */
   extractable?: boolean;
-  
+
   /** Key ID */
   id?: string;
-  
+
   /** Key size in bits (for RSA) */
   modulusLength?: number;
 }
@@ -91,7 +91,12 @@ export interface KeyGenOptions {
 /**
  * Symmetric encryption algorithms
  */
-export type SymmetricAlgorithm = 'aes-256-gcm' | 'aes-256-cbc' | 'aes-128-gcm' | 'aes-128-cbc' | 'chacha20-poly1305';
+export type SymmetricAlgorithm =
+  | 'aes-256-gcm'
+  | 'aes-256-cbc'
+  | 'aes-128-gcm'
+  | 'aes-128-cbc'
+  | 'chacha20-poly1305';
 
 /**
  * Symmetric key interface
@@ -99,10 +104,10 @@ export type SymmetricAlgorithm = 'aes-256-gcm' | 'aes-256-cbc' | 'aes-128-gcm' |
 export interface SymmetricKey {
   /** Raw key bytes */
   raw: Uint8Array;
-  
+
   /** Algorithm */
   algorithm: SymmetricAlgorithm;
-  
+
   /** Key ID */
   id?: string;
 }
@@ -113,13 +118,13 @@ export interface SymmetricKey {
 export interface EncryptOptions {
   /** Encryption algorithm */
   algorithm?: SymmetricAlgorithm;
-  
+
   /** Initialization vector (auto-generated if not provided) */
   iv?: Uint8Array;
-  
+
   /** Additional authenticated data (for AEAD) */
   aad?: Uint8Array;
-  
+
   /** Tag length in bits (for GCM) */
   tagLength?: number;
 }
@@ -130,13 +135,13 @@ export interface EncryptOptions {
 export interface EncryptionResult {
   /** Ciphertext */
   ciphertext: Uint8Array;
-  
+
   /** Initialization vector */
   iv: Uint8Array;
-  
+
   /** Authentication tag (for AEAD) */
   tag?: Uint8Array;
-  
+
   /** Algorithm used */
   algorithm: SymmetricAlgorithm;
 }
@@ -147,10 +152,10 @@ export interface EncryptionResult {
 export interface DecryptOptions {
   /** Algorithm (must match encryption, derived from EncryptionResult if not provided) */
   algorithm?: SymmetricAlgorithm;
-  
+
   /** Initialization vector */
   iv?: Uint8Array;
-  
+
   /** Additional authenticated data */
   aad?: Uint8Array;
 
@@ -173,7 +178,7 @@ export type AsymmetricAlgorithm = 'rsa-oaep' | 'ecies' | 'x25519';
 export interface AsymmetricEncryptOptions {
   /** Algorithm */
   algorithm?: AsymmetricAlgorithm;
-  
+
   /** Label for RSA-OAEP */
   label?: Uint8Array;
 }
@@ -193,7 +198,7 @@ export type SignatureAlgorithm = 'ed25519' | 'ecdsa-secp256k1' | 'rsa-pss' | 'rs
 export interface SignOptions {
   /** Algorithm */
   algorithm?: SignatureAlgorithm;
-  
+
   /** Hash algorithm for RSA */
   hash?: 'sha256' | 'sha384' | 'sha512';
 }
@@ -204,7 +209,7 @@ export interface SignOptions {
 export interface Signature {
   /** Signature bytes */
   raw: Uint8Array;
-  
+
   /** Algorithm used */
   algorithm: SignatureAlgorithm;
 }
@@ -216,7 +221,15 @@ export interface Signature {
 /**
  * Hash algorithms
  */
-export type HashAlgorithm = 'sha1' | 'sha256' | 'sha384' | 'sha512' | 'sha3-256' | 'sha3-512' | 'blake2b' | 'blake2s';
+export type HashAlgorithm =
+  | 'sha1'
+  | 'sha256'
+  | 'sha384'
+  | 'sha512'
+  | 'sha3-256'
+  | 'sha3-512'
+  | 'blake2b'
+  | 'blake2s';
 
 /**
  * Hash options
@@ -241,13 +254,13 @@ export type KDFAlgorithm = 'hkdf' | 'pbkdf2' | 'scrypt' | 'argon2id';
 export interface HKDFOptions {
   /** Hash algorithm */
   hash: HashAlgorithm;
-  
+
   /** Salt */
   salt: Uint8Array;
-  
+
   /** Info context */
   info?: Uint8Array;
-  
+
   /** Output length in bytes */
   length: number;
 }
@@ -258,13 +271,13 @@ export interface HKDFOptions {
 export interface PBKDF2Options {
   /** Hash algorithm */
   hash: HashAlgorithm;
-  
+
   /** Salt */
   salt: Uint8Array;
-  
+
   /** Iteration count */
   iterations: number;
-  
+
   /** Output length in bytes */
   length: number;
 }
@@ -275,16 +288,16 @@ export interface PBKDF2Options {
 export interface ScryptOptions {
   /** Salt */
   salt: Uint8Array;
-  
+
   /** CPU/memory cost parameter (N) */
   cost?: number;
-  
+
   /** Block size parameter (r) */
   blockSize?: number;
-  
+
   /** Parallelization parameter (p) */
   parallelization?: number;
-  
+
   /** Output length in bytes */
   length: number;
 }
@@ -296,7 +309,7 @@ export interface ScryptOptions {
 /**
  * SRTP crypto suites
  */
-export type SRTPCryptoSuite = 
+export type SRTPCryptoSuite =
   | 'AES_CM_128_HMAC_SHA1_80'
   | 'AES_CM_128_HMAC_SHA1_32'
   | 'AES_256_CM_HMAC_SHA1_80'
@@ -310,10 +323,10 @@ export type SRTPCryptoSuite =
 export interface SRTPKey {
   /** Master key */
   masterKey: Uint8Array;
-  
+
   /** Master salt */
   masterSalt: Uint8Array;
-  
+
   /** Crypto suite */
   cryptoSuite: SRTPCryptoSuite;
 }
@@ -324,19 +337,19 @@ export interface SRTPKey {
 export interface SRTPParams {
   /** Derived encryption key */
   encryptionKey: Uint8Array;
-  
+
   /** Derived authentication key */
   authKey: Uint8Array;
-  
+
   /** Derived salt */
   salt: Uint8Array;
-  
+
   /** Key derivation rate */
   keyDerivationRate?: number;
-  
+
   /** Roll-over counter */
   roc?: number;
-  
+
   /** Sequence number */
   seq?: number;
 }
@@ -362,7 +375,7 @@ export interface SRTPHeader {
 
   /** Header extension */
   extension?: Uint8Array;
-  
+
   /** Raw header bytes */
   raw: Uint8Array;
 }
@@ -382,7 +395,7 @@ export interface DTLSVersion {
 /**
  * DTLS cipher suite
  */
-export type DTLSCipherSuite = 
+export type DTLSCipherSuite =
   | 'TLS_ECDHE_ECDSA_WITH_AES_128_GCM_SHA256'
   | 'TLS_ECDHE_ECDSA_WITH_AES_256_GCM_SHA384'
   | 'TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256'
@@ -396,7 +409,7 @@ export type DTLSCipherSuite =
 export interface DTLSFingerprint {
   /** Hash algorithm */
   algorithm: 'sha256' | 'sha384' | 'sha512';
-  
+
   /** Fingerprint value (hex string) */
   value: string;
 }
@@ -417,16 +430,16 @@ export type DTLSState = 'closed' | 'connecting' | 'connected' | 'failed';
 export interface DTLSSessionParams {
   /** Local fingerprint */
   localFingerprint: DTLSFingerprint;
-  
+
   /** Remote fingerprint */
   remoteFingerprint: DTLSFingerprint;
-  
+
   /** DTLS role */
   role: DTLSRole;
-  
+
   /** Selected cipher suite */
   cipherSuite?: DTLSCipherSuite;
-  
+
   /** Connection state */
   state: DTLSState;
 }

@@ -1,7 +1,7 @@
 /**
  * @fileoverview Cryptographic utilities for V-COMM
  * @module @vcomm/crypto
- * 
+ *
  * Provides comprehensive cryptographic functionality for secure voice communication:
  * - Key generation and management (Ed25519, X25519, secp256k1, RSA)
  * - Symmetric encryption (AES-GCM, AES-CBC, ChaCha20-Poly1305)
@@ -113,11 +113,7 @@ export { generateKeyPairAsync as generateKeyPair };
 // SRTP
 // ============================================================================
 
-export {
-  SRTPSession,
-  createSRTPSession,
-  generateSRTPKey,
-} from './srtp';
+export { SRTPSession, createSRTPSession, generateSRTPKey } from './srtp';
 
 // ============================================================================
 // DTLS
@@ -151,7 +147,7 @@ export function quickEncrypt(
 ): { ciphertext: string; iv: string; tag: string } {
   const key = generateKey('aes-256-gcm');
   const result = encrypt(plaintext, key);
-  
+
   return {
     ciphertext: Buffer.from(result.ciphertext).toString('base64'),
     iv: Buffer.from(result.iv).toString('base64'),
@@ -169,7 +165,7 @@ export function quickDecrypt(
   tag: string
 ): Uint8Array {
   const symKey = { raw: key, algorithm: 'aes-256-gcm' as const };
-  
+
   return decrypt(
     {
       ciphertext: Buffer.from(ciphertext, 'base64'),
@@ -199,14 +195,14 @@ export async function hashPassword(
   const iterations = options.iterations ?? 100000;
   const saltLength = options.saltLength ?? 16;
   const salt = generateSalt(saltLength);
-  
+
   const hash = await pbkdf2(password, {
     hash: 'sha256',
     salt,
     iterations,
     length: 32,
   });
-  
+
   return {
     hash: Buffer.from(hash).toString('base64'),
     salt: Buffer.from(salt).toString('base64'),
@@ -225,24 +221,24 @@ export async function verifyPassword(
 ): Promise<boolean> {
   const saltBytes = Buffer.from(salt, 'base64');
   const expectedHash = Buffer.from(storedHash, 'base64');
-  
+
   const computedHash = await pbkdf2(password, {
     hash: 'sha256',
     salt: saltBytes,
     iterations,
     length: 32,
   });
-  
+
   // Constant-time comparison
   if (computedHash.length !== expectedHash.length) {
     return false;
   }
-  
+
   let result = 0;
   for (let i = 0; i < computedHash.length; i++) {
     result |= computedHash[i] ^ expectedHash[i];
   }
-  
+
   return result === 0;
 }
 

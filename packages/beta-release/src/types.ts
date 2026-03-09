@@ -1,6 +1,6 @@
 /**
  * @vcomm/beta-release - Type Definitions
- * 
+ *
  * Comprehensive type definitions for beta release strategy including
  * feature flags, gradual rollout, feedback collection, and analytics.
  */
@@ -17,12 +17,12 @@ export type FeatureFlagStatus = 'enabled' | 'disabled' | 'partial';
 /**
  * Feature flag type
  */
-export type FeatureFlagType = 
-  | 'boolean'    // Simple on/off
-  | 'variant'    // A/B testing variants
+export type FeatureFlagType =
+  | 'boolean' // Simple on/off
+  | 'variant' // A/B testing variants
   | 'multivariate' // Multiple variants
   | 'percentage' // Percentage rollout
-  | 'targeted';  // User/segment targeted
+  | 'targeted'; // User/segment targeted
 
 /**
  * Feature flag targeting rule
@@ -186,11 +186,11 @@ export interface EvaluationContext {
  * Rollout strategy type
  */
 export type RolloutStrategyType =
-  | 'percentage'    // Percentage of users
-  | 'staged'        // Stage-based rollout
-  | 'ring'          // Ring-based (canary)
-  | 'regional'      // Region-by-region
-  | 'segment';      // Segment-based
+  | 'percentage' // Percentage of users
+  | 'staged' // Stage-based rollout
+  | 'ring' // Ring-based (canary)
+  | 'regional' // Region-by-region
+  | 'segment'; // Segment-based
 
 /**
  * Rollout status
@@ -280,10 +280,6 @@ export interface RolloutConfig {
   completedAt?: Date;
   /** Created by */
   createdBy: string;
-  /** Created at */
-  createdAt?: Date;
-  /** Updated at */
-  updatedAt?: Date;
   /** Target segments */
   targetSegments?: string[];
   /** Excluded segments */
@@ -750,22 +746,22 @@ export enum BetaReleaseErrorCode {
   FLAG_NOT_FOUND = 'FLAG_NOT_FOUND',
   FLAG_ALREADY_EXISTS = 'FLAG_ALREADY_EXISTS',
   INVALID_FLAG_CONFIG = 'INVALID_FLAG_CONFIG',
-  
+
   // Rollout
   ROLLOUT_NOT_FOUND = 'ROLLOUT_NOT_FOUND',
   ROLLOUT_ALREADY_RUNNING = 'ROLLOUT_ALREADY_RUNNING',
   ROLLOUT_STAGE_FAILED = 'ROLLOUT_STAGE_FAILED',
   ROLLOUT_ROLLBACK_FAILED = 'ROLLOUT_ROLLBACK_FAILED',
-  
+
   // Feedback
   FEEDBACK_NOT_FOUND = 'FEEDBACK_NOT_FOUND',
   SURVEY_NOT_FOUND = 'SURVEY_NOT_FOUND',
   SURVEY_CLOSED = 'SURVEY_CLOSED',
-  
+
   // Analytics
   METRIC_NOT_FOUND = 'METRIC_NOT_FOUND',
   QUERY_FAILED = 'QUERY_FAILED',
-  
+
   // General
   NOT_AUTHORIZED = 'NOT_AUTHORIZED',
   VALIDATION_ERROR = 'VALIDATION_ERROR',

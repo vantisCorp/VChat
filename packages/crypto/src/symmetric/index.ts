@@ -24,14 +24,14 @@ const _TAG_LENGTH = 16;
 
 /**
  * Generate a symmetric key
- * 
+ *
  * @param algorithm Encryption algorithm
  * @returns Symmetric key
  */
 export function generateKey(algorithm: SymmetricAlgorithm = DEFAULT_ALGORITHM): SymmetricKey {
   const keyLength = getKeyLength(algorithm);
   const raw = randomBytes(keyLength);
-  
+
   return {
     raw,
     algorithm,
@@ -40,18 +40,23 @@ export function generateKey(algorithm: SymmetricAlgorithm = DEFAULT_ALGORITHM): 
 
 /**
  * Create a symmetric key from raw bytes
- * 
+ *
  * @param raw Raw key bytes
  * @param algorithm Encryption algorithm
  * @returns Symmetric key
  */
-export function createKey(raw: Uint8Array, algorithm: SymmetricAlgorithm = DEFAULT_ALGORITHM): SymmetricKey {
+export function createKey(
+  raw: Uint8Array,
+  algorithm: SymmetricAlgorithm = DEFAULT_ALGORITHM
+): SymmetricKey {
   const expectedLength = getKeyLength(algorithm);
-  
+
   if (raw.length !== expectedLength) {
-    throw new CryptoError(`Invalid key length: expected ${expectedLength} bytes, got ${raw.length}`);
+    throw new CryptoError(
+      `Invalid key length: expected ${expectedLength} bytes, got ${raw.length}`
+    );
   }
-  
+
   return {
     raw,
     algorithm,
@@ -60,7 +65,7 @@ export function createKey(raw: Uint8Array, algorithm: SymmetricAlgorithm = DEFAU
 
 /**
  * Encrypt data using symmetric encryption
- * 
+ *
  * @param plaintext Data to encrypt
  * @param key Encryption key
  * @param options Encryption options
@@ -73,14 +78,13 @@ export function encrypt(
 ): EncryptionResult {
   const algorithm = options.algorithm ?? key.algorithm;
   const iv = options.iv ?? generateIV(getIVLength(algorithm));
-  
+
   try {
-    const data = typeof plaintext === 'string' 
-      ? Buffer.from(plaintext, 'utf8') 
-      : Buffer.from(plaintext);
-    
+    const data =
+      typeof plaintext === 'string' ? Buffer.from(plaintext, 'utf8') : Buffer.from(plaintext);
+
     const isAEAD = isAEADAlgorithm(algorithm);
-    
+
     if (isAEAD) {
       return encryptAEAD(data, key.raw, iv, algorithm, options);
     } else {
@@ -93,7 +97,7 @@ export function encrypt(
 
 /**
  * Decrypt data using symmetric encryption
- * 
+ *
  * @param result Encryption result
  * @param key Decryption key
  * @param options Decryption options
@@ -105,19 +109,12 @@ export function decrypt(
   options: DecryptOptions = {}
 ): Uint8Array {
   const algorithm = options.algorithm ?? result.algorithm;
-  
+
   try {
     const isAEAD = isAEADAlgorithm(algorithm);
-    
+
     if (isAEAD) {
-      return decryptAEAD(
-        result.ciphertext,
-        key.raw,
-        result.iv,
-        algorithm,
-        result.tag!,
-        options
-      );
+      return decryptAEAD(result.ciphertext, key.raw, result.iv, algorithm, result.tag!, options);
     } else {
       return decryptCBC(result.ciphertext, key.raw, result.iv, algorithm);
     }
@@ -136,8 +133,12 @@ function encryptAEAD(
   algorithm: SymmetricAlgorithm,
   options: EncryptOptions
 ): EncryptionResult {
-  const cipher = createCipheriv(mapAlgorithm(algorithm), Buffer.from(key), Buffer.from(iv)) as CipherGCM;
-  
+  const cipher = createCipheriv(
+    mapAlgorithm(algorithm),
+    Buffer.from(key),
+    Buffer.from(iv)
+  ) as CipherGCM;
+
   // Set AAD if provided
   if (options.aad) {
     (cipher as any).setAAD(Buffer.from(options.aad));
@@ -145,7 +146,7 @@ function encryptAEAD(
 
   const encrypted = Buffer.concat([cipher.update(plaintext), cipher.final()]);
   const tag = (cipher as any).getAuthTag();
-  
+
   return {
     ciphertext: new Uint8Array(encrypted),
     iv: new Uint8Array(iv),
@@ -165,19 +166,20 @@ function decryptAEAD(
   tag: Uint8Array,
   options: DecryptOptions
 ): Uint8Array {
-  const decipher = createDecipheriv(mapAlgorithm(algorithm), Buffer.from(key), Buffer.from(iv)) as DecipherGCM;
-  
+  const decipher = createDecipheriv(
+    mapAlgorithm(algorithm),
+    Buffer.from(key),
+    Buffer.from(iv)
+  ) as DecipherGCM;
+
   decipher.setAuthTag(Buffer.from(tag));
-  
+
   if (options.aad) {
     (decipher as any).setAAD(Buffer.from(options.aad));
   }
-  
-  const decrypted = Buffer.concat([
-    decipher.update(Buffer.from(ciphertext)),
-    decipher.final(),
-  ]);
-  
+
+  const decrypted = Buffer.concat([decipher.update(Buffer.from(ciphertext)), decipher.final()]);
+
   return new Uint8Array(decrypted);
 }
 
@@ -192,12 +194,12 @@ function encryptCBC(
 ): EncryptionResult {
   // Apply PKCS7 padding
   const padded = pkcs7Pad(plaintext, 16);
-  
+
   const cipher = createCipheriv(mapAlgorithm(algorithm), Buffer.from(key), Buffer.from(iv));
   cipher.setAutoPadding(false);
-  
+
   const encrypted = Buffer.concat([cipher.update(padded), cipher.final()]);
-  
+
   return {
     ciphertext: new Uint8Array(encrypted),
     iv: new Uint8Array(iv),
@@ -216,12 +218,9 @@ function decryptCBC(
 ): Uint8Array {
   const decipher = createDecipheriv(mapAlgorithm(algorithm), Buffer.from(key), Buffer.from(iv));
   decipher.setAutoPadding(false);
-  
-  const decrypted = Buffer.concat([
-    decipher.update(Buffer.from(ciphertext)),
-    decipher.final(),
-  ]);
-  
+
+  const decrypted = Buffer.concat([decipher.update(Buffer.from(ciphertext)), decipher.final()]);
+
   // Remove PKCS7 padding
   return new Uint8Array(pkcs7Unpad(decrypted));
 }
@@ -250,11 +249,7 @@ export function aes256GcmDecrypt(
   aad?: Uint8Array
 ): Uint8Array {
   const symKey = createKey(key, 'aes-256-gcm');
-  return decrypt(
-    { ciphertext, iv, tag, algorithm: 'aes-256-gcm' },
-    symKey,
-    { iv, tag, aad }
-  );
+  return decrypt({ ciphertext, iv, tag, algorithm: 'aes-256-gcm' }, symKey, { iv, tag, aad });
 }
 
 /**
@@ -281,11 +276,7 @@ export function chaChaDecrypt(
   aad?: Uint8Array
 ): Uint8Array {
   const symKey = createKey(key, 'chacha20-poly1305');
-  return decrypt(
-    { ciphertext, iv, tag, algorithm: 'chacha20-poly1305' },
-    symKey,
-    { iv, tag, aad }
-  );
+  return decrypt({ ciphertext, iv, tag, algorithm: 'chacha20-poly1305' }, symKey, { iv, tag, aad });
 }
 
 /**
@@ -341,7 +332,7 @@ function mapAlgorithm(algorithm: SymmetricAlgorithm): string {
     'aes-128-cbc': 'aes-128-cbc',
     'chacha20-poly1305': 'chacha20-poly1305',
   };
-  
+
   return mapping[algorithm];
 }
 
@@ -364,14 +355,14 @@ function pkcs7Unpad(data: Buffer): Buffer {
   if (padding === 0 || padding > 16) {
     throw new DecryptionError('Invalid padding');
   }
-  
+
   // Verify padding
   for (let i = 0; i < padding; i++) {
     if (data[data.length - 1 - i] !== padding) {
       throw new DecryptionError('Invalid padding');
     }
   }
-  
+
   return data.slice(0, data.length - padding);
 }
 

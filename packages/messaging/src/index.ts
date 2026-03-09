@@ -12,7 +12,7 @@ export type {
   MessageRecipient,
   NodeMap,
   WorkerMessage,
-  WorkerResponse
+  WorkerResponse,
 } from './types';
 
 // Convenience exports

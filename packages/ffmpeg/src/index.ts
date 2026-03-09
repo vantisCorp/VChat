@@ -1,7 +1,7 @@
 /**
  * @fileoverview FFmpeg integration package for V-COMM
  * @module @vcomm/ffmpeg
- * 
+ *
  * This package provides comprehensive FFmpeg integration with:
  * - Hardware acceleration support (NVIDIA, AMD, Intel, VAAPI, VideoToolbox)
  * - AV1 encoding with SVT-AV1
@@ -27,10 +27,8 @@ import { VideoEncoder, videoEncoder } from './encoder';
 import { VideoDecoder, videoDecoder } from './decoder';
 import {
   VideoConfig,
-  _AudioConfig,
   OutputConfig,
   InputConfig,
-  _TranscodeProgress,
   TranscodeEventHandler,
   HardwareAcceleration,
   VideoCodec,
@@ -132,11 +130,7 @@ export class FFmpeg {
   /**
    * Encode video with H.264
    */
-  async encodeH264(
-    input: string,
-    output: string,
-    options?: Partial<VideoConfig>
-  ): Promise<string> {
+  async encodeH264(input: string, output: string, options?: Partial<VideoConfig>): Promise<string> {
     await this.ensureInitialized();
     return this.encoder.encodeH264(input, output, options);
   }
@@ -144,11 +138,7 @@ export class FFmpeg {
   /**
    * Encode video with H.265/HEVC
    */
-  async encodeHEVC(
-    input: string,
-    output: string,
-    options?: Partial<VideoConfig>
-  ): Promise<string> {
+  async encodeHEVC(input: string, output: string, options?: Partial<VideoConfig>): Promise<string> {
     await this.ensureInitialized();
     return this.encoder.encodeHEVC(input, output, options);
   }
@@ -156,11 +146,7 @@ export class FFmpeg {
   /**
    * Encode video with AV1
    */
-  async encodeAV1(
-    input: string,
-    output: string,
-    options?: Partial<VideoConfig>
-  ): Promise<string> {
+  async encodeAV1(input: string, output: string, options?: Partial<VideoConfig>): Promise<string> {
     await this.ensureInitialized();
     return this.encoder.encodeAV1(input, output, options);
   }
@@ -271,12 +257,16 @@ export class FFmpeg {
     }
   ): Promise<string> {
     await this.ensureInitialized();
-    return this.encoder.addWatermark(input, {
-      image: watermarkPath,
-      position: options?.position || 'bottom-right',
-      opacity: options?.opacity,
-      scale: options?.scale,
-    }, output);
+    return this.encoder.addWatermark(
+      input,
+      {
+        image: watermarkPath,
+        position: options?.position || 'bottom-right',
+        opacity: options?.opacity,
+        scale: options?.scale,
+      },
+      output
+    );
   }
 
   /**
@@ -323,9 +313,12 @@ export class FFmpeg {
   ): Promise<string> {
     await this.ensureInitialized();
     return this.decoder.extractAudio(input, output, {
-      codec: options?.codec === 'mp3' ? 'libmp3lame' : 
-             options?.codec === 'opus' ? 'libopus' : 
-             options?.codec || 'aac',
+      codec:
+        options?.codec === 'mp3'
+          ? 'libmp3lame'
+          : options?.codec === 'opus'
+            ? 'libopus'
+            : options?.codec || 'aac',
       bitrate: options?.bitrate,
     });
   }
@@ -333,12 +326,7 @@ export class FFmpeg {
   /**
    * Trim video
    */
-  async trim(
-    input: string,
-    output: string,
-    startTime: number,
-    endTime: number
-  ): Promise<string> {
+  async trim(input: string, output: string, startTime: number, endTime: number): Promise<string> {
     await this.ensureInitialized();
     return this.transcode(
       { path: input, startTime, duration: endTime - startTime },
@@ -349,11 +337,7 @@ export class FFmpeg {
   /**
    * Convert video format
    */
-  async convert(
-    input: string,
-    output: string,
-    format: ContainerFormat
-  ): Promise<string> {
+  async convert(input: string, output: string, format: ContainerFormat): Promise<string> {
     await this.ensureInitialized();
     return this.transcode(input, {
       path: output,
@@ -365,12 +349,7 @@ export class FFmpeg {
   /**
    * Resize video
    */
-  async resize(
-    input: string,
-    output: string,
-    width: number,
-    height?: number
-  ): Promise<string> {
+  async resize(input: string, output: string, width: number, height?: number): Promise<string> {
     await this.ensureInitialized();
     return this.transcode(input, {
       path: output,

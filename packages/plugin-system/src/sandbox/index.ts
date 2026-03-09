@@ -1,16 +1,11 @@
 /**
  * @vcomm/plugin-system - Plugin Sandbox
- * 
+ *
  * Provides secure execution environment for plugins.
  * Implements permission-based access control and resource limits.
  */
 
-import {
-  PluginInstance,
-  PluginError,
-  PluginErrorCode,
-  PermissionCheckContext,
-} from '../types';
+import { PluginInstance, PluginError, PluginErrorCode, PermissionCheckContext } from '../types';
 
 /**
  * Sandbox configuration
@@ -90,17 +85,17 @@ export interface ResourceMetrics {
 
 /**
  * PluginSandbox - Secure execution environment for plugins
- * 
+ *
  * @example
  * ```typescript
  * const sandbox = new PluginSandbox();
- * 
+ *
  * // Initialize sandbox for a plugin
  * sandbox.initialize(plugin);
- * 
+ *
  * // Check permission
  * const allowed = sandbox.checkPermission(plugin, 'message.read', context);
- * 
+ *
  * // Execute in sandbox
  * const result = await sandbox.execute(plugin, async () => {
  *   // Plugin code runs here with restricted access
@@ -123,8 +118,8 @@ export class PluginSandbox {
   initialize(plugin: PluginInstance): void {
     // Initialize permission rules from manifest
     const rules: PermissionRule[] = [];
-    
-    for (const permission of (plugin.permissions || [])) {
+
+    for (const permission of plugin.permissions || []) {
       const permType = typeof permission === 'string' ? permission : permission.type;
       rules.push({
         permission: permType,
@@ -173,8 +168,8 @@ export class PluginSandbox {
     const rules = this.permissionRules.get(plugin.id) || [];
 
     // Find applicable rules
-    const applicableRules = rules.filter(r =>
-      r.permission === permission || this.isWildcardMatch(r.permission, permission)
+    const applicableRules = rules.filter(
+      (r) => r.permission === permission || this.isWildcardMatch(r.permission, permission)
     );
 
     // Check conditions
@@ -196,7 +191,12 @@ export class PluginSandbox {
 
     // Check if permission was explicitly granted
     const hasPermission = applicableRules.length > 0;
-    this.logPermissionCheck(plugin.id, permission, hasPermission, hasPermission ? 'granted' : 'no rule');
+    this.logPermissionCheck(
+      plugin.id,
+      permission,
+      hasPermission,
+      hasPermission ? 'granted' : 'no rule'
+    );
 
     return hasPermission;
   }
@@ -209,7 +209,7 @@ export class PluginSandbox {
     permissions: string[],
     context?: PermissionCheckContext
   ): { permission: string; granted: boolean }[] {
-    return permissions.map(permission => ({
+    return permissions.map((permission) => ({
       permission,
       granted: this.checkPermission(plugin, permission, context),
     }));
@@ -218,15 +218,11 @@ export class PluginSandbox {
   /**
    * Grant additional permission to a plugin
    */
-  grantPermission(
-    pluginId: string,
-    permission: string,
-    source: 'user' | 'system' = 'user'
-  ): void {
+  grantPermission(pluginId: string, permission: string, source: 'user' | 'system' = 'user'): void {
     const rules = this.permissionRules.get(pluginId) || [];
 
     // Check if already granted
-    const existing = rules.find(r => r.permission === permission);
+    const existing = rules.find((r) => r.permission === permission);
     if (existing) {
       existing.granted = true;
       existing.source = source;
@@ -246,7 +242,7 @@ export class PluginSandbox {
    */
   revokePermission(pluginId: string, permission: string): void {
     const rules = this.permissionRules.get(pluginId) || [];
-    const existing = rules.find(r => r.permission === permission);
+    const existing = rules.find((r) => r.permission === permission);
 
     if (existing) {
       existing.granted = false;
@@ -264,12 +260,9 @@ export class PluginSandbox {
   /**
    * Execute a function in the sandbox
    */
-  async execute<T>(
-    plugin: PluginInstance,
-    fn: () => Promise<T> | T
-  ): Promise<T> {
+  async execute<T>(plugin: PluginInstance, fn: () => Promise<T> | T): Promise<T> {
     const pluginId = plugin.id;
-    
+
     // Track active executions
     const activeCount = this.activeExecutions.get(pluginId) || 0;
     this.activeExecutions.set(pluginId, activeCount + 1);
@@ -285,7 +278,7 @@ export class PluginSandbox {
     try {
       // Execute with timeout
       const result = await this.executeWithTimeout(fn, this.config.executionTimeout);
-      
+
       // Update metrics
       if (metrics) {
         metrics.cpuTime += Date.now() - startTime;
@@ -306,16 +299,15 @@ export class PluginSandbox {
   /**
    * Execute with timeout
    */
-  private async executeWithTimeout<T>(
-    fn: () => Promise<T> | T,
-    timeout: number
-  ): Promise<T> {
+  private async executeWithTimeout<T>(fn: () => Promise<T> | T, timeout: number): Promise<T> {
     return new Promise((resolve, reject) => {
       const timer = setTimeout(() => {
-        reject(new PluginError(
-          PluginErrorCode.EXECUTION_TIMEOUT,
-          `Execution timed out after ${timeout}ms`
-        ));
+        reject(
+          new PluginError(
+            PluginErrorCode.EXECUTION_TIMEOUT,
+            `Execution timed out after ${timeout}ms`
+          )
+        );
       }, timeout);
 
       Promise.resolve(fn())
@@ -394,7 +386,7 @@ export class PluginSandbox {
 
       case 'role':
         if (Array.isArray(condition.value) && context.userRoles) {
-          return condition.value.some(role => context.userRoles!.includes(role));
+          return condition.value.some((role) => context.userRoles!.includes(role));
         }
         return true;
 
@@ -419,7 +411,9 @@ export class PluginSandbox {
     reason: string
   ): void {
     if (this.config.logPermissionChecks) {
-      console.log(`[Sandbox] Permission check: ${pluginId} -> ${permission}: ${granted ? 'GRANTED' : 'DENIED'} (${reason})`);
+      console.log(
+        `[Sandbox] Permission check: ${pluginId} -> ${permission}: ${granted ? 'GRANTED' : 'DENIED'} (${reason})`
+      );
     }
   }
 

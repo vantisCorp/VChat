@@ -1,6 +1,6 @@
 /**
  * @vcomm/plugin-system - Type Definitions
- * 
+ *
  * Comprehensive type definitions for the plugin system including
  * lifecycle management, hooks, permissions, and marketplace integration.
  */
@@ -12,7 +12,7 @@
 /**
  * Plugin status in the lifecycle
  */
-export type PluginStatus = 
+export type PluginStatus =
   | 'uninstalled'
   | 'installed'
   | 'enabled'
@@ -28,7 +28,7 @@ export type PluginVisibility = 'public' | 'private' | 'unlisted';
 /**
  * Plugin category for marketplace organization
  */
-export type PluginCategory = 
+export type PluginCategory =
   | 'integration'
   | 'moderation'
   | 'automation'
@@ -353,9 +353,7 @@ export interface HookDefinition {
 /**
  * Hook handler function
  */
-export type HookHandler<T = unknown, R = unknown> = (
-  context: HookContext<T>
-) => R | Promise<R>;
+export type HookHandler<T = unknown, R = unknown> = (context: HookContext<T>) => R | Promise<R>;
 
 /**
  * Hook execution context
@@ -669,43 +667,6 @@ export interface PluginSystemOptions extends PluginSystemConfig {
 // Plugin Error Codes
 // ============================================================================
 
-/**
- * Plugin error codes
- */
-export enum PluginErrorCode {
-  NOT_FOUND = 'PLUGIN_NOT_FOUND',
-  NOT_INITIALIZED = 'PLUGIN_NOT_INITIALIZED',
-  ALREADY_INITIALIZED = 'PLUGIN_ALREADY_INITIALIZED',
-  INVALID_MANIFEST = 'INVALID_MANIFEST',
-  INVALID_SOURCE = 'INVALID_SOURCE',
-  LOAD_IN_PROGRESS = 'LOAD_IN_PROGRESS',
-  PLUGIN_ALREADY_EXISTS = 'PLUGIN_ALREADY_EXISTS',
-  PLUGIN_ENABLED = 'PLUGIN_ENABLED',
-  DEPENDENCY_MISSING = 'DEPENDENCY_MISSING',
-  DEPENDENCY_CONFLICT = 'DEPENDENCY_CONFLICT',
-  PERMISSION_DENIED = 'PERMISSION_DENIED',
-  SANDBOX_VIOLATION = 'SANDBOX_VIOLATION',
-  EXECUTION_TIMEOUT = 'EXECUTION_TIMEOUT',
-  NOT_IMPLEMENTED = 'NOT_IMPLEMENTED',
-  REMOTE_LOAD_DISABLED = 'REMOTE_LOAD_DISABLED',
-  FETCH_FAILED = 'FETCH_FAILED',
-  LIMIT_EXCEEDED = 'LIMIT_EXCEEDED',
-}
-
-/**
- * Plugin error class
- */
-export class PluginError extends Error {
-  constructor(
-    message: string,
-    public readonly code: PluginErrorCode,
-    public readonly details?: unknown
-  ) {
-    super(message);
-    this.name = 'PluginError';
-  }
-}
-
 // ============================================================================
 // Plugin Events
 // ============================================================================
@@ -753,11 +714,13 @@ export type PluginEventHandler = (event: PluginEvent) => void | Promise<void>;
 export enum PluginErrorCode {
   NOT_FOUND = 'NOT_FOUND',
   ALREADY_INSTALLED = 'ALREADY_INSTALLED',
+  ALREADY_INITIALIZED = 'ALREADY_INITIALIZED',
   PLUGIN_ALREADY_EXISTS = 'PLUGIN_ALREADY_EXISTS',
   VERSION_MISMATCH = 'VERSION_MISMATCH',
   DEPENDENCY_MISSING = 'DEPENDENCY_MISSING',
   DEPENDENCY_CONFLICT = 'DEPENDENCY_CONFLICT',
   PERMISSION_DENIED = 'PERMISSION_DENIED',
+  SANDBOX_VIOLATION = 'SANDBOX_VIOLATION',
   INSTALLATION_FAILED = 'INSTALLATION_FAILED',
   LOAD_FAILED = 'LOAD_FAILED',
   ENABLE_FAILED = 'ENABLE_FAILED',
@@ -859,7 +822,12 @@ export interface PluginConfigField {
 /**
  * Plugin config value
  */
-export type PluginConfigValue = string | number | boolean | PluginConfigValueArray | PluginConfigValueRecord;
+export type PluginConfigValue =
+  | string
+  | number
+  | boolean
+  | PluginConfigValueArray
+  | PluginConfigValueRecord;
 
 /**
  * Plugin config value array

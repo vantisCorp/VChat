@@ -25,7 +25,7 @@ import {
 
 /**
  * Generate an Ed25519 key pair
- * 
+ *
  * @param options Key generation options
  * @returns Key pair
  */
@@ -35,12 +35,12 @@ export async function generateEd25519KeyPair(
   try {
     // Generate random private key seed
     const privateKeyRaw = randomBytes(32);
-    
+
     // Derive public key
     const publicKeyRaw = await ed25519.getPublicKeyAsync(privateKeyRaw);
-    
+
     const id = options.id ?? generateKeyId();
-    
+
     const publicKey: PublicKey = {
       algorithm: 'ed25519',
       usages: ['verify'],
@@ -48,7 +48,7 @@ export async function generateEd25519KeyPair(
       id,
       raw: publicKeyRaw,
     };
-    
+
     const privateKey: PrivateKey = {
       algorithm: 'ed25519',
       usages: ['sign'],
@@ -56,16 +56,18 @@ export async function generateEd25519KeyPair(
       id,
       raw: privateKeyRaw,
     };
-    
+
     return { publicKey, privateKey };
   } catch (error) {
-    throw new KeyGenerationError(`Failed to generate Ed25519 key pair: ${(error as Error).message}`);
+    throw new KeyGenerationError(
+      `Failed to generate Ed25519 key pair: ${(error as Error).message}`
+    );
   }
 }
 
 /**
  * Generate an X25519 key pair for key exchange
- * 
+ *
  * @param options Key generation options
  * @returns Key pair
  */
@@ -75,13 +77,13 @@ export async function generateX25519KeyPair(
   try {
     // Generate random private key
     const privateKeyRaw = randomBytes(32);
-    
+
     // Use secp256k1 utils for X25519 scalar multiplication
     // Note: In production, use proper X25519 library
     const publicKeyRaw = await deriveX25519PublicKey(privateKeyRaw);
-    
+
     const id = options.id ?? generateKeyId();
-    
+
     const publicKey: PublicKey = {
       algorithm: 'x25519',
       usages: ['deriveKey', 'deriveBits'],
@@ -89,7 +91,7 @@ export async function generateX25519KeyPair(
       id,
       raw: publicKeyRaw,
     };
-    
+
     const privateKey: PrivateKey = {
       algorithm: 'x25519',
       usages: ['deriveKey', 'deriveBits'],
@@ -97,7 +99,7 @@ export async function generateX25519KeyPair(
       id,
       raw: privateKeyRaw,
     };
-    
+
     return { publicKey, privateKey };
   } catch (error) {
     throw new KeyGenerationError(`Failed to generate X25519 key pair: ${(error as Error).message}`);
@@ -106,7 +108,7 @@ export async function generateX25519KeyPair(
 
 /**
  * Generate a secp256k1 key pair
- * 
+ *
  * @param options Key generation options
  * @returns Key pair
  */
@@ -116,12 +118,12 @@ export async function generateSecp256k1KeyPair(
   try {
     // Generate random private key
     const privateKeyRaw = secp256k1.utils.randomSecretKey();
-    
+
     // Derive public key (compressed)
     const publicKeyRaw = secp256k1.getPublicKey(privateKeyRaw, true);
-    
+
     const id = options.id ?? generateKeyId();
-    
+
     const publicKey: PublicKey = {
       algorithm: 'secp256k1',
       usages: ['verify'],
@@ -129,7 +131,7 @@ export async function generateSecp256k1KeyPair(
       id,
       raw: publicKeyRaw,
     };
-    
+
     const privateKey: PrivateKey = {
       algorithm: 'secp256k1',
       usages: ['sign'],
@@ -137,25 +139,25 @@ export async function generateSecp256k1KeyPair(
       id,
       raw: privateKeyRaw,
     };
-    
+
     return { publicKey, privateKey };
   } catch (error) {
-    throw new KeyGenerationError(`Failed to generate secp256k1 key pair: ${(error as Error).message}`);
+    throw new KeyGenerationError(
+      `Failed to generate secp256k1 key pair: ${(error as Error).message}`
+    );
   }
 }
 
 /**
  * Generate an RSA key pair
- * 
+ *
  * @param options Key generation options
  * @returns Key pair
  */
-export function generateRSAKeyPair(
-  options: Partial<KeyGenOptions> = {}
-): Promise<KeyPair> {
+export function generateRSAKeyPair(options: Partial<KeyGenOptions> = {}): Promise<KeyPair> {
   return new Promise((resolve, reject) => {
     const modulusLength = options.modulusLength ?? 2048;
-    
+
     generateKeyPair(
       'rsa',
       {
@@ -175,9 +177,9 @@ export function generateRSAKeyPair(
           reject(new KeyGenerationError(`Failed to generate RSA key pair: ${err.message}`));
           return;
         }
-        
+
         const id = options.id ?? generateKeyId();
-        
+
         // Extract raw public key from PEM
         const publicKey: PublicKey = {
           algorithm: 'rsa',
@@ -187,7 +189,7 @@ export function generateRSAKeyPair(
           raw: new Uint8Array(Buffer.from(publicKeyPem)),
           pem: publicKeyPem,
         };
-        
+
         const privateKey: PrivateKey = {
           algorithm: 'rsa',
           usages: ['sign', 'decrypt'],
@@ -195,7 +197,7 @@ export function generateRSAKeyPair(
           id,
           pem: privateKeyPem,
         };
-        
+
         resolve({ publicKey, privateKey });
       }
     );
@@ -204,13 +206,11 @@ export function generateRSAKeyPair(
 
 /**
  * Generate a key pair
- * 
+ *
  * @param options Key generation options
  * @returns Key pair
  */
-export async function generateKeyPairAsync(
-  options: KeyGenOptions
-): Promise<KeyPair> {
+export async function generateKeyPairAsync(options: KeyGenOptions): Promise<KeyPair> {
   switch (options.algorithm) {
     case 'ed25519':
       return generateEd25519KeyPair(options);
@@ -227,7 +227,7 @@ export async function generateKeyPairAsync(
 
 /**
  * Sign data with a private key
- * 
+ *
  * @param data Data to sign
  * @param privateKey Private key
  * @param options Signing options
@@ -240,7 +240,7 @@ export async function sign(
 ): Promise<Signature> {
   const algorithm = options.algorithm ?? getSignatureAlgorithm(privateKey.algorithm);
   const dataBytes = typeof data === 'string' ? Buffer.from(data, 'utf8') : Buffer.from(data);
-  
+
   try {
     switch (algorithm) {
       case 'ed25519': {
@@ -253,43 +253,46 @@ export async function sign(
           algorithm: 'ed25519',
         };
       }
-      
+
       case 'ecdsa-secp256k1': {
         if (!privateKey.raw) {
           throw new SignatureError('Private key not extractable');
         }
         // secp256k1 v3: signAsync prehashes with sha256 by default
-        const signatureBytes = await secp256k1.signAsync(dataBytes, privateKey.raw, { format: 'der' });
+        const signatureBytes = await secp256k1.signAsync(dataBytes, privateKey.raw, {
+          format: 'der',
+        });
         return {
           raw: signatureBytes,
           algorithm: 'ecdsa-secp256k1',
         };
       }
-      
+
       case 'rsa-pss':
       case 'rsa-pkcs1v15': {
         if (!privateKey.pem) {
           throw new SignatureError('RSA private key PEM not available');
         }
-        const signer = createSign(`RSA-SHA${options.hash === 'sha384' ? '384' : options.hash === 'sha512' ? '512' : '256'}`);
+        const signer = createSign(
+          `RSA-SHA${options.hash === 'sha384' ? '384' : options.hash === 'sha512' ? '512' : '256'}`
+        );
         signer.update(dataBytes);
-        
-        const padding = algorithm === 'rsa-pss' 
-          ? constants.RSA_PKCS1_PSS_PADDING 
-          : constants.RSA_PKCS1_PADDING;
-        
+
+        const padding =
+          algorithm === 'rsa-pss' ? constants.RSA_PKCS1_PSS_PADDING : constants.RSA_PKCS1_PADDING;
+
         const signature = signer.sign({
           key: privateKey.pem,
           padding,
           saltLength: algorithm === 'rsa-pss' ? 32 : undefined,
         });
-        
+
         return {
           raw: new Uint8Array(signature),
           algorithm,
         };
       }
-      
+
       default:
         throw new SignatureError(`Unsupported signature algorithm: ${algorithm}`);
     }
@@ -301,7 +304,7 @@ export async function sign(
 
 /**
  * Verify a signature
- * 
+ *
  * @param data Original data
  * @param signature Signature to verify
  * @param publicKey Public key
@@ -313,18 +316,18 @@ export async function verify(
   publicKey: PublicKey
 ): Promise<boolean> {
   const dataBytes = typeof data === 'string' ? Buffer.from(data, 'utf8') : Buffer.from(data);
-  
+
   try {
     switch (signature.algorithm) {
       case 'ed25519': {
         return ed25519.verifyAsync(signature.raw, dataBytes, publicKey.raw);
       }
-      
+
       case 'ecdsa-secp256k1': {
         // secp256k1 v3: verify handles prehashing by default, uses DER format
         return secp256k1.verify(signature.raw, dataBytes, publicKey.raw, { format: 'der' });
       }
-      
+
       case 'rsa-pss':
       case 'rsa-pkcs1v15': {
         if (!publicKey.pem) {
@@ -332,11 +335,12 @@ export async function verify(
         }
         const verifier = createVerify('RSA-SHA256');
         verifier.update(dataBytes);
-        
-        const padding = signature.algorithm === 'rsa-pss' 
-          ? constants.RSA_PKCS1_PSS_PADDING 
-          : constants.RSA_PKCS1_PADDING;
-        
+
+        const padding =
+          signature.algorithm === 'rsa-pss'
+            ? constants.RSA_PKCS1_PSS_PADDING
+            : constants.RSA_PKCS1_PADDING;
+
         return verifier.verify(
           {
             key: publicKey.pem,
@@ -345,7 +349,7 @@ export async function verify(
           Buffer.from(signature.raw)
         );
       }
-      
+
       default:
         throw new VerificationError(`Unsupported signature algorithm: ${signature.algorithm}`);
     }
@@ -399,11 +403,11 @@ export function exportPublicKeyPEM(publicKey: PublicKey): string {
   if (publicKey.pem) {
     return publicKey.pem;
   }
-  
+
   // For Ed25519/secp256k1, create SPKI format
   const raw = publicKey.raw;
   const base64 = Buffer.from(raw).toString('base64');
-  
+
   let oid: string;
   switch (publicKey.algorithm) {
     case 'ed25519':
@@ -415,7 +419,7 @@ export function exportPublicKeyPEM(publicKey: PublicKey): string {
     default:
       throw new CryptoError(`Cannot export ${publicKey.algorithm} to PEM`);
   }
-  
+
   const lines = base64.match(/.{1,64}/g) ?? [];
   return `-----BEGIN PUBLIC KEY-----\n${oid}${lines.join('\n')}\n-----END PUBLIC KEY-----`;
 }

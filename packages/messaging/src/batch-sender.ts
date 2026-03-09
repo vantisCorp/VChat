@@ -11,7 +11,7 @@ import {
   BatchResult,
   NodeMap,
   WorkerMessage,
-  WorkerResponse
+  WorkerResponse,
 } from './types';
 
 export class BatchMessageSender {
@@ -77,7 +77,7 @@ export class BatchMessageSender {
       const batch: MessageBatch = {
         recipients,
         message: options?.packMode === 'binary' ? this.packMessage(message) : message,
-        options: { ...options, sendMode: 'direct' } as BatchOptions
+        options: { ...options, sendMode: 'direct' } as BatchOptions,
       };
 
       const result = await this.sendDirect(batch);
@@ -98,8 +98,9 @@ export class BatchMessageSender {
       const workerMessage: WorkerMessage = {
         type: 'SEND_BATCH',
         recipients: batch.recipients,
-        message: batch.options?.packMode === 'binary' ? this.packMessage(batch.message) : batch.message,
-        ...(batch.options ? { options: batch.options } : {})
+        message:
+          batch.options?.packMode === 'binary' ? this.packMessage(batch.message) : batch.message,
+        ...(batch.options ? { options: batch.options } : {}),
       };
 
       worker.postMessage(workerMessage);
@@ -110,10 +111,11 @@ export class BatchMessageSender {
           failed: response.failed,
           duration: response.duration,
           recipients: response.recipients,
-          errors: response.errors?.map(e => ({
-            recipient: e.recipient,
-            error: new Error(e.error)
-          })) ?? []
+          errors:
+            response.errors?.map((e) => ({
+              recipient: e.recipient,
+              error: new Error(e.error),
+            })) ?? [],
         });
       });
 
@@ -155,7 +157,7 @@ export class BatchMessageSender {
       failed,
       duration: Date.now() - Date.now(), // Will be calculated by caller
       recipients: batch.recipients,
-      errors
+      errors,
     };
   }
 
@@ -173,7 +175,7 @@ export class BatchMessageSender {
   private getAvailableWorker(): Worker {
     if (this.workers.length < this.maxWorkers) {
       const worker = new Worker('./batch-worker.ts', {
-        workerData: { workerId: this.workers.length }
+        workerData: { workerId: this.workers.length },
       });
       this.workers.push(worker);
       return worker;
@@ -203,7 +205,7 @@ export class BatchMessageSender {
     let hash = 0;
     for (let i = 0; i < str.length; i++) {
       const char = str.charCodeAt(i);
-      hash = ((hash << 5) - hash) + char;
+      hash = (hash << 5) - hash + char;
       hash = hash & hash; // Convert to 32bit integer
     }
     return Math.abs(hash);
@@ -213,19 +215,22 @@ export class BatchMessageSender {
    * Merge multiple batch results
    */
   private mergeResults(results: BatchResult[]): BatchResult {
-    return results.reduce((acc, result) => ({
-      sent: acc.sent + result.sent,
-      failed: acc.failed + result.failed,
-      duration: acc.duration + result.duration,
-      recipients: [...acc.recipients, ...result.recipients],
-      errors: [...(acc.errors || []), ...(result.errors || [])]
-    }), {
-      sent: 0,
-      failed: 0,
-      duration: 0,
-      recipients: [],
-      errors: []
-    });
+    return results.reduce(
+      (acc, result) => ({
+        sent: acc.sent + result.sent,
+        failed: acc.failed + result.failed,
+        duration: acc.duration + result.duration,
+        recipients: [...acc.recipients, ...result.recipients],
+        errors: [...(acc.errors || []), ...(result.errors || [])],
+      }),
+      {
+        sent: 0,
+        failed: 0,
+        duration: 0,
+        recipients: [],
+        errors: [],
+      }
+    );
   }
 
   /**
@@ -236,10 +241,11 @@ export class BatchMessageSender {
     // TODO: Implement actual message sending logic
     // This could be WebSocket, gRPC, HTTP, or any transport
     // For now, simulate with a delay
-    await new Promise(resolve => setTimeout(resolve, Math.random() * 10));
+    await new Promise((resolve) => setTimeout(resolve, Math.random() * 10));
 
     // Simulate occasional failures
-    if (Math.random() < 0.01) { // 1% failure rate
+    if (Math.random() < 0.01) {
+      // 1% failure rate
       throw new Error(`Failed to send to ${recipient}`);
     }
   }
@@ -273,7 +279,7 @@ export class BatchMessageSender {
     return {
       workersCount: this.workers.length,
       nodesCount: this.nodeMap.size,
-      maxWorkers: this.maxWorkers
+      maxWorkers: this.maxWorkers,
     };
   }
 
@@ -281,7 +287,7 @@ export class BatchMessageSender {
    * Clean up resources
    */
   destroy(): void {
-    this.workers.forEach(worker => {
+    this.workers.forEach((worker) => {
       worker.terminate();
     });
     this.workers = [];

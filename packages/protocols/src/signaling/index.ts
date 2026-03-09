@@ -61,32 +61,15 @@ export class SignalingMessageBuilder {
     mediaTypes: ('audio' | 'video')[] = ['audio']
   ): SignalingMessage {
     const offer: SDPOffer = { sdp, mediaTypes };
-    return this.createMessage(
-      SignalingMessageType.OFFER,
-      from,
-      to,
-      callId,
-      offer
-    );
+    return this.createMessage(SignalingMessageType.OFFER, from, to, callId, offer);
   }
 
   /**
    * Build SDP answer message
    */
-  static buildAnswer(
-    from: string,
-    to: string,
-    callId: string,
-    sdp: string
-  ): SignalingMessage {
+  static buildAnswer(from: string, to: string, callId: string, sdp: string): SignalingMessage {
     const answer: SDPAnswer = { sdp };
-    return this.createMessage(
-      SignalingMessageType.ANSWER,
-      from,
-      to,
-      callId,
-      answer
-    );
+    return this.createMessage(SignalingMessageType.ANSWER, from, to, callId, answer);
   }
 
   /**
@@ -105,13 +88,7 @@ export class SignalingMessageBuilder {
       sdpMid,
       sdpMLineIndex,
     };
-    return this.createMessage(
-      SignalingMessageType.CANDIDATE,
-      from,
-      to,
-      callId,
-      iceCandidate
-    );
+    return this.createMessage(SignalingMessageType.CANDIDATE, from, to, callId, iceCandidate);
   }
 
   /**
@@ -123,31 +100,14 @@ export class SignalingMessageBuilder {
     callId: string,
     reason?: string
   ): SignalingMessage {
-    return this.createMessage(
-      SignalingMessageType.RENEGOTIATE,
-      from,
-      to,
-      callId,
-      { reason }
-    );
+    return this.createMessage(SignalingMessageType.RENEGOTIATE, from, to, callId, { reason });
   }
 
   /**
    * Build bye message
    */
-  static buildBye(
-    from: string,
-    to: string,
-    callId: string,
-    reason?: string
-  ): SignalingMessage {
-    return this.createMessage(
-      SignalingMessageType.BYE,
-      from,
-      to,
-      callId,
-      { reason }
-    );
+  static buildBye(from: string, to: string, callId: string, reason?: string): SignalingMessage {
+    return this.createMessage(SignalingMessageType.BYE, from, to, callId, { reason });
   }
 
   /**
@@ -160,13 +120,10 @@ export class SignalingMessageBuilder {
     errorCode: number,
     errorMessage: string
   ): SignalingMessage {
-    return this.createMessage(
-      SignalingMessageType.ERROR,
-      from,
-      to,
-      callId,
-      { errorCode, errorMessage }
-    );
+    return this.createMessage(SignalingMessageType.ERROR, from, to, callId, {
+      errorCode,
+      errorMessage,
+    });
   }
 }
 
@@ -230,10 +187,7 @@ export class SignalingMessageParser {
       throw new SignalingError('Message is not an offer');
     }
 
-    if (
-      typeof message.payload.sdp !== 'string' ||
-      !Array.isArray(message.payload.mediaTypes)
-    ) {
+    if (typeof message.payload.sdp !== 'string' || !Array.isArray(message.payload.mediaTypes)) {
       throw new SignalingError('Invalid offer payload');
     }
 
@@ -562,10 +516,7 @@ export class SignalingHeartbeat {
   /**
    * Start heartbeat monitoring
    */
-  start(
-    onTimeout: (callId: string) => void,
-    sendHeartbeat: () => void
-  ): void {
+  start(onTimeout: (callId: string) => void, sendHeartbeat: () => void): void {
     this.stop();
 
     this.interval = setInterval(() => {
@@ -778,4 +729,3 @@ export class SignalingUtils {
     return `[${message.type}] ${message.from} -> ${message.to} (call: ${message.callId})`;
   }
 }
-

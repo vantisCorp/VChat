@@ -23,7 +23,7 @@ import {
 
 /**
  * Derive a shared secret using ECDH (X25519/secp256k1)
- * 
+ *
  * @param privateKey Our private key
  * @param publicKey Their public key
  * @returns Shared secret
@@ -35,17 +35,19 @@ export async function deriveSharedSecret(
   if (!privateKey.raw) {
     throw new CryptoError('Private key not extractable');
   }
-  
+
   if (privateKey.algorithm === 'x25519' || publicKey.algorithm === 'x25519') {
     // Simplified X25519 - in production use proper X25519 implementation
     return deriveX25519SharedSecret(privateKey.raw, publicKey.raw);
   }
-  
+
   if (privateKey.algorithm === 'secp256k1' && publicKey.algorithm === 'secp256k1') {
     return deriveSecp256k1SharedSecret(privateKey.raw, publicKey.raw);
   }
-  
-  throw new CryptoError(`Incompatible key types: ${privateKey.algorithm} and ${publicKey.algorithm}`);
+
+  throw new CryptoError(
+    `Incompatible key types: ${privateKey.algorithm} and ${publicKey.algorithm}`
+  );
 }
 
 /**
@@ -82,7 +84,7 @@ async function deriveSecp256k1SharedSecret(
 
 /**
  * Encrypt data for a recipient using ECIES
- * 
+ *
  * @param plaintext Data to encrypt
  * @param recipientPublicKey Recipient's public key
  * @param options Encryption options
@@ -96,33 +98,33 @@ export async function encryptForRecipient(
   if (recipientPublicKey.algorithm !== 'secp256k1' && recipientPublicKey.algorithm !== 'x25519') {
     throw new EncryptionError(`Unsupported algorithm: ${recipientPublicKey.algorithm}`);
   }
-  
+
   // Generate ephemeral key pair
   const ephemeralPrivateKey = secp256k1.utils.randomSecretKey();
   const ephemeralPublicKey = secp256k1.getPublicKey(ephemeralPrivateKey, true);
-  
+
   // Derive shared secret
-  const sharedSecret = await deriveSecp256k1SharedSecret(ephemeralPrivateKey, recipientPublicKey.raw);
-  
+  const sharedSecret = await deriveSecp256k1SharedSecret(
+    ephemeralPrivateKey,
+    recipientPublicKey.raw
+  );
+
   // Derive encryption key using HKDF
   const encryptionKey = await hkdf(sharedSecret, {
     hash: 'sha256',
     salt: new Uint8Array(0),
     length: 32,
   });
-  
+
   // Encrypt with AES-256-GCM
   const key = createKey(encryptionKey, 'aes-256-gcm');
   const result = encrypt(plaintext, key);
-  
+
   // Combine ephemeral public key + iv + tag + ciphertext
   const combined = new Uint8Array(
-    ephemeralPublicKey.length + 
-    result.iv.length + 
-    result.tag!.length + 
-    result.ciphertext.length
+    ephemeralPublicKey.length + result.iv.length + result.tag!.length + result.ciphertext.length
   );
-  
+
   let offset = 0;
   combined.set(ephemeralPublicKey, offset);
   offset += ephemeralPublicKey.length;
@@ -131,13 +133,13 @@ export async function encryptForRecipient(
   combined.set(result.tag!, offset);
   offset += result.tag!.length;
   combined.set(result.ciphertext, offset);
-  
+
   return combined;
 }
 
 /**
  * Decrypt data from a sender using ECIES
- * 
+ *
  * @param ciphertext Encrypted data
  * @param recipientPrivateKey Recipient's private key
  * @returns Decrypted data
@@ -149,17 +151,17 @@ export async function decryptForRecipient(
   if (!recipientPrivateKey.raw) {
     throw new DecryptionError('Private key not extractable');
   }
-  
+
   // Parse the combined data
   // ephemeralPublicKey (33 bytes) + iv (12 bytes) + tag (16 bytes) + ciphertext
   const ephemeralPublicKeyLength = 33;
   const ivLength = 12;
   const tagLength = 16;
-  
+
   if (ciphertext.length < ephemeralPublicKeyLength + ivLength + tagLength) {
     throw new DecryptionError('Ciphertext too short');
   }
-  
+
   let offset = 0;
   const ephemeralPublicKey = ciphertext.slice(offset, offset + ephemeralPublicKeyLength);
   offset += ephemeralPublicKeyLength;
@@ -168,24 +170,26 @@ export async function decryptForRecipient(
   const tag = ciphertext.slice(offset, offset + tagLength);
   offset += tagLength;
   const encryptedData = ciphertext.slice(offset);
-  
+
   // Derive shared secret
-  const sharedSecret = await deriveSecp256k1SharedSecret(recipientPrivateKey.raw, ephemeralPublicKey);
-  
+  const sharedSecret = await deriveSecp256k1SharedSecret(
+    recipientPrivateKey.raw,
+    ephemeralPublicKey
+  );
+
   // Derive encryption key using HKDF
   const encryptionKey = await hkdf(sharedSecret, {
     hash: 'sha256',
     salt: new Uint8Array(0),
     length: 32,
   });
-  
+
   // Decrypt with AES-256-GCM
   const key = createKey(encryptionKey, 'aes-256-gcm');
-  return decrypt(
-    { ciphertext: encryptedData, iv, tag, algorithm: 'aes-256-gcm' },
-    key,
-    { iv, tag }
-  );
+  return decrypt({ ciphertext: encryptedData, iv, tag, algorithm: 'aes-256-gcm' }, key, {
+    iv,
+    tag,
+  });
 }
 
 /**
@@ -196,18 +200,19 @@ export function rsaEncrypt(
   publicKeyPem: string,
   label?: Uint8Array
 ): Uint8Array {
-  const data = typeof plaintext === 'string' ? Buffer.from(plaintext, 'utf8') : Buffer.from(plaintext);
-  
+  const data =
+    typeof plaintext === 'string' ? Buffer.from(plaintext, 'utf8') : Buffer.from(plaintext);
+
   const options: any = {
     key: publicKeyPem,
     padding: constants.RSA_PKCS1_OAEP_PADDING,
     oaepHash: 'sha256',
   };
-  
+
   if (label) {
     options.oaepLabel = Buffer.from(label);
   }
-  
+
   try {
     const encrypted = publicEncrypt(options, data);
     return new Uint8Array(encrypted);
@@ -229,11 +234,11 @@ export function rsaDecrypt(
     padding: constants.RSA_PKCS1_OAEP_PADDING,
     oaepHash: 'sha256',
   };
-  
+
   if (label) {
     options.oaepLabel = Buffer.from(label);
   }
-  
+
   try {
     const decrypted = privateDecrypt(options, Buffer.from(ciphertext));
     return new Uint8Array(decrypted);
@@ -244,7 +249,7 @@ export function rsaDecrypt(
 
 /**
  * HKDF key derivation
- * 
+ *
  * @param inputKeyMaterial Input key material
  * @param options HKDF options
  * @returns Derived key
@@ -254,33 +259,33 @@ export async function hkdf(
   options: HKDFOptions
 ): Promise<Uint8Array> {
   const { hash: hashAlg, salt, info = new Uint8Array(0), length } = options;
-  
+
   // Extract
   const prk = hmac(inputKeyMaterial, salt, hashAlg);
-  
+
   // Expand
   const hashLength = hashAlg === 'sha256' ? 32 : hashAlg === 'sha384' ? 48 : 64;
   const blocks = Math.ceil(length / hashLength);
-  
+
   const output = new Uint8Array(blocks * hashLength);
   let previousBlock: Uint8Array = new Uint8Array(0);
-  
+
   for (let i = 0; i < blocks; i++) {
     const input = new Uint8Array(previousBlock.length + info.length + 1);
     input.set(previousBlock, 0);
     input.set(info, previousBlock.length);
     input[input.length - 1] = i + 1;
-    
+
     previousBlock = new Uint8Array(hmac(input, prk, hashAlg));
     output.set(previousBlock, i * hashLength);
   }
-  
+
   return output.slice(0, length);
 }
 
 /**
  * PBKDF2 key derivation
- * 
+ *
  * @param password Password
  * @param options PBKDF2 options
  * @returns Derived key
@@ -290,49 +295,48 @@ export async function pbkdf2(
   options: PBKDF2Options
 ): Promise<Uint8Array> {
   const { hash: hashAlg, salt, iterations, length } = options;
-  
-  const passwordBytes = typeof password === 'string' 
-    ? new TextEncoder().encode(password) 
-    : password;
-  
+
+  const passwordBytes =
+    typeof password === 'string' ? new TextEncoder().encode(password) : password;
+
   // Simplified PBKDF2 using HMAC
   // In production, use crypto.pbkdf2
   const prf = (data: Uint8Array) => hmac(data, passwordBytes, hashAlg);
-  
+
   const hashLength = hashAlg === 'sha256' ? 32 : hashAlg === 'sha384' ? 48 : 64;
   const blocks = Math.ceil(length / hashLength);
-  
+
   const output = new Uint8Array(blocks * hashLength);
-  
+
   for (let blockIndex = 1; blockIndex <= blocks; blockIndex++) {
     const blockInput = new Uint8Array(salt.length + 4);
     blockInput.set(salt, 0);
-    
+
     // Big-endian block index
     blockInput[salt.length] = (blockIndex >> 24) & 0xff;
     blockInput[salt.length + 1] = (blockIndex >> 16) & 0xff;
     blockInput[salt.length + 2] = (blockIndex >> 8) & 0xff;
     blockInput[salt.length + 3] = blockIndex & 0xff;
-    
+
     let u = prf(blockInput);
     const block = new Uint8Array(u);
-    
+
     for (let i = 1; i < iterations; i++) {
       u = prf(u);
       for (let j = 0; j < block.length; j++) {
         block[j] ^= u[j];
       }
     }
-    
+
     output.set(block, (blockIndex - 1) * hashLength);
   }
-  
+
   return output.slice(0, length);
 }
 
 /**
  * Scrypt key derivation
- * 
+ *
  * @param password Password
  * @param options Scrypt options
  * @returns Derived key
@@ -342,15 +346,14 @@ export async function scrypt(
   options: ScryptOptions
 ): Promise<Uint8Array> {
   const { salt, cost = 16384, blockSize = 8, parallelization = 1, length } = options;
-  
+
   // Use Node.js scrypt
   const { scrypt: nodeScrypt } = await import('crypto');
-  
+
   return new Promise((resolve, reject) => {
-    const passwordBuffer = typeof password === 'string' 
-      ? Buffer.from(password, 'utf8') 
-      : Buffer.from(password);
-    
+    const passwordBuffer =
+      typeof password === 'string' ? Buffer.from(password, 'utf8') : Buffer.from(password);
+
     nodeScrypt(
       passwordBuffer,
       Buffer.from(salt),
@@ -385,7 +388,7 @@ export async function deriveSymmetricKey(
     info: context,
     length: 32,
   });
-  
+
   return createKey(keyMaterial, 'aes-256-gcm');
 }
 
