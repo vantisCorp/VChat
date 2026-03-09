@@ -42,7 +42,7 @@
 [![Discord](https://img.shields.io/discord/832347567897219072?style=for-the-badge&logo=discord&logoColor=white)](https://discord.gg/A5MzwsRj7D)
 [![Documentation](https://img.shields.io/badge/docs-latest-blue?style=for-the-badge&logo=readthedocs)](https://vantis-corp.github.io/VChat/)
 [![Build](https://img.shields.io/github/actions/workflow/status/vantisCorp/VChat/ci.yml?style=for-the-badge&logo=github-actions)](https://github.com/vantisCorp/VChat/actions)
-[![Security](https://img.shields.io/github/actions/workflow/status/vantisCorp/VChat/security.yml?style=for-the-badge&logo=github-actions)](https://github.com/vantisCorp/VChat/actions)
+[![Security](https://img.shields.io/github/actions/workflow/status/vantisCorp/VChat/socket-security.yml?style=for-the-badge&logo=github-actions)](https://github.com/vantisCorp/VChat/actions)
 [![Deploy](https://img.shields.io/github/deployments/vantisCorp/VChat/github-pages?style=for-the-badge&logo=github-pages)](https://vantis-corp.github.io/VChat/)
 
 ---
