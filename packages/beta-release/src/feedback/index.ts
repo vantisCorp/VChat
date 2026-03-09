@@ -220,7 +220,7 @@ export class FeedbackManager {
     }
 
     // Prevent updating immutable fields
-    const { id, createdAt, voters, ...allowedUpdates } = updates as any;
+    const { _id, _createdAt, _voters, ...allowedUpdates } = updates as any;
 
     const updated: FeedbackEntry = {
       ...existing,
@@ -373,10 +373,11 @@ export class FeedbackManager {
         case 'updatedAt':
           comparison = a.updatedAt.getTime() - b.updatedAt.getTime();
           break;
-        case 'priority':
+        case 'priority': {
           const priorityOrder = { critical: 0, high: 1, medium: 2, low: 3 };
           comparison = priorityOrder[a.priority] - priorityOrder[b.priority];
           break;
+          }
         case 'votes':
           comparison = a.votes - b.votes;
           break;
@@ -479,7 +480,7 @@ export class FeedbackManager {
     }
 
     // Prevent updating immutable fields
-    const { id, createdAt, responseCount, ...allowedUpdates } = updates as any;
+    const { _id, _createdAt, _responseCount, ...allowedUpdates } = updates as any;
 
     const updated: FeedbackSurvey = {
       ...existing,

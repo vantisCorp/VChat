@@ -270,6 +270,10 @@ export interface RolloutConfig {
   stages: RolloutStage[];
   /** Current stage index */
   currentStageIndex: number;
+  /** Created at */
+  createdAt: Date;
+  /** Updated at */
+  updatedAt: Date;
   /** Started at */
   startedAt?: Date;
   /** Completed at */

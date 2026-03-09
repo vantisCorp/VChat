@@ -10,7 +10,8 @@
     "CARGO_HOME",
     "GITHUB_TOKEN"
   ],
-  "pipeline": {
+  "tasks": {
+    "//build": {},
     "build": {
       "dependsOn": ["^build"],
       "outputs": [
@@ -28,6 +29,7 @@
       "cache": false,
       "persistent": true
     },
+    "//lint": {},
     "lint": {
       "dependsOn": ["^lint"],
       "outputs": [],
@@ -42,6 +44,7 @@
       "outputs": [],
       "cache": true
     },
+    "//type-check": {},
     "type-check": {
       "dependsOn": ["^build"],
       "outputs": [],
@@ -50,6 +53,7 @@
     "clean": {
       "cache": false
     },
+    "//cargo:build": {},
     "cargo:build": {
       "dependsOn": ["^cargo:build"],
       "outputs": [

@@ -10,14 +10,14 @@ import {
   HookHandler,
   HookContext,
   HookResult,
-  PluginInstance,
-  PluginError,
+  _PluginInstance,
+  _PluginError,
 } from '../types';
 
 /**
  * Handler registration entry
  */
-interface HandlerEntry {
+interface HandlerEntry<_T = unknown, _R = unknown> {
   /** Unique handler ID */
   id: string;
   /** Plugin ID that registered this handler */

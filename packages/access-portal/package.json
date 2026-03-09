@@ -1,6 +1,6 @@
 {
   "name": "@vcomm/access-portal",
-  "version": "1.0.0",
+  "version": "0.1.0",
   "description": "Access management portal with RBAC, OAuth integration, and audit logging for V-COMM",
   "main": "dist/index.js",
   "module": "dist/index.mjs",
@@ -12,13 +12,24 @@
       "types": "./dist/index.d.ts"
     }
   },
-  "files": ["dist", "README.md"],
+  "files": [
+    "dist",
+    "README.md"
+  ],
   "scripts": {
     "build": "tsup src/index.ts --format cjs,esm --dts --clean",
     "dev": "tsup src/index.ts --watch",
-    "typecheck": "tsc --noEmit"
+    "typecheck": "tsc --noEmit",
+    "lint": "eslint src/",
+    "type-check": "tsc --noEmit"
   },
-  "keywords": ["vcomm", "access-control", "rbac", "oauth", "audit-logging"],
+  "keywords": [
+    "vcomm",
+    "access-control",
+    "rbac",
+    "oauth",
+    "audit-logging"
+  ],
   "author": "Vantis Corporation",
   "license": "MIT",
   "dependencies": {

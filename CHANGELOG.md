@@ -15,8 +15,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## 🔥 Quick Navigation
 
 [Unreleased](#unreleased) •
-[0.2.0](#020---2024-06-01) •
-[0.1.0](#010---2024-03-04)
+[0.2.0](#020---2026-06-01) •
+[0.1.0](#010---2026-03-04)
 
 ---
 
@@ -49,7 +49,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
-## [0.2.0] - 2024-06-01
+## [0.2.0] - 2026-06-01
 
 ### 🎉 Highlights
 - **Mobile App**: First public release for iOS and Android
@@ -150,7 +150,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
-## [0.1.0] - 2024-03-04
+## [0.1.0] - 2026-03-04
 
 ### 🎉 Initial Release
 
@@ -366,8 +366,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 | Version | Release Date | Features | Status |
 |---------|--------------|----------|--------|
-| 0.2.0 | Jun 2024 | Mobile App, Enhanced Security | 🚧 In Progress |
-| 0.1.0 | Mar 2024 | Initial Release | ✅ Stable |
+| 0.2.0 | Jun 2026 | Mobile App, Enhanced Security | 🚧 In Progress |
+| 0.1.0 | Mar 2026 | Initial Release | ✅ Stable |
 
 ---
 
@@ -430,7 +430,7 @@ If you reference V-COMM in your work, please cite:
 @software{vcomm_2024,
   title={V-COMM: Next-Gen Secure Communication Platform},
   author={Vantis Corp},
-  year={2024},
+  year={2026},
   version={0.1.0},
   url={https://github.com/vantisCorp/VChat}
 }
@@ -440,7 +440,7 @@ If you reference V-COMM in your work, please cite:
 
 <div align="center">
 
-**Last Updated**: June 2024 • **Next Release**: August 2024
+**Last Updated**: June 2026 • **Next Release**: August 2026
 
 ---
 

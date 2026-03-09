@@ -1,13 +1,14 @@
 {
   "name": "@vcomm/concurrency",
-  "version": "1.0.0",
+  "version": "0.1.0",
   "description": "Concurrency control utilities including semaphores, rate limiters, circuit breakers, and distributed locks",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "scripts": {
     "build": "tsc",
     "test": "jest",
-    "lint": "eslint src/**/*.ts"
+    "lint": "eslint src/",
+    "type-check": "tsc --noEmit"
   },
   "keywords": [
     "concurrency",

@@ -1,6 +1,6 @@
 {
   "name": "@vcomm/ui",
-  "version": "1.0.0",
+  "version": "0.1.0",
   "description": "UI components for V-COMM voice communication platform",
   "main": "dist/index.js",
   "module": "dist/index.mjs",
@@ -20,7 +20,9 @@
     "build": "tsup src/index.tsx --format cjs,esm --dts",
     "build:css": "postcss src/styles.css -o dist/styles.css",
     "clean": "rm -rf dist",
-    "typecheck": "tsc --noEmit"
+    "typecheck": "tsc --noEmit",
+    "lint": "eslint src/",
+    "type-check": "tsc --noEmit"
   },
   "keywords": [
     "vcomm",

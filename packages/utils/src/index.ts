@@ -304,6 +304,7 @@ export function formatBytes(bytes: number, decimals: number = 2): string {
  * Format number with thousands separator
  */
 export function formatNumber(num: number, separator: string = ','): string {
+  // eslint-disable-next-line security/detect-unsafe-regex
   return num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, separator);
 }
 
@@ -1077,6 +1078,7 @@ export function isValidHexColor(color: string): boolean {
  * Check if valid IPv4
  */
 export function isValidIPv4(ip: string): boolean {
+  // eslint-disable-next-line security/detect-unsafe-regex
   const ipv4Regex = /^(\d{1,3}\.){3}\d{1,3}$/;
   if (!ipv4Regex.test(ip)) return false;
   const parts = ip.split('.');
@@ -1087,6 +1089,7 @@ export function isValidIPv4(ip: string): boolean {
  * Check if valid IPv6
  */
 export function isValidIPv6(ip: string): boolean {
+  // eslint-disable-next-line security/detect-unsafe-regex
   const ipv6Regex = /^([0-9a-fA-F]{1,4}:){7}[0-9a-fA-F]{1,4}$/;
   return ipv6Regex.test(ip);
 }

@@ -3,13 +3,12 @@
  * @module @vcomm/crypto/asymmetric
  */
 
-import { createCipheriv, createDecipheriv, publicEncrypt, privateDecrypt, constants } from 'crypto';
+import { publicEncrypt, privateDecrypt, constants } from 'crypto';
 import * as secp256k1 from '@noble/secp256k1';
-import { sha256, sha512, hmac } from '../hash';
-import { randomBytes, generateIV } from '../random';
-import { encrypt, decrypt, generateKey, createKey } from '../symmetric';
+import { sha256, hmac } from '../hash';
+
+import { encrypt, decrypt, createKey } from '../symmetric';
 import {
-  KeyPair,
   PrivateKey,
   PublicKey,
   AsymmetricEncryptOptions,
@@ -17,7 +16,6 @@ import {
   PBKDF2Options,
   ScryptOptions,
   SymmetricKey,
-  EncryptionResult,
   EncryptionError,
   DecryptionError,
   CryptoError,
@@ -93,7 +91,7 @@ async function deriveSecp256k1SharedSecret(
 export async function encryptForRecipient(
   plaintext: Uint8Array | string,
   recipientPublicKey: PublicKey,
-  options: AsymmetricEncryptOptions = {}
+  _options: AsymmetricEncryptOptions = {}
 ): Promise<Uint8Array> {
   if (recipientPublicKey.algorithm !== 'secp256k1' && recipientPublicKey.algorithm !== 'x25519') {
     throw new EncryptionError(`Unsupported algorithm: ${recipientPublicKey.algorithm}`);

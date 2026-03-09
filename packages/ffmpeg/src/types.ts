@@ -746,7 +746,7 @@ export interface MediaInfo {
   
   /** Subtitle streams */
   subtitleStreams: SubtitleStreamInfo[];
-  
+
   /** Metadata */
   metadata: Record<string, string | number>;
   
@@ -760,10 +760,10 @@ export interface MediaInfo {
 export interface VideoStreamInfo {
   /** Stream index */
   index: number;
-  
+
   /** Codec name */
   codec: string;
-  
+
   /** Profile */
   profile?: string | number;
   
@@ -804,10 +804,10 @@ export interface VideoStreamInfo {
 export interface AudioStreamInfo {
   /** Stream index */
   index: number;
-  
+
   /** Codec name */
   codec: string;
-  
+
   /** Profile */
   profile?: string | number;
   

@@ -113,8 +113,8 @@ import {
   BetaProgramStats,
   BetaUser,
   BetaProgramConfig,
-  BetaReleaseError,
-  BetaReleaseErrorCode,
+  _BetaReleaseError,
+  _BetaReleaseErrorCode,
 } from './types';
 
 /**

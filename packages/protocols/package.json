@@ -1,13 +1,14 @@
 {
   "name": "@vcomm/protocols",
-  "version": "1.0.0",
+  "version": "0.1.0",
   "description": "Protocol definitions and implementations for V-COMM - WebSocket, WebRTC, UDP, RTP/RTCP, and more",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "scripts": {
     "build": "tsc",
     "test": "jest",
-    "lint": "eslint src/**/*.ts"
+    "lint": "eslint src/",
+    "type-check": "tsc --noEmit"
   },
   "keywords": [
     "protocol",

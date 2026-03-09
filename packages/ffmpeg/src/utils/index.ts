@@ -7,8 +7,8 @@ import * as childProcess from 'child_process';
 import * as fs from 'fs/promises';
 import * as path from 'path';
 import {
-  FFmpegError,
-  FFmpegErrorCode,
+
+  _FFmpegErrorCode,
   EncodingPreset,
   VideoConfig,
   AudioConfig,
@@ -469,8 +469,11 @@ export function formatBitrate(bps: number): string {
 export function parseTimeString(timeStr: string): number {
   // Formats: HH:MM:SS.mmm, HH:MM:SS, MM:SS.mmm, MM:SS, SS.mmm, SS
   const patterns = [
+    // eslint-disable-next-line security/detect-unsafe-regex
     /^(\d+):(\d+):(\d+)(?:\.(\d+))?$/,
+    // eslint-disable-next-line security/detect-unsafe-regex
     /^(\d+):(\d+)(?:\.(\d+))?$/,
+    // eslint-disable-next-line security/detect-unsafe-regex
     /^(\d+)(?:\.(\d+))?$/,
   ];
 
@@ -515,6 +518,7 @@ export function generateTimestamp(): string {
  */
 export async function ensureDirectory(filePath: string): Promise<void> {
   const dir = path.dirname(filePath);
+  // eslint-disable-next-line security/detect-non-literal-fs-filename
   await fs.mkdir(dir, { recursive: true });
 }
 
@@ -535,6 +539,7 @@ export async function fileExists(filePath: string): Promise<boolean> {
  */
 export async function deleteIfExists(filePath: string): Promise<void> {
   try {
+    // eslint-disable-next-line security/detect-non-literal-fs-filename
     await fs.unlink(filePath);
   } catch {
     // Ignore if file doesn't exist

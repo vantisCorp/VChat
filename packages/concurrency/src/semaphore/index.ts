@@ -273,7 +273,7 @@ export class PrioritySemaphore extends Semaphore {
   /**
    * Acquire with priority (lower number = higher priority)
    */
-  async acquireWithPriority(priority: number = 0): Promise<Permit> {
+  async acquireWithPriority(_priority: number = 0): Promise<Permit> {
     // For simplicity, delegate to base acquire
     // In production, would implement priority queue
     return this.acquire();

@@ -4,9 +4,12 @@
   "private": true,
   "description": "V-COMM: Next-Generation Secure Communication Ecosystem",
   "license": "AGPL-3.0",
+  "type": "module",
   "workspaces": [
     "apps/*",
-    "packages/*"
+    "packages/*",
+    "packages/shared/*",
+    "website"
   ],
   "scripts": {
     "build": "turbo run build",

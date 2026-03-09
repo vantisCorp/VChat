@@ -1,6 +1,6 @@
 {
   "name": "@vcomm/plugin-system",
-  "version": "1.0.0",
+  "version": "0.1.0",
   "description": "Extensible plugin system for V-COMM with lifecycle management, sandboxing, and marketplace integration",
   "main": "dist/index.js",
   "module": "dist/index.mjs",
@@ -12,13 +12,24 @@
       "types": "./dist/index.d.ts"
     }
   },
-  "files": ["dist", "README.md"],
+  "files": [
+    "dist",
+    "README.md"
+  ],
   "scripts": {
     "build": "tsup src/index.ts --format cjs,esm --dts --clean",
     "dev": "tsup src/index.ts --watch",
-    "typecheck": "tsc --noEmit"
+    "typecheck": "tsc --noEmit",
+    "lint": "eslint src/",
+    "type-check": "tsc --noEmit"
   },
-  "keywords": ["vcomm", "plugin", "extension", "addon", "marketplace"],
+  "keywords": [
+    "vcomm",
+    "plugin",
+    "extension",
+    "addon",
+    "marketplace"
+  ],
   "author": "Vantis Corporation",
   "license": "MIT",
   "dependencies": {

@@ -4,7 +4,7 @@
  */
 
 import { createHash, createHmac } from 'crypto';
-import { HashAlgorithm, HashOptions, CryptoError } from '../types';
+import { HashAlgorithm, CryptoError } from '../types';
 
 /**
  * Hash data using the specified algorithm

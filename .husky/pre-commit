@@ -1,8 +1,4 @@
-#!/usr/bin/env sh
-. "$(dirname -- "$0")/_/husky.sh"
-
-# Run lint-staged
-npx lint-staged
+pnpm exec lint-staged
 
 # Run gitleaks for secret detection
 if command -v gitleaks &> /dev/null; then

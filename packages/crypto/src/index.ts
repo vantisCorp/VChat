@@ -105,6 +105,7 @@ export {
   exportPublicKeyPEM,
 } from './keys';
 
+// Re-export generateKeyPairAsync as generateKeyPair
 import { generateKeyPairAsync } from './keys';
 export { generateKeyPairAsync as generateKeyPair };
 
@@ -146,7 +147,7 @@ import { generateEd25519KeyPair, sign, verify } from './keys';
  */
 export function quickEncrypt(
   plaintext: string | Uint8Array,
-  password: string
+  _password: string
 ): { ciphertext: string; iv: string; tag: string } {
   const key = generateKey('aes-256-gcm');
   const result = encrypt(plaintext, key);

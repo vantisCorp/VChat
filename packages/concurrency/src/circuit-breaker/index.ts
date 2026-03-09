@@ -369,7 +369,7 @@ export class CircuitBreaker {
    * Transition to a new state
    */
   private transitionTo(newState: CircuitState): void {
-    const oldState = this.state;
+    const _oldState = this.state;
     this.state = newState;
     
     switch (newState) {

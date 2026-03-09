@@ -219,6 +219,17 @@ export interface CircuitBreakerStats {
 /**
  * Circuit breaker state info
  */
+export interface CircuitBreakerStats {
+  totalCalls: number;
+  successfulCalls: number;
+  failedCalls: number;
+  timeouts: number;
+  lastFailureTime: Date | null;
+  lastSuccessTime: Date | null;
+  consecutiveFailures: number;
+  consecutiveSuccesses: number;
+}
+
 export interface CircuitBreakerState {
   /** Current state */
   state: CircuitState;
@@ -364,23 +375,6 @@ export interface LockState {
   /** Whether the lock is held (alias) */
   isHeld?: boolean;
   
-  /** Lock key */
-  key?: string;
-  
-  /** Lock holder ID */
-  holder?: string;
-  
-  /** Token for lock identification */
-  token?: string;
-  
-  /** Expiration time */
-  expiresAt?: Date;
-  
-  /** TTL in milliseconds */
-  ttl?: number;
-  
-  /** Time when lock was acquired */
-  acquiredAt?: Date;
 }
 
 /**
@@ -461,6 +455,9 @@ export interface ResourcePoolOptions<T> {
   
   /** Function to reset resource state */
   reset?: (resource: T) => Promise<void>;
+  
+  /** Maximum uses per resource before recycling (0 = unlimited) */
+  maxUses?: number;
 }
 
 /**
@@ -493,6 +490,9 @@ export interface PooledResource<T> {
   
   /** Number of times the resource has been used */
   useCount: number;
+  
+  /** Release the resource back to the pool */
+  release: () => void;
 }
 
 /**
@@ -519,6 +519,9 @@ export interface PoolState {
   
   /** Minimum resources to maintain */
   min?: number;
+  
+  /** Number of waiting acquire requests */
+  waiting: number;
   
   /** Number of resources being created */
   creating?: number;
@@ -661,13 +664,13 @@ export class CircuitOpenError extends ConcurrencyError {
 export class RateLimitExceededError extends ConcurrencyError {
   constructor(
     public readonly limit: number,
-    public readonly resetTime: number,
+    public readonly resetAt: Date,
     public readonly retryAfter: number
   ) {
     super(
       `Rate limit exceeded. Retry after ${retryAfter}ms`,
       ConcurrencyErrorCode.RATE_LIMITED,
-      { limit, resetTime, retryAfter }
+      { limit, resetAt, retryAfter }
     );
     this.name = 'RateLimitExceededError';
   }

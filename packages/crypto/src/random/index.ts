@@ -3,6 +3,7 @@
  * @module @vcomm/crypto/random
  */
 
+import * as nodeCrypto from 'crypto';
 import { CryptoError } from '../types';
 
 /**
@@ -24,7 +25,6 @@ export function randomBytes(length: number): Uint8Array {
   } else {
     // Node.js fallback
     try {
-      const nodeCrypto = require('crypto');
       const buffer = nodeCrypto.randomBytes(length);
       bytes.set(buffer);
     } catch {

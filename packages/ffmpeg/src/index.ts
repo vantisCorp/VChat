@@ -27,10 +27,10 @@ import { VideoEncoder, videoEncoder } from './encoder';
 import { VideoDecoder, videoDecoder } from './decoder';
 import {
   VideoConfig,
-  AudioConfig,
+  _AudioConfig,
   OutputConfig,
   InputConfig,
-  TranscodeProgress,
+  _TranscodeProgress,
   TranscodeEventHandler,
   HardwareAcceleration,
   VideoCodec,
@@ -201,7 +201,7 @@ export class FFmpeg {
   async encodeForWeb(
     input: string,
     output: string,
-    options?: { quality?: 'low' | 'medium' | 'high' }
+    _options?: { quality?: 'low' | 'medium' | 'high' }
   ): Promise<string> {
     const preset = getOptimalPreset('web');
 

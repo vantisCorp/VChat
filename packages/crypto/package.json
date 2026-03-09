@@ -1,13 +1,14 @@
 {
   "name": "@vcomm/crypto",
-  "version": "1.0.0",
+  "version": "0.1.0",
   "description": "Cryptographic utilities for V-COMM - secure voice communication platform",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "scripts": {
     "build": "tsc",
     "test": "jest",
-    "lint": "eslint src/**/*.ts"
+    "lint": "eslint src/",
+    "type-check": "tsc --noEmit"
   },
   "keywords": [
     "crypto",

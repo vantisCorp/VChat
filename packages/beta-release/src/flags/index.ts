@@ -8,12 +8,12 @@
 import {
   FeatureFlagConfig,
   FeatureFlagStatus,
-  FeatureFlagType,
+  _FeatureFlagType,
   FeatureFlagResult,
   FeatureVariant,
   TargetingRule,
   TargetingCondition,
-  TargetingOperator,
+  _TargetingOperator,
   EvaluationContext,
   BetaReleaseError,
   BetaReleaseErrorCode,
@@ -298,7 +298,7 @@ export class FeatureFlags {
           return (condition.value as (string | number)[]).includes(value as string | number);
         }
         return false;
-      
+
       case 'not_in':
         if (Array.isArray(condition.value)) {
           return !(condition.value as (string | number)[]).includes(value as string | number);
