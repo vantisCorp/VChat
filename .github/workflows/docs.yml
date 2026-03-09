@@ -99,7 +99,7 @@ jobs:
           echo "✅ Docusaurus build completed"
       
       - name: Upload artifacts
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v7
         with:
           name: docs-build
           path: docs/

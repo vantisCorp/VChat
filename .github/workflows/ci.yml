@@ -237,7 +237,7 @@ jobs:
           out: 'reports'
 
       - name: Upload OWASP report
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v7
         with:
           name: owasp-report
           path: reports
@@ -267,7 +267,7 @@ jobs:
         continue-on-error: true
 
       - name: Upload chaos reports
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v7
         with:
           name: chaos-reports
           path: chaos-reports/
@@ -349,7 +349,7 @@ jobs:
         continue-on-error: true
 
       - name: Upload performance report
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v7
         with:
           name: performance-report
           path: lighthouse-report.html
