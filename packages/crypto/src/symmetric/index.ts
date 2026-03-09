@@ -20,7 +20,7 @@ import { generateIV } from '../random';
  * Default algorithms
  */
 const DEFAULT_ALGORITHM: SymmetricAlgorithm = 'aes-256-gcm';
-const TAG_LENGTH = 16;
+const _TAG_LENGTH = 16;
 
 /**
  * Generate a symmetric key

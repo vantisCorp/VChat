@@ -232,7 +232,6 @@ export class BatchMessageSender {
    * Send message to a single recipient
    * This should be overridden with actual implementation
    */
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   private async sendMessage(recipient: string, _message: any): Promise<void> {
     // TODO: Implement actual message sending logic
     // This could be WebSocket, gRPC, HTTP, or any transport

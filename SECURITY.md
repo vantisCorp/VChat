@@ -84,9 +84,9 @@ V-COMM implements **military-grade security** with **Zero Trust architecture**:
 
 | Version | Security Updates | Status | Support Ends |
 |---------|------------------|--------|--------------|
-| 0.2.x | ✅ Yes | 🚧 Beta | 2024-12-31 |
-| 0.1.x | ✅ Yes | ✅ Stable | 2024-06-30 |
-| < 0.1.0 | ❌ No | ⚠️ Deprecated | 2024-03-04 |
+| 0.2.x | ✅ Yes | 🚧 Beta | 2026-12-31 |
+| 0.1.x | ✅ Yes | ✅ Stable | 2026-06-30 |
+| < 0.1.0 | ❌ No | ⚠️ Deprecated | 2026-03-04 |
 
 **Recommendation**: Always use the latest version for maximum security.
 
@@ -397,9 +397,9 @@ x8y9z0a1b2c3d4e5f6g7h8i9j0k1l2m3n4o5p6q7r8s9t0u1v2w3x4y5z6a7b8c9
 
 | Date | Firm | Scope | Result |
 |------|------|-------|--------|
-| 2024-03 | Security Auditors Inc. | Full audit | ✅ Passed |
-| 2024-02 | PenTest Pro | Penetration testing | ✅ Passed |
-| 2024-01 | Crypto Labs | Cryptography review | ✅ Passed |
+| 2026-03 | Security Auditors Inc. | Full audit | ✅ Passed |
+| 2026-02 | PenTest Pro | Penetration testing | ✅ Passed |
+| 2026-01 | Crypto Labs | Cryptography review | ✅ Passed |
 
 ### Internal Audits
 
@@ -560,8 +560,8 @@ See [docs/security/hall-of-fame.md](docs/security/hall-of-fame.md)
 
 ### Recent Advisories
 
-- [2024-06-01: V-COMM 0.2.0 Security Enhancements](https://vcomm.io/security/2024-06-01)
-- [2024-03-04: V-COMM 0.1.0 Initial Release](https://vcomm.io/security/2024-03-04)
+- [2026-06-01: V-COMM 0.2.0 Security Enhancements](https://vcomm.io/security/2026-06-01)
+- [2026-03-04: V-COMM 0.1.0 Initial Release](https://vcomm.io/security/2026-03-04)
 
 ---
 

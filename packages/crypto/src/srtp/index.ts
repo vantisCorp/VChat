@@ -3,7 +3,7 @@
  * @module @vcomm/crypto/srtp
  */
 
-import { createCipheriv, createDecipheriv, createHmac } from 'crypto';
+import { createCipheriv, createDecipheriv } from 'crypto';
 import {
   SRTPCryptoSuite,
   SRTPKey,
@@ -11,7 +11,7 @@ import {
   SRTPHeader,
   SRTPError,
 } from '../types';
-import { sha1, hmac } from '../hash';
+import { hmac } from '../hash';
 import { randomBytes } from '../random';
 
 /**
@@ -226,7 +226,7 @@ export class SRTPSession {
   /**
    * Compute authentication tag
    */
-  private computeAuthTag(data: Uint8Array, header: SRTPHeader): Uint8Array {
+  private computeAuthTag(data: Uint8Array, _header: SRTPHeader): Uint8Array {
     // Append ROC to the data
     const dataWithRoc = new Uint8Array(data.length + 4);
     dataWithRoc.set(data, 0);
@@ -249,7 +249,7 @@ export class SRTPSession {
     }
     
     const firstByte = packet[0];
-    const hasPadding = (firstByte & 0x20) !== 0;
+    const _hasPadding = (firstByte & 0x20) !== 0;
     const hasExtension = (firstByte & 0x10) !== 0;
     const csrcCount = firstByte & 0x0f;
     

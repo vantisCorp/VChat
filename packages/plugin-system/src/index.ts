@@ -91,7 +91,7 @@ import { PluginRegistry } from './registry';
 import { PluginLoader } from './loader';
 import { PluginSandbox } from './sandbox';
 import {
-  PluginManifest,
+
   PluginInstance,
   PluginStatus,
   HookType,
@@ -99,7 +99,7 @@ import {
   HookContext,
   HookResult,
   PluginSystemConfig,
-  PluginPermission,
+  _PluginPermission,
   PermissionCheckContext,
   PluginError,
   PluginErrorCode,

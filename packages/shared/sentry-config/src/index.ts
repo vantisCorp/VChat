@@ -126,7 +126,7 @@ export function initSentry(config: Partial<SentryConfig> = {}): void {
     captureUnhandledRejections: true,
     
     // Before send hook for filtering
-    beforeSend(event, hint) {
+    beforeSend(event, _hint) {
       // Filter out sensitive information
       if (event.request) {
         delete event.request.cookies;

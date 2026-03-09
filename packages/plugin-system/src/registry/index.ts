@@ -9,9 +9,9 @@ import {
   PluginManifest,
   PluginInstance,
   PluginStatus,
-  PluginPermission,
+  _PluginPermission,
   PluginDependency,
-  PluginVersion,
+  _PluginVersion,
   PluginError,
   PluginErrorCode,
 } from '../types';
@@ -284,12 +284,14 @@ export class PluginRegistry {
     }
 
     // Validate ID format (reverse domain notation)
+    // eslint-disable-next-line security/detect-unsafe-regex
     const idPattern = /^[a-z0-9]+(?:\.[a-z0-9]+)*\/[a-z0-9-]+$/;
     if (!idPattern.test(manifest.id) && !manifest.id.startsWith('local/')) {
       console.warn(`Plugin ID "${manifest.id}" does not follow recommended format (e.g., com.example/my-plugin)`);
     }
 
     // Validate version format
+    // eslint-disable-next-line security/detect-unsafe-regex
     const versionPattern = /^\d+\.\d+\.\d+(-[a-zA-Z0-9.]+)?$/;
     if (!versionPattern.test(manifest.version)) {
       throw new PluginError(

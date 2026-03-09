@@ -105,10 +105,7 @@ export {
   exportPublicKeyPEM,
 } from './keys';
 
-<<<<<<< HEAD
-=======
 // Re-export generateKeyPairAsync as generateKeyPair
->>>>>>> 6a949b1 (fix: resolve TypeScript build errors across multiple packages)
 import { generateKeyPairAsync } from './keys';
 export { generateKeyPairAsync as generateKeyPair };
 
@@ -150,7 +147,7 @@ import { generateEd25519KeyPair, sign, verify } from './keys';
  */
 export function quickEncrypt(
   plaintext: string | Uint8Array,
-  password: string
+  _password: string
 ): { ciphertext: string; iv: string; tag: string } {
   const key = generateKey('aes-256-gcm');
   const result = encrypt(plaintext, key);

@@ -310,6 +310,13 @@ id_ecdsa
 backups/
 backup/
 
+# === Workspace Artifacts ===
+outputs/
+summarized_conversations/
+todo.md
+AUDIT_REPORT.md
+*.log
+
 # === Generated Documentation ===
 api-docs/
 generated-docs/

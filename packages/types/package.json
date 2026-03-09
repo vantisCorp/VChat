@@ -1,6 +1,6 @@
 {
   "name": "@vcomm/types",
-  "version": "1.0.0",
+  "version": "0.1.0",
   "description": "Shared type definitions for V-COMM voice communication platform",
   "main": "dist/index.js",
   "module": "dist/index.mjs",
@@ -18,7 +18,9 @@
   "scripts": {
     "build": "tsup src/index.ts --format cjs,esm --dts",
     "clean": "rm -rf dist",
-    "typecheck": "tsc --noEmit"
+    "typecheck": "tsc --noEmit",
+    "lint": "eslint src/",
+    "type-check": "tsc --noEmit"
   },
   "keywords": [
     "vcomm",

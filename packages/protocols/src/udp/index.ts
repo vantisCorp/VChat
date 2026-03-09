@@ -5,8 +5,8 @@
 
 import {
   UDPPacket,
-  UDPSocketOptions,
-  ProtocolError,
+  _UDPSocketOptions,
+  _ProtocolError,
 } from '../types';
 
 // ============================================================================

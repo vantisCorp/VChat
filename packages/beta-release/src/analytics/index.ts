@@ -6,9 +6,9 @@
  */
 
 import {
-  BetaMetric,
+
   MetricType,
-  MetricAggregation,
+  _MetricAggregation,
   MetricDataPoint,
   MetricQuery,
   MetricQueryResult,
