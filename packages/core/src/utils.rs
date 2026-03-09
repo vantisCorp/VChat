@@ -59,11 +59,7 @@ impl Utils {
     pub fn is_valid_username(username: &str) -> bool {
         // Username validation: 3-32 chars, alphanumeric, underscores, hyphens
         let len = username.len();
-        len >= 3
-            && len <= 32
-            && username
-                .chars()
-                .all(|c| c.is_alphanumeric() || c == '_' || c == '-')
+        len >= 3 && len <= 32 && username.chars().all(|c| c.is_alphanumeric() || c == '_' || c == '-')
     }
 
     /// Sleep for specified duration
