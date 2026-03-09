@@ -19,8 +19,7 @@
         "build/**",
         ".next/**",
         "!.next/cache/**",
-        "target/**",
-        "!.next/cache/**"
+        "target/**"
       ],
       "cache": true,
       "persistent": false
