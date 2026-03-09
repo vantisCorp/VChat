@@ -793,7 +793,11 @@ export interface EventMap {
   [EventType.SERVER_MEMBER_LEAVE]: { member: ServerMember };
   [EventType.SERVER_MEMBER_UPDATE]: { member: ServerMember; oldMember?: Partial<ServerMember> };
   [EventType.SERVER_ROLE_CREATE]: { serverId: ServerId; role: ServerRole };
-  [EventType.SERVER_ROLE_UPDATE]: { serverId: ServerId; role: ServerRole; oldRole?: Partial<ServerRole> };
+  [EventType.SERVER_ROLE_UPDATE]: {
+    serverId: ServerId;
+    role: ServerRole;
+    oldRole?: Partial<ServerRole>;
+  };
   [EventType.SERVER_ROLE_DELETE]: { serverId: ServerId; role: ServerRole };
   [EventType.CHANNEL_CREATE]: { channel: Channel };
   [EventType.CHANNEL_UPDATE]: { channel: Channel; oldChannel?: Partial<Channel> };
@@ -802,8 +806,18 @@ export interface EventMap {
   [EventType.MESSAGE_CREATE]: { message: Message };
   [EventType.MESSAGE_UPDATE]: { message: Partial<Message>; oldMessage?: Message };
   [EventType.MESSAGE_DELETE]: { messageId: MessageId; channelId: ChannelId };
-  [EventType.MESSAGE_REACTION_ADD]: { messageId: MessageId; channelId: ChannelId; reaction: MessageReaction; userId: UserId };
-  [EventType.MESSAGE_REACTION_REMOVE]: { messageId: MessageId; channelId: ChannelId; reaction: MessageReaction; userId: UserId };
+  [EventType.MESSAGE_REACTION_ADD]: {
+    messageId: MessageId;
+    channelId: ChannelId;
+    reaction: MessageReaction;
+    userId: UserId;
+  };
+  [EventType.MESSAGE_REACTION_REMOVE]: {
+    messageId: MessageId;
+    channelId: ChannelId;
+    reaction: MessageReaction;
+    userId: UserId;
+  };
   [EventType.MESSAGE_REACTION_REMOVE_ALL]: { messageId: MessageId; channelId: ChannelId };
   [EventType.VOICE_STATE_UPDATE]: { state: VoiceState; oldState?: VoiceState };
   [EventType.VOICE_SERVER_UPDATE]: { update: VoiceServerUpdate };

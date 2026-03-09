@@ -86,20 +86,10 @@ export {
 } from './rtp';
 
 // RTCP Module
-export {
-  RTCPPacketHandler,
-  getNTPTime,
-  ntpToDate,
-} from './rtcp';
+export { RTCPPacketHandler, getNTPTime, ntpToDate } from './rtcp';
 
 // WebRTC Module
-export {
-  SDPParser,
-  ICEHandler,
-  DTLSHandler,
-  SDPUtils,
-  WebRTCSession,
-} from './webrtc';
+export { SDPParser, ICEHandler, DTLSHandler, SDPUtils, WebRTCSession } from './webrtc';
 
 // WebSocket Module
 export {

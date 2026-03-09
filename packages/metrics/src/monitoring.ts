@@ -43,7 +43,7 @@ export class MonitoringSystem {
   async getMetricsEndpoint(): Promise<{ contentType: string; data: string }> {
     return {
       contentType: this.metrics.getContentType(),
-      data: await this.metrics.getMetrics()
+      data: await this.metrics.getMetrics(),
     };
   }
 
@@ -58,7 +58,7 @@ export class MonitoringSystem {
     const processingTime = this.metrics.getMessageMetrics().processingTime;
     const endTimer = processingTime.startTimer({
       operation,
-      ...labels
+      ...labels,
     });
 
     try {
@@ -70,7 +70,7 @@ export class MonitoringSystem {
       this.metrics.getMessageMetrics().errors.inc({
         type: 'processing',
         severity: 'error',
-        component: operation
+        component: operation,
       });
       throw error;
     }
@@ -99,10 +99,7 @@ export class MonitoringSystem {
 
     // Track response size
     if (responseSize) {
-      performance.responseSize.observe(
-        { route, status: status.toString() },
-        responseSize
-      );
+      performance.responseSize.observe({ route, status: status.toString() }, responseSize);
     }
 
     // Track errors
@@ -110,7 +107,7 @@ export class MonitoringSystem {
       performance.errorRate.inc({
         type: status >= 500 ? 'server_error' : 'client_error',
         route,
-        status: status.toString()
+        status: status.toString(),
       });
     }
   }
@@ -165,12 +162,12 @@ export class MonitoringSystem {
       messageMetrics.messagesSent.inc({
         channel,
         status: status || 'success',
-        type: messageType || 'text'
+        type: messageType || 'text',
       });
     } else {
       messageMetrics.messagesReceived.inc({
         channel,
-        type: messageType || 'text'
+        type: messageType || 'text',
       });
     }
   }
@@ -179,10 +176,9 @@ export class MonitoringSystem {
    * Track queue size
    */
   trackQueueSize(queueType: string, size: number, node?: string): void {
-    this.metrics.getMessageMetrics().queueSize.set(
-      { queue_type: queueType, node: node || 'default' },
-      size
-    );
+    this.metrics
+      .getMessageMetrics()
+      .queueSize.set({ queue_type: queueType, node: node || 'default' }, size);
   }
 
   /**
@@ -195,7 +191,7 @@ export class MonitoringSystem {
       errorCount: 0, // This would be tracked internally
       averageResponseTime: 0, // This would be calculated
       memoryUsage: process.memoryUsage().heapUsed,
-      cpuUsage: 0 // This would be calculated
+      cpuUsage: 0, // This would be calculated
     };
   }
 
@@ -214,7 +210,7 @@ export class MonitoringSystem {
       uptime: Date.now() - this.startTime,
       memory: process.memoryUsage(),
       metrics: true,
-      sentry: this.sentry.isInitialized()
+      sentry: this.sentry.isInitialized(),
     };
   }
 

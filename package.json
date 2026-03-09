@@ -17,6 +17,7 @@
     "lint": "turbo run lint",
     "test": "turbo run test",
     "format": "turbo run format",
+    "format:check": "prettier --check 'packages/*/src/**/*.{ts,tsx,js,jsx}'",
     "type-check": "turbo run type-check",
     "clean": "turbo run clean && rm -rf node_modules",
     "cargo:build": "turbo run cargo:build",

@@ -205,14 +205,12 @@ export class WSMessageBuilder {
   /**
    * Build channel create message
    */
-  static buildChannelCreate(
-    channel: {
-      id: string;
-      name: string;
-      type: 'voice' | 'text';
-      serverId: string;
-    }
-  ): WSMessage<typeof channel> {
+  static buildChannelCreate(channel: {
+    id: string;
+    name: string;
+    type: 'voice' | 'text';
+    serverId: string;
+  }): WSMessage<typeof channel> {
     return {
       header: this.createHeader(WSMessageType.CHANNEL_CREATE),
       payload: channel,
@@ -235,14 +233,12 @@ export class WSMessageBuilder {
   /**
    * Build channel update message
    */
-  static buildChannelUpdate(
-    channel: {
-      id: string;
-      name?: string;
-      type?: 'voice' | 'text';
-      serverId: string;
-    }
-  ): WSMessage<typeof channel> {
+  static buildChannelUpdate(channel: {
+    id: string;
+    name?: string;
+    type?: 'voice' | 'text';
+    serverId: string;
+  }): WSMessage<typeof channel> {
     return {
       header: this.createHeader(WSMessageType.CHANNEL_UPDATE),
       payload: channel,
@@ -252,14 +248,12 @@ export class WSMessageBuilder {
   /**
    * Build user update message
    */
-  static buildUserUpdate(
-    user: {
-      userId: string;
-      username?: string;
-      avatar?: string;
-      status?: string;
-    }
-  ): WSMessage<typeof user> {
+  static buildUserUpdate(user: {
+    userId: string;
+    username?: string;
+    avatar?: string;
+    status?: string;
+  }): WSMessage<typeof user> {
     return {
       header: this.createHeader(WSMessageType.USER_UPDATE),
       payload: user,
@@ -269,13 +263,11 @@ export class WSMessageBuilder {
   /**
    * Build server update message
    */
-  static buildServerUpdate(
-    server: {
-      serverId: string;
-      name?: string;
-      icon?: string;
-    }
-  ): WSMessage<typeof server> {
+  static buildServerUpdate(server: {
+    serverId: string;
+    name?: string;
+    icon?: string;
+  }): WSMessage<typeof server> {
     return {
       header: this.createHeader(WSMessageType.SERVER_UPDATE),
       payload: server,
@@ -298,7 +290,7 @@ export class WSMessageParser {
   static parse<T = any>(data: string): WSMessage<T> {
     try {
       const parsed = JSON.parse(data);
-      
+
       if (!this.validate(parsed)) {
         throw new WSError('Invalid message structure', 400);
       }
@@ -356,7 +348,7 @@ export class WSMessageParser {
    */
   static parseBinary(data: ArrayBuffer): WSMessage {
     const view = new DataView(data);
-    
+
     // Binary format:
     // 0-1: Message type (uint16)
     // 2-5: Sequence number (uint32)
@@ -387,16 +379,16 @@ export class WSMessageParser {
   static toBinary(message: WSMessage<Uint8Array>): ArrayBuffer {
     const type = this.stringTypeToBinary(message.header.type);
     const payload = message.payload;
-    
+
     const buffer = new ArrayBuffer(14 + payload.length);
     const view = new DataView(buffer);
-    
+
     view.setUint16(0, type, false);
     view.setUint32(2, message.header.sequence || 0, false);
     view.setBigUint64(6, BigInt(message.header.timestamp), false);
-    
+
     new Uint8Array(buffer, 14).set(payload);
-    
+
     return buffer;
   }
 
@@ -631,11 +623,7 @@ export class WSReconnectManager {
   private readonly baseDelay: number;
   private readonly maxDelay: number;
 
-  constructor(
-    maxAttempts: number = 10,
-    baseDelay: number = 1000,
-    maxDelay: number = 30000
-  ) {
+  constructor(maxAttempts: number = 10, baseDelay: number = 1000, maxDelay: number = 30000) {
     this.maxAttempts = maxAttempts;
     this.baseDelay = baseDelay;
     this.maxDelay = maxDelay;

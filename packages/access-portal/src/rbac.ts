@@ -3,43 +3,166 @@
  */
 
 import type {
-  Role, Permission, PermissionAction, ResourceType,
-  UserRoleAssignment, PermissionCheckRequest, PermissionCheckResult, SystemRoleType
+  Role,
+  Permission,
+  PermissionAction,
+  ResourceType,
+  UserRoleAssignment,
+  PermissionCheckRequest,
+  PermissionCheckResult,
+  SystemRoleType,
 } from './types';
 
 // Default Permissions
 export const DEFAULT_PERMISSIONS: Permission[] = [
   { id: 'server:create', action: 'create', resource: 'server', description: 'Create new servers' },
-  { id: 'server:read', action: 'read', resource: 'server', description: 'View server information', isDefault: true },
-  { id: 'server:update', action: 'update', resource: 'server', description: 'Modify server settings' },
+  {
+    id: 'server:read',
+    action: 'read',
+    resource: 'server',
+    description: 'View server information',
+    isDefault: true,
+  },
+  {
+    id: 'server:update',
+    action: 'update',
+    resource: 'server',
+    description: 'Modify server settings',
+  },
   { id: 'server:delete', action: 'delete', resource: 'server', description: 'Delete servers' },
-  { id: 'server:manage', action: 'manage', resource: 'server', description: 'Manage server members' },
-  { id: 'server:admin', action: 'admin', resource: 'server', description: 'Full server administration' },
+  {
+    id: 'server:manage',
+    action: 'manage',
+    resource: 'server',
+    description: 'Manage server members',
+  },
+  {
+    id: 'server:admin',
+    action: 'admin',
+    resource: 'server',
+    description: 'Full server administration',
+  },
   { id: 'channel:create', action: 'create', resource: 'channel', description: 'Create channels' },
-  { id: 'channel:read', action: 'read', resource: 'channel', description: 'View channels', isDefault: true },
+  {
+    id: 'channel:read',
+    action: 'read',
+    resource: 'channel',
+    description: 'View channels',
+    isDefault: true,
+  },
   { id: 'channel:manage', action: 'manage', resource: 'channel', description: 'Manage channels' },
-  { id: 'message:create', action: 'create', resource: 'message', description: 'Send messages', isDefault: true },
-  { id: 'message:read', action: 'read', resource: 'message', description: 'Read messages', isDefault: true },
+  {
+    id: 'message:create',
+    action: 'create',
+    resource: 'message',
+    description: 'Send messages',
+    isDefault: true,
+  },
+  {
+    id: 'message:read',
+    action: 'read',
+    resource: 'message',
+    description: 'Read messages',
+    isDefault: true,
+  },
   { id: 'message:manage', action: 'manage', resource: 'message', description: 'Manage messages' },
-  { id: 'user:read', action: 'read', resource: 'user', description: 'View user profiles', isDefault: true },
+  {
+    id: 'user:read',
+    action: 'read',
+    resource: 'user',
+    description: 'View user profiles',
+    isDefault: true,
+  },
   { id: 'user:manage', action: 'manage', resource: 'user', description: 'Manage users' },
   { id: 'user:admin', action: 'admin', resource: 'user', description: 'Full user administration' },
   { id: 'role:create', action: 'create', resource: 'role', description: 'Create roles' },
   { id: 'role:read', action: 'read', resource: 'role', description: 'View roles', isDefault: true },
   { id: 'role:manage', action: 'manage', resource: 'role', description: 'Manage roles' },
-  { id: 'file:create', action: 'create', resource: 'file', description: 'Upload files', isDefault: true },
-  { id: 'file:read', action: 'read', resource: 'file', description: 'Download files', isDefault: true },
+  {
+    id: 'file:create',
+    action: 'create',
+    resource: 'file',
+    description: 'Upload files',
+    isDefault: true,
+  },
+  {
+    id: 'file:read',
+    action: 'read',
+    resource: 'file',
+    description: 'Download files',
+    isDefault: true,
+  },
   { id: 'audit_log:read', action: 'read', resource: 'audit_log', description: 'View audit logs' },
 ];
 
 // Default System Roles
-export const DEFAULT_SYSTEM_ROLES: Record<SystemRoleType, Omit<Role, 'id' | 'createdAt' | 'updatedAt'>> = {
-  owner: { name: 'Owner', color: '#FFD700', position: 1000, isSystem: true, mentionable: true, permissions: DEFAULT_PERMISSIONS },
-  admin: { name: 'Administrator', color: '#E74C3C', position: 900, isSystem: true, mentionable: true, permissions: DEFAULT_PERMISSIONS.filter(p => !p.id.includes(':admin') && p.id !== 'server:delete') },
-  moderator: { name: 'Moderator', color: '#3498DB', position: 800, isSystem: true, mentionable: true, permissions: DEFAULT_PERMISSIONS.filter(p => ['channel:read', 'channel:manage', 'message:read', 'message:manage', 'user:read', 'user:manage'].includes(p.id)) },
-  member: { name: 'Member', color: '#95A5A6', position: 100, isSystem: true, mentionable: false, permissions: DEFAULT_PERMISSIONS.filter(p => p.isDefault) },
-  guest: { name: 'Guest', color: '#7F8C8D', position: 50, isSystem: true, mentionable: false, permissions: DEFAULT_PERMISSIONS.filter(p => p.isDefault && !['message:create', 'file:create'].includes(p.id)) },
-  bot: { name: 'Bot', color: '#9B59B6', position: 200, isSystem: true, mentionable: false, permissions: DEFAULT_PERMISSIONS.filter(p => ['message:create', 'message:read', 'channel:read', 'user:read'].includes(p.id)) },
+export const DEFAULT_SYSTEM_ROLES: Record<
+  SystemRoleType,
+  Omit<Role, 'id' | 'createdAt' | 'updatedAt'>
+> = {
+  owner: {
+    name: 'Owner',
+    color: '#FFD700',
+    position: 1000,
+    isSystem: true,
+    mentionable: true,
+    permissions: DEFAULT_PERMISSIONS,
+  },
+  admin: {
+    name: 'Administrator',
+    color: '#E74C3C',
+    position: 900,
+    isSystem: true,
+    mentionable: true,
+    permissions: DEFAULT_PERMISSIONS.filter(
+      (p) => !p.id.includes(':admin') && p.id !== 'server:delete'
+    ),
+  },
+  moderator: {
+    name: 'Moderator',
+    color: '#3498DB',
+    position: 800,
+    isSystem: true,
+    mentionable: true,
+    permissions: DEFAULT_PERMISSIONS.filter((p) =>
+      [
+        'channel:read',
+        'channel:manage',
+        'message:read',
+        'message:manage',
+        'user:read',
+        'user:manage',
+      ].includes(p.id)
+    ),
+  },
+  member: {
+    name: 'Member',
+    color: '#95A5A6',
+    position: 100,
+    isSystem: true,
+    mentionable: false,
+    permissions: DEFAULT_PERMISSIONS.filter((p) => p.isDefault),
+  },
+  guest: {
+    name: 'Guest',
+    color: '#7F8C8D',
+    position: 50,
+    isSystem: true,
+    mentionable: false,
+    permissions: DEFAULT_PERMISSIONS.filter(
+      (p) => p.isDefault && !['message:create', 'file:create'].includes(p.id)
+    ),
+  },
+  bot: {
+    name: 'Bot',
+    color: '#9B59B6',
+    position: 200,
+    isSystem: true,
+    mentionable: false,
+    permissions: DEFAULT_PERMISSIONS.filter((p) =>
+      ['message:create', 'message:read', 'channel:read', 'user:read'].includes(p.id)
+    ),
+  },
 };
 
 /**
@@ -94,8 +217,21 @@ export class RBACManager {
     return Array.from(this.roles.values());
   }
 
-  assignRole(userId: string, roleId: string, scopeId: string, assignedBy: string, expiresAt?: Date): UserRoleAssignment {
-    const assignment: UserRoleAssignment = { userId, roleId, scopeId, assignedBy, assignedAt: new Date(), expiresAt };
+  assignRole(
+    userId: string,
+    roleId: string,
+    scopeId: string,
+    assignedBy: string,
+    expiresAt?: Date
+  ): UserRoleAssignment {
+    const assignment: UserRoleAssignment = {
+      userId,
+      roleId,
+      scopeId,
+      assignedBy,
+      assignedAt: new Date(),
+      expiresAt,
+    };
     const userAssignments = this.userRoles.get(userId) || [];
     userAssignments.push(assignment);
     this.userRoles.set(userId, userAssignments);
@@ -106,7 +242,7 @@ export class RBACManager {
   revokeRole(userId: string, roleId: string, scopeId: string): boolean {
     const assignments = this.userRoles.get(userId);
     if (!assignments) return false;
-    const index = assignments.findIndex(a => a.roleId === roleId && a.scopeId === scopeId);
+    const index = assignments.findIndex((a) => a.roleId === roleId && a.scopeId === scopeId);
     if (index === -1) return false;
     assignments.splice(index, 1);
     this.permissionCache.delete(userId);
@@ -115,7 +251,7 @@ export class RBACManager {
 
   getUserRoles(userId: string, scopeId?: string): UserRoleAssignment[] {
     const assignments = this.userRoles.get(userId) || [];
-    return scopeId ? assignments.filter(a => a.scopeId === scopeId) : assignments;
+    return scopeId ? assignments.filter((a) => a.scopeId === scopeId) : assignments;
   }
 
   checkPermission(request: PermissionCheckRequest): PermissionCheckResult {
@@ -130,7 +266,11 @@ export class RBACManager {
     };
   }
 
-  checkPermissions(userId: string, permissions: string[], scopeId?: string): Map<string, PermissionCheckResult> {
+  checkPermissions(
+    userId: string,
+    permissions: string[],
+    scopeId?: string
+  ): Map<string, PermissionCheckResult> {
     const results = new Map<string, PermissionCheckResult>();
     for (const permission of permissions) {
       results.set(permission, this.checkPermission({ userId, permission, scopeId }));
@@ -176,7 +316,7 @@ export class RBACManager {
 
   private invalidateCacheForRole(roleId: string): void {
     for (const [userId, assignments] of this.userRoles) {
-      if (assignments.some(a => a.roleId === roleId)) {
+      if (assignments.some((a) => a.roleId === roleId)) {
         for (const key of this.permissionCache.keys()) {
           if (key.startsWith(userId)) this.permissionCache.delete(key);
         }
@@ -189,11 +329,35 @@ export class RBACManager {
   }
 }
 
-export function parsePermission(permissionId: string): { action: PermissionAction; resource: ResourceType } | null {
+export function parsePermission(
+  permissionId: string
+): { action: PermissionAction; resource: ResourceType } | null {
   const [resource, action] = permissionId.split(':');
   if (!resource || !action) return null;
-  const validActions: PermissionAction[] = ['create', 'read', 'update', 'delete', 'manage', 'admin'];
-  const validResources: ResourceType[] = ['server', 'channel', 'message', 'user', 'role', 'file', 'space', 'ticket', 'forum', 'bot', 'webhook', 'audit_log', 'settings', 'api_key'];
+  const validActions: PermissionAction[] = [
+    'create',
+    'read',
+    'update',
+    'delete',
+    'manage',
+    'admin',
+  ];
+  const validResources: ResourceType[] = [
+    'server',
+    'channel',
+    'message',
+    'user',
+    'role',
+    'file',
+    'space',
+    'ticket',
+    'forum',
+    'bot',
+    'webhook',
+    'audit_log',
+    'settings',
+    'api_key',
+  ];
   if (!validActions.includes(action as PermissionAction)) return null;
   if (!validResources.includes(resource as ResourceType)) return null;
   return { action: action as PermissionAction, resource: resource as ResourceType };

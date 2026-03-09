@@ -8,44 +8,38 @@ import { HashAlgorithm, CryptoError } from '../types';
 
 /**
  * Hash data using the specified algorithm
- * 
+ *
  * @param data Data to hash
  * @param algorithm Hash algorithm (default: sha256)
  * @returns Hash digest
  */
-export function hash(
-  data: Uint8Array | string,
-  algorithm: HashAlgorithm = 'sha256'
-): Uint8Array {
+export function hash(data: Uint8Array | string, algorithm: HashAlgorithm = 'sha256'): Uint8Array {
   const nodeAlgorithm = mapAlgorithm(algorithm);
   const hasher = createHash(nodeAlgorithm);
-  
+
   if (typeof data === 'string') {
     hasher.update(data, 'utf8');
   } else {
     hasher.update(Buffer.from(data));
   }
-  
+
   return new Uint8Array(hasher.digest());
 }
 
 /**
  * Hash data and return as hex string
- * 
+ *
  * @param data Data to hash
  * @param algorithm Hash algorithm (default: sha256)
  * @returns Hex encoded hash
  */
-export function hashHex(
-  data: Uint8Array | string,
-  algorithm: HashAlgorithm = 'sha256'
-): string {
+export function hashHex(data: Uint8Array | string, algorithm: HashAlgorithm = 'sha256'): string {
   return Buffer.from(hash(data, algorithm)).toString('hex');
 }
 
 /**
  * Compute HMAC
- * 
+ *
  * @param data Data to authenticate
  * @param key HMAC key
  * @param algorithm Hash algorithm (default: sha256)
@@ -58,19 +52,19 @@ export function hmac(
 ): Uint8Array {
   const nodeAlgorithm = mapAlgorithm(algorithm);
   const hmacHasher = createHmac(nodeAlgorithm, typeof key === 'string' ? key : Buffer.from(key));
-  
+
   if (typeof data === 'string') {
     hmacHasher.update(data, 'utf8');
   } else {
     hmacHasher.update(Buffer.from(data));
   }
-  
+
   return new Uint8Array(hmacHasher.digest());
 }
 
 /**
  * Compute HMAC and return as hex string
- * 
+ *
  * @param data Data to authenticate
  * @param key HMAC key
  * @param algorithm Hash algorithm (default: sha256)
@@ -86,7 +80,7 @@ export function hmacHex(
 
 /**
  * Verify HMAC
- * 
+ *
  * @param data Data to verify
  * @param key HMAC key
  * @param expectedHmac Expected HMAC value
@@ -100,17 +94,17 @@ export function verifyHmac(
   algorithm: HashAlgorithm = 'sha256'
 ): boolean {
   const computed = hmac(data, key, algorithm);
-  
+
   // Constant-time comparison
   if (computed.length !== expectedHmac.length) {
     return false;
   }
-  
+
   let result = 0;
   for (let i = 0; i < computed.length; i++) {
     result |= computed[i] ^ expectedHmac[i];
   }
-  
+
   return result === 0;
 }
 
@@ -161,13 +155,13 @@ export function sha3_512(data: Uint8Array | string): Uint8Array {
  */
 export function blake2b(data: Uint8Array | string, length: number = 64): Uint8Array {
   const hasher = createHash(`blake2b${length * 8}`);
-  
+
   if (typeof data === 'string') {
     hasher.update(data, 'utf8');
   } else {
     hasher.update(Buffer.from(data));
   }
-  
+
   return new Uint8Array(hasher.digest());
 }
 
@@ -176,13 +170,13 @@ export function blake2b(data: Uint8Array | string, length: number = 64): Uint8Ar
  */
 export function blake2s(data: Uint8Array | string, length: number = 32): Uint8Array {
   const hasher = createHash(`blake2s${length * 8}`);
-  
+
   if (typeof data === 'string') {
     hasher.update(data, 'utf8');
   } else {
     hasher.update(Buffer.from(data));
   }
-  
+
   return new Uint8Array(hasher.digest());
 }
 
@@ -198,13 +192,13 @@ export function doubleSha256(data: Uint8Array | string): Uint8Array {
  */
 export function ripemd160(data: Uint8Array | string): Uint8Array {
   const hasher = createHash('ripemd160');
-  
+
   if (typeof data === 'string') {
     hasher.update(data, 'utf8');
   } else {
     hasher.update(Buffer.from(data));
   }
-  
+
   return new Uint8Array(hasher.digest());
 }
 
@@ -220,21 +214,21 @@ export function hash160(data: Uint8Array | string): Uint8Array {
  */
 function mapAlgorithm(algorithm: HashAlgorithm): string {
   const mapping: Record<HashAlgorithm, string> = {
-    'sha1': 'sha1',
-    'sha256': 'sha256',
-    'sha384': 'sha384',
-    'sha512': 'sha512',
+    sha1: 'sha1',
+    sha256: 'sha256',
+    sha384: 'sha384',
+    sha512: 'sha512',
     'sha3-256': 'sha3-256',
     'sha3-512': 'sha3-512',
-    'blake2b': 'blake2b512',
-    'blake2s': 'blake2s256',
+    blake2b: 'blake2b512',
+    blake2s: 'blake2s256',
   };
-  
+
   const mapped = mapping[algorithm];
   if (!mapped) {
     throw new CryptoError(`Unsupported hash algorithm: ${algorithm}`);
   }
-  
+
   return mapped;
 }
 

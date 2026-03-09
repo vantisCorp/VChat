@@ -10,7 +10,10 @@
 /**
  * Generate a random string
  */
-export function randomString(length: number = 16, charset: string = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789'): string {
+export function randomString(
+  length: number = 16,
+  charset: string = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789'
+): string {
   let result = '';
   const chars = charset.length;
   for (let i = 0; i < length; i++) {
@@ -714,7 +717,9 @@ export function mapKeys<T extends Record<string, any>>(
 /**
  * Invert object (swap keys and values)
  */
-export function invert<T extends Record<string, string | number>>(obj: T): Record<T[keyof T], keyof T> {
+export function invert<T extends Record<string, string | number>>(
+  obj: T
+): Record<T[keyof T], keyof T> {
   const result = {} as Record<T[keyof T], keyof T>;
   for (const key in obj) {
     if (Object.prototype.hasOwnProperty.call(obj, key)) {
@@ -892,7 +897,11 @@ export async function retry<T>(
 /**
  * Timeout wrapper for promises
  */
-export async function timeout<T>(promise: Promise<T>, ms: number, message: string = 'Timeout'): Promise<T> {
+export async function timeout<T>(
+  promise: Promise<T>,
+  ms: number,
+  message: string = 'Timeout'
+): Promise<T> {
   let timeoutId: ReturnType<typeof setTimeout> | undefined;
   const timeoutPromise = new Promise<never>((_, reject) => {
     timeoutId = setTimeout(() => reject(new Error(message)), ms);
@@ -948,10 +957,13 @@ export async function props<T extends Record<string, Promise<any>>>(
   const keys = Object.keys(obj);
   const promises = keys.map((key) => obj[key]);
   const results = await Promise.all(promises);
-  return keys.reduce((acc, key, i) => {
-    acc[key as keyof T] = results[i];
-    return acc;
-  }, {} as { [K in keyof T]: Awaited<T[K]> });
+  return keys.reduce(
+    (acc, key, i) => {
+      acc[key as keyof T] = results[i];
+      return acc;
+    },
+    {} as { [K in keyof T]: Awaited<T[K]> }
+  );
 }
 
 // ============================================================================

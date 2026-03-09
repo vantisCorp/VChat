@@ -20,7 +20,7 @@ describe('BatchMessageSender', () => {
     test('should send batch messages successfully', async () => {
       const batch: MessageBatch = {
         recipients: ['user1', 'user2', 'user3'],
-        message: { text: 'Hello' }
+        message: { text: 'Hello' },
       };
 
       const result: BatchResult = await sender.sendBatch(batch);
@@ -32,7 +32,7 @@ describe('BatchMessageSender', () => {
     test('should handle failed messages', async () => {
       const batch: MessageBatch = {
         recipients: ['user1', 'user2', 'user3', 'user4', 'user5'],
-        message: { text: 'Hello' }
+        message: { text: 'Hello' },
       };
 
       const result: BatchResult = await sender.sendBatch(batch);
@@ -42,11 +42,11 @@ describe('BatchMessageSender', () => {
 
     test('should pack messages with binary mode', async () => {
       const largeMessage = { data: 'x'.repeat(1000000) };
-      
+
       const batch: MessageBatch = {
         recipients: ['user1'],
         message: largeMessage,
-        options: { packMode: 'binary' }
+        options: { packMode: 'binary' },
       };
 
       const result: BatchResult = await sender.sendBatch(batch);
@@ -56,9 +56,11 @@ describe('BatchMessageSender', () => {
 
     test('should group recipients by node', async () => {
       const batch: MessageBatch = {
-        recipients: Array(150).fill(null).map((_, i) => `user${i}`),
+        recipients: Array(150)
+          .fill(null)
+          .map((_, i) => `user${i}`),
         message: { text: 'Hello' },
-        options: { groupByNode: true }
+        options: { groupByNode: true },
       };
 
       const result: BatchResult = await sender.sendBatch(batch);
@@ -72,7 +74,7 @@ describe('BatchMessageSender', () => {
     test('should update node mapping', () => {
       const nodeMap = new Map([
         ['node-0', ['user1', 'user2']],
-        ['node-1', ['user3', 'user4']]
+        ['node-1', ['user3', 'user4']],
       ]);
 
       sender.updateNodeMap(nodeMap);

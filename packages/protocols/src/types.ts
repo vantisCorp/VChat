@@ -265,7 +265,7 @@ export enum RTCPFeedbackType {
   NACK_SLI = 2,
   NACK_RPSI = 3,
   TRANSPORT_WIDE_FEEDBACK = 15,
-  
+
   // PSFB
   PLI = 1,
   SLI = 2,
@@ -325,7 +325,7 @@ export interface ICECandidate {
 /**
  * ICE connection state
  */
-export type ICEConnectionState = 
+export type ICEConnectionState =
   | 'new'
   | 'checking'
   | 'connected'
@@ -783,7 +783,7 @@ export class SDPError extends ProtocolError {
 export class WSError extends ProtocolError {
   /** Error code */
   code?: number;
-  
+
   constructor(message: string, code?: number) {
     super(message);
     this.name = 'WSError';

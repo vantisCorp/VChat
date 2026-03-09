@@ -426,9 +426,7 @@ export const Avatar: React.FC<AvatarProps> = ({
       ) : (
         <span className="vcomm-avatar__fallback">{fallback || alt.charAt(0).toUpperCase()}</span>
       )}
-      {status && (
-        <span className={`vcomm-avatar__status vcomm-avatar__status--${status}`} />
-      )}
+      {status && <span className={`vcomm-avatar__status vcomm-avatar__status--${status}`} />}
     </div>
   );
 };
@@ -534,12 +532,7 @@ export const Badge: React.FC<BadgeProps> = ({
     info: 'vcomm-badge--info',
   };
 
-  const classes = [
-    baseClasses,
-    variantClasses[variant],
-    dot ? 'vcomm-badge--dot' : '',
-    className,
-  ]
+  const classes = [baseClasses, variantClasses[variant], dot ? 'vcomm-badge--dot' : '', className]
     .filter(Boolean)
     .join(' ');
 
@@ -573,12 +566,7 @@ export const StatusIndicator: React.FC<StatusIndicatorProps> = ({
     lg: 'vcomm-status--lg',
   };
 
-  const classes = [
-    baseClasses,
-    `vcomm-status--${status}`,
-    sizeClasses[size],
-    className,
-  ]
+  const classes = [baseClasses, `vcomm-status--${status}`, sizeClasses[size], className]
     .filter(Boolean)
     .join(' ');
 
@@ -617,11 +605,7 @@ export const VoiceChannel: React.FC<VoiceChannelProps> = ({
   testId,
 }) => {
   const baseClasses = 'vcomm-voice-channel';
-  const classes = [
-    baseClasses,
-    isConnected ? 'vcomm-voice-channel--connected' : '',
-    className,
-  ]
+  const classes = [baseClasses, isConnected ? 'vcomm-voice-channel--connected' : '', className]
     .filter(Boolean)
     .join(' ');
 
@@ -660,7 +644,9 @@ export const VoiceChannel: React.FC<VoiceChannelProps> = ({
               />
               <span className="vcomm-voice-channel__username">{user.name}</span>
               {user.muted && <span className="vcomm-voice-channel__icon-muted">🔇</span>}
-              {user.deafened && <span className="vcomm-voice-channel__icon-deafened"> headphone slash</span>}
+              {user.deafened && (
+                <span className="vcomm-voice-channel__icon-deafened"> headphone slash</span>
+              )}
             </div>
           ))}
         </div>
@@ -707,11 +693,7 @@ export const Message: React.FC<MessageProps> = ({
   testId,
 }) => {
   const baseClasses = 'vcomm-message';
-  const classes = [
-    baseClasses,
-    mentioned ? 'vcomm-message--mentioned' : '',
-    className,
-  ]
+  const classes = [baseClasses, mentioned ? 'vcomm-message--mentioned' : '', className]
     .filter(Boolean)
     .join(' ');
 
@@ -784,9 +766,7 @@ export const UserList: React.FC<UserListProps> = ({
     <div className={classes} style={style} data-testid={testId}>
       {groupedUsers.online && groupedUsers.online.length > 0 && (
         <div className="vcomm-user-list__group">
-          <div className="vcomm-user-list__group-header">
-            Online — {groupedUsers.online.length}
-          </div>
+          <div className="vcomm-user-list__group-header">Online — {groupedUsers.online.length}</div>
           {groupedUsers.online.map((user) => (
             <button
               key={user.id}
@@ -926,12 +906,7 @@ export const ProgressBar: React.FC<ProgressBarProps> = ({
     danger: 'vcomm-progress--danger',
   };
 
-  const classes = [
-    baseClasses,
-    sizeClasses[size],
-    variantClasses[variant],
-    className,
-  ]
+  const classes = [baseClasses, sizeClasses[size], variantClasses[variant], className]
     .filter(Boolean)
     .join(' ');
 
@@ -940,9 +915,7 @@ export const ProgressBar: React.FC<ProgressBarProps> = ({
       <div className="vcomm-progress__track">
         <div className="vcomm-progress__fill" style={{ width: `${percentage}%` }} />
       </div>
-      {showLabel && (
-        <span className="vcomm-progress__label">{Math.round(percentage)}%</span>
-      )}
+      {showLabel && <span className="vcomm-progress__label">{Math.round(percentage)}%</span>}
     </div>
   );
 };
@@ -973,11 +946,7 @@ export const Slider: React.FC<SliderProps> = ({
   const percentage = ((value - min) / (max - min)) * 100;
 
   const baseClasses = 'vcomm-slider';
-  const classes = [
-    baseClasses,
-    disabled ? 'vcomm-slider--disabled' : '',
-    className,
-  ]
+  const classes = [baseClasses, disabled ? 'vcomm-slider--disabled' : '', className]
     .filter(Boolean)
     .join(' ');
 

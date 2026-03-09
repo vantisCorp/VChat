@@ -21,16 +21,13 @@ export class SentryIntegration {
       dsn: config.sentryDsn,
       environment: config.environment,
       tracesSampleRate: config.sampleRate || 1.0,
-      integrations: [
-        Sentry.httpIntegration(),
-        Sentry.expressIntegration(),
-      ],
+      integrations: [Sentry.httpIntegration(), Sentry.expressIntegration()],
       beforeSend(event) {
         // Add custom context
         event.tags = {
           ...event.tags,
           service: 'vcomm-api',
-          version: process.env['APP_VERSION'] || 'unknown'
+          version: process.env['APP_VERSION'] || 'unknown',
         };
 
         // Filter out sensitive data
@@ -42,7 +39,7 @@ export class SentryIntegration {
         }
 
         return event;
-      }
+      },
     });
 
     this.initialized = true;
@@ -59,14 +56,18 @@ export class SentryIntegration {
     }
 
     Sentry.captureException(error, {
-      extra: context ?? {}
+      extra: context ?? {},
     });
   }
 
   /**
    * Capture a message
    */
-  captureMessage(message: string, level: 'info' | 'warning' | 'error' = 'info', context?: Record<string, unknown>): void {
+  captureMessage(
+    message: string,
+    level: 'info' | 'warning' | 'error' = 'info',
+    context?: Record<string, unknown>
+  ): void {
     if (!this.initialized) {
       console.log(`[${level.toUpperCase()}] ${message}`);
       return;
@@ -74,7 +75,7 @@ export class SentryIntegration {
 
     Sentry.captureMessage(message, {
       level,
-      extra: context ?? {}
+      extra: context ?? {},
     });
   }
 
@@ -88,7 +89,7 @@ export class SentryIntegration {
 
     return Sentry.startInactiveSpan({
       name,
-      op
+      op,
     });
   }
 
@@ -142,7 +143,7 @@ export class SentryIntegration {
 
     Sentry.addBreadcrumb({
       type: 'default',
-      ...breadcrumb
+      ...breadcrumb,
     });
   }
 

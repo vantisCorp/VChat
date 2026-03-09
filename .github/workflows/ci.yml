@@ -81,7 +81,7 @@ jobs:
         run: pnpm run lint
 
       - name: Format check with Prettier
-        run: pnpm run format --check
+        run: pnpm run format:check
 
       - name: Commitlint check
         uses: wagoid/commitlint-github-action@v6
@@ -151,11 +151,12 @@ jobs:
             build
           key: ${{ runner.os }}-build-${{ hashFiles('**/package.json') }}
 
-  # Rust Build & Test
+  # Rust Build & Test (only runs if Cargo.toml exists)
   rust-build:
     name: 🦀 Rust Build & Test
     runs-on: ubuntu-latest
     needs: security-scan
+    if: hashFiles('**/Cargo.toml') != ''
     steps:
       - name: Checkout code
         uses: actions/checkout@v4

@@ -14,7 +14,7 @@ export type {
   PerformanceMetrics,
   MetricsConfig,
   AlertRule,
-  MonitoringStats
+  MonitoringStats,
 } from './types';
 
 // Convenience exports
