@@ -20,9 +20,9 @@
     "build": "tsup src/index.tsx --format cjs,esm --dts",
     "build:css": "postcss src/styles.css -o dist/styles.css",
     "clean": "rm -rf dist",
-    "typecheck": "tsc --noEmit",
     "lint": "eslint src/",
-    "type-check": "tsc --noEmit"
+    "type-check": "tsc --noEmit",
+    "test": "jest --passWithNoTests"
   },
   "keywords": [
     "vcomm",
