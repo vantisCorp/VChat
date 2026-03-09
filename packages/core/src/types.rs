@@ -37,7 +37,10 @@ pub enum UserRole {
 impl UserRole {
     /// Check if role has moderation permissions
     pub fn can_moderate(&self) -> bool {
-        matches!(self, UserRole::Moderator | UserRole::Admin | UserRole::Owner)
+        matches!(
+            self,
+            UserRole::Moderator | UserRole::Admin | UserRole::Owner
+        )
     }
 
     /// Check if role has administrative permissions

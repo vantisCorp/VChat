@@ -19,6 +19,8 @@ export default [
       '**/coverage/**',
       '**/*.d.ts',
       'eslint.config.js',
+      '**/*.test.ts',
+      '**/*.spec.ts',
     ],
   },
   js.configs.recommended,
@@ -27,7 +29,6 @@ export default [
   prettierConfig,
   {
     files: ['**/*.{ts,tsx,js,jsx}'],
-    ignores: ['**/*.test.ts', '**/*.spec.ts'],
     languageOptions: {
       ecmaVersion: 2022,
       sourceType: 'module',
@@ -51,6 +52,13 @@ export default [
         // WebExtension globals
         chrome: 'readonly',
         browser: 'readonly',
+        // Timer globals
+        setTimeout: 'readonly',
+        clearTimeout: 'readonly',
+        setInterval: 'readonly',
+        clearInterval: 'readonly',
+        setImmediate: 'readonly',
+        clearImmediate: 'readonly',
       },
     },
     rules: {
@@ -71,16 +79,6 @@ export default [
           allowedNames: ['self'],
         },
       ],
-    },
-  },
-  // Test files configuration - no type-aware linting
-  {
-    files: ['**/*.test.ts', '**/*.spec.ts'],
-    ...ts.configs.recommended,
-    rules: {
-      '@typescript-eslint/no-unused-vars': 'off',
-      '@typescript-eslint/no-explicit-any': 'off',
-      '@typescript-eslint/no-non-null-assertion': 'off',
     },
   },
 ];
