@@ -343,12 +343,12 @@ export class DTLSSession {
    */
   private handleAlert(packet: Uint8Array): Uint8Array | null {
     const level = packet[13];
-    const description = packet[14];
-    
+    const _description = packet[14];
+
     if (level === 2) { // Fatal
       this.fail();
     }
-    
+
     return null;
   }
   
@@ -391,33 +391,33 @@ export class DTLSSession {
   }
   
   // Simplified handshake handlers
-  private handleClientHello(packet: Uint8Array): Uint8Array | null {
+  private handleClientHello(_packet: Uint8Array): Uint8Array | null {
     // Would process client hello and generate server hello
     return null;
   }
-  
-  private handleServerHello(packet: Uint8Array): Uint8Array | null {
+
+  private handleServerHello(_packet: Uint8Array): Uint8Array | null {
     // Would process server hello
     return null;
   }
-  
-  private handleCertificate(packet: Uint8Array): Uint8Array | null {
+
+  private handleCertificate(_packet: Uint8Array): Uint8Array | null {
     return null;
   }
-  
-  private handleServerKeyExchange(packet: Uint8Array): Uint8Array | null {
+
+  private handleServerKeyExchange(_packet: Uint8Array): Uint8Array | null {
     return null;
   }
-  
-  private handleServerHelloDone(packet: Uint8Array): Uint8Array | null {
+
+  private handleServerHelloDone(_packet: Uint8Array): Uint8Array | null {
     return null;
   }
-  
-  private handleClientKeyExchange(packet: Uint8Array): Uint8Array | null {
+
+  private handleClientKeyExchange(_packet: Uint8Array): Uint8Array | null {
     return null;
   }
-  
-  private handleFinished(packet: Uint8Array): Uint8Array | null {
+
+  private handleFinished(_packet: Uint8Array): Uint8Array | null {
     // Would verify finished message
     return null;
   }

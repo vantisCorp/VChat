@@ -6,7 +6,7 @@
 import { generateKeyPair, createSign, createVerify, constants } from 'crypto';
 import * as ed25519 from '@noble/ed25519';
 import * as secp256k1 from '@noble/secp256k1';
-import { sha256, sha512 } from '../hash';
+import { sha512 } from '../hash';
 import { randomBytes } from '../random';
 import {
   KeyAlgorithm,
